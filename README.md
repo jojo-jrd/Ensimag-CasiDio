@@ -10,30 +10,57 @@ Ici vous décrivez les fonctionnalités souhaitées et celles effectivement mise
 
 ### Cas d'usage
 
-A modifier/compléter 
-
 ```plantuml
 @startuml
-left to right direction
-actor "Visitor" as v
-actor "Registered User" as u
-actor "Admin" as a
-u <-- a
-rectangle Application {
-  usecase "Register" as R
-  usecase "Connect" as C
-  usecase "Create a Group" as CG
-  usecase "Add user in one of my groups" as AU
-  usecase "Delete user in one of my groups" as AU
-  usecase "Delete a Group" as DG
-  usecase "Change role" as CR
+
+:Utilisateurs: as User
+
+package Application {
+
+  :Administarateurs: as Admin
+  
+  "Connexion" as (Login)
+  "Gestion compte" as (AccountManagement)
+  "Gestion utilisateurs" as (AccountAdminManagement)
+  "Gestion crédits" as (CreditManagement)
+  "Création compte" as (CreateAccount)
+  "Connexion" as (Login)
+  "Modifier des comptes" as (UpdateAccountAdmin)
+  "Jouer jeux" as (PlayGames)
+  "Afficher tableau de bord" as (DashBoard)
+  "Afficher tableau de bord admin" as (DashBoardAdmin)
+  
+  User <|-- Admin
+  User --> (Login)
+  User --> (AccountManagement)
+  User -> (CreditManagement)
+  User --> (CreateAccount)
+  User --> (PlayGames)
+  User --> (DashBoard)
+  Admin --> (DashBoardAdmin)
+  Admin --> (AccountAdminManagement)
+  
+  (CreateAccount) <-- (Login) #line.dashed : <<i>>
+  
+  (Login) <-- (DashBoard) #line.dashed : <<i>>
+  (Login) <-- (PlayGames) #line.dashed : <<i>>
+  (Login) <-- (DashBoardAdmin) #line.dashed : <<i>>
+  
+  (Login) <-- (AccountManagement) #line.dashed : <<i>>
+  (AccountManagement) <-- (Modification compte) #line.dashed : <<e>>
+  (AccountManagement) <-- (Supprimer compte) #line.dashed : <<e>>
+  
+  (Login) <-- (CreditManagement) #line.dashed : <<i>>
+  (CreditManagement) <-- (Ajouter crédits) #line.dashed : <<e>>
+  (CreditManagement) <-- (Retirer crédits) #line.dashed : <<e>>
+  
+  (Login) <--  (AccountAdminManagement) #line.dashed : <<i>>
+  (AccountAdminManagement) <-- (Créer des comptes) #line.dashed : <<e>>
+  (AccountAdminManagement) <-- (UpdateAccountAdmin) #line.dashed : <<e>>
+  (AccountAdminManagement) <-- (Supprimer des comptes) #line.dashed : <<e>>
+
 }
-a --> DG
-a --> CR
-v --> R
-u --> C
-u --> AU
-u --> CG
+
 @enduml
 ```
 
