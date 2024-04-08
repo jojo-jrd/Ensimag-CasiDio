@@ -13,11 +13,11 @@ Ici vous décrivez les fonctionnalités souhaitées et celles effectivement mise
 ```plantuml
 @startuml
 
-:Utilisateurs: as User
+:Utilisateurs connectés: as User
+:Utilisateurs non connectées: as UserNotConnected
+:Administarateurs: as Admin
 
 package Application {
-
-  :Administarateurs: as Admin
   
   "Connexion" as (Login)
   "Gestion compte" as (AccountManagement)
@@ -31,10 +31,10 @@ package Application {
   "Afficher tableau de bord admin" as (DashBoardAdmin)
   
   User <|-- Admin
-  User --> (Login)
-  User --> (AccountManagement)
+  UserNotConnected --> (Login)
+  UserNotConnected --> (CreateAccount)
+  User -> (AccountManagement)
   User -> (CreditManagement)
-  User --> (CreateAccount)
   User --> (PlayGames)
   User --> (DashBoard)
   Admin --> (DashBoardAdmin)
