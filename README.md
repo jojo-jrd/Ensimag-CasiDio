@@ -137,9 +137,7 @@ class User{
   -address: String
   -birthDate: Date
   -balance: Float
-}
-
-class Admin extends User{
+  -isAdmin: Boolean
 }
 
 abstract Games{
