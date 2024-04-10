@@ -67,13 +67,17 @@
           {
             "name": "obj",
             "in": "body",
-            "description": "Name and email",
+            "description": "Create a new user",
             "schema": {
               "type": "object",
               "properties": {
-                "name": {
+                "firstName": {
                   "type": "string",
-                  "example": "John Doe"
+                  "example": "John"
+                },
+                "lastName": {
+                  "type": "string",
+                  "example": "Doe"
                 },
                 "email": {
                   "type": "string",
@@ -82,12 +86,18 @@
                 "password": {
                   "type": "string",
                   "example": "1m02P@SsF0rt!"
+                },
+                "birthDate": {
+                  "type": "string",
+                  "example": "11/30/2000"
                 }
               },
               "required": [
-                "name",
+                "firstName",
+                "lastName",
                 "email",
-                "password"
+                "password",
+                "birthDate"
               ]
             }
           }

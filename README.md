@@ -134,7 +134,6 @@ A modifier/compléter...
 
 ```plantuml
 class User{
-  -id: String
   -firstName: String
   -lastName: String
   -email: String

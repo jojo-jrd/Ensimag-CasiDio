@@ -52,12 +52,13 @@ module.exports = {
   async newUser (req, res) {
     // #swagger.tags = ['Users']
     // #swagger.summary = 'New User'
-    // #swagger.parameters['obj'] = { in: 'body', description:'Create a new user', schema: { $name: 'John Doe', $email: 'John.Doe@acme.com', $password: '1m02P@SsF0rt!'}}
-    if (!has(req.body, ['name', 'email', 'password'])) throw new CodeError('You must specify the name and email', status.BAD_REQUEST)
-    const { name, email, password } = req.body
-    console.log(req.body)
+    // #swagger.parameters['obj'] = { in: 'body', description:'Create a new user', schema: { $firstName: 'John', $lastName: 'Doe', $email: 'John.Doe@acme.com', $password: '1m02P@SsF0rt!', $birthDate: '11/30/2000'}}
+    if (!has(req.body, ['firstName', 'lastName', 'email', 'password', 'birthDate'])) throw new CodeError('You must specify all the fields', status.BAD_REQUEST)
+
+    const { firstName, lastName, email, password, birthDate } = req.body
+
     if (!validPassword(password)) throw new CodeError('Weak password!', status.BAD_REQUEST)
-    await userModel.create({ name, email, password: await bcrypt.hash(password, 2) })
+    await userModel.create({ firstName, lastName, email, password: await bcrypt.hash(password, 2), birthDate: new Date(birthDate), balance: 0})
     res.json({ status: true, message: 'User Added' })
   },
   async getUsers (req, res) {
