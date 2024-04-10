@@ -1,15 +1,15 @@
-import { useState, useRef, useContext } from 'react'; 
+import { useState, useRef, useContext } from 'react';
 import { AppContext } from '../../AppContext';
 
 function LoginView(){
-  const loginRef = useRef(null);
+  const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const [erreurMessage, setErreurMessage] = useState("");
   const {setToken, changePage} = useContext(AppContext)
 
   async function verifie(){
     let message = ""
-    if (!loginRef.current.value.match(/[a-z0-9]{3,10}/)) {
+    if (!emailRef.current.value.match(/[a-z0-9]{3,10}/)) {
       message += "Le login est incorrect."
     }
     if (passwordRef.current.value.length < 6) {
@@ -17,12 +17,12 @@ function LoginView(){
     }
     setErreurMessage(message)
     if (message.length===0) {
-        const reponse = await (await fetch("https://mon.app.org/login", 
+        const reponse = await (await fetch(`${import.meta.env.VITE_API_URL}/login`, 
             {
                 method:'POST',
                 headers:{'Content-type':'application/json'},
                 body: JSON.stringify({
-                    login : loginRef.current.value,
+                    email : emailRef.current.value,
                     password : passwordRef.current.value
                 })
             })).json()
@@ -33,8 +33,8 @@ function LoginView(){
   return (
     <fieldset>
       <legend>Connectez vous</legend>
-      <label>Login</label>
-      <input ref={loginRef} type="text"/>
+      <label>Email</label>
+      <input ref={emailRef} type="text"/>
       <label>Password</label>
       <input ref={passwordRef} type="password"/>
       <button onClick={verifie}>Connect</button>
