@@ -130,25 +130,38 @@ A modifier/compléter...
 
 ```plantuml
 class User{
-  name
-  email
-  passhash
-  isAdmin : boolean
+  -id: String
+  -firstName: String
+  -lastName: String
+  -email: String
+  -password: String
+  -address: String
+  -birthDate: Date
+  -balance: Float
+  -isAdmin: Boolean
 }
 
-class Message{
-  content
+abstract Games{
+  -id: String
+  -name: String
 }
 
-class Group{
-  name
+class Rocket implements Games{
+}
+class Mines implements Games{
+}
+class SlotMachine implements Games{
 }
 
-User "1" -- "n" Message : posts
-Group "1" -- "n" Message : contains
+class History{
+ -id: String;
+ -earnings: Float
+ -timeStamp: Date
+}
 
-User "n" -- "n"  Group : is member 
-User "1" -- "n"  Group : create and own
+
+History *--> User
+History *--> Games
 ```
 
 #### Architecture de votre code
