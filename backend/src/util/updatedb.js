@@ -8,10 +8,16 @@ const bcrypt = require('bcrypt');
   await require('../models/database.js').sync({ force: true })
   console.log('Base de données créée.')
   // Initialise la base avec quelques données
-  const passhash = await bcrypt.hash('123456', 2)
+  const passhash = await bcrypt.hash('123', 2)
   console.log(passhash)
   await userModel.create({
-    name: 'Sebastien Viardot', email: 'Sebastien.Viardot@grenoble-inp.fr', passhash
+    firstName: 'Lukas',
+    lastName: 'Loiodice',
+    email: 'Lukas.Loiodice@grenoble-inp.fr',
+    password: passhash,
+    birthDate: Date('2002-09-17'),
+    balance: 999999,
+    isAdmin: true
   })
   // Ajouter ici le code permettant d'initialiser par défaut la base de donnée
 })()

@@ -112,9 +112,13 @@ A compléter
 
 ### API mise en place
 
-Donner le lien vers la documentation swagger et/ou faire un tableau récapitulant l'API
-
-A compléter
+|Endpoint | GET  | POST | PUT  | DELETE  |
+|---|---|---|---|---|
+| /login  | *  | Obtention du token utilisateur/**email**,**password**  | *  | * |
+| /register  | *  | Crée un utilisateur/**email**,**password**,**firstName**,**lastName**,**address**,**birthDate**  | * | * |
+| /api/users  | (**TOKEN**,**ADMIN**)Lister tous les utilisateurs  | *  |  * |  * |
+| /api/user | * | * | (**TOKEN**)Modification du mot de passe/**email**,**password**,**firstName**,**lastName**,**address**,**birthDate** | * |
+| /api/users/{id}| * | * | (**TOKEN**, **ADMIN**)Mettre à jour les informations de l'utilisateur/**email**,**password**,**firstName**,**lastName**,**address**,**birthDate**,**isAdmin** |*
 
 ## Architecture du code
 
