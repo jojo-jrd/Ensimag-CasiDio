@@ -31,15 +31,20 @@ function LoginView(){
     }
   }
   return (
-    <fieldset>
-      <legend>Connectez vous</legend>
-      <label>Email</label>
-      <input ref={emailRef} type="text"/>
-      <label>Password</label>
-      <input ref={passwordRef} type="password"/>
-      <button onClick={verifie}>Connect</button>
-      <span style={{color:"red"}}> {erreurMessage}</span>
-    </fieldset>
+    <div>
+      <fieldset>
+        <legend>Connectez vous</legend>
+        <label>Email</label>
+        <input ref={emailRef} type="text"/>
+        <label>Password</label>
+        <input ref={passwordRef} type="password"/>
+        <button onClick={verifie}>Connect</button>
+        <span style={{color:"red"}}> {erreurMessage}</span>
+      </fieldset>
+      <div>
+        <p>Pas encore de compte ? <a onClick={() => changePage('register')}>Créez en un !</a></p>
+      </div>
+    </div>
   )
 }
 

@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import './App.css'
 import { AppContext } from '../../AppContext';
-import LoginView from './../login/login';
+import LoginView from '../login/Login';
+import RegisterView from '../register/Register'
 
 function App() {
   const [token, setToken] = useState(null);
@@ -16,9 +17,9 @@ function App() {
 
   function getCurrentPage(){
     switch(page){
-      case 'home' : return <LoginView/> ;
+      case 'login' : return <LoginView/> ;
+      case 'register' : return <RegisterView/> ;
       default: return <LoginView/> 
-      // TODO: ajouter les pages
     }
   }
 
