@@ -76,20 +76,7 @@ module.exports = {
     if (data) {
       res.json({status: true, message: 'Returning user data', data})
     } else {
-      res.status(status.INTERNAL_SERVER_ERROR).json({status: false, message: 'User not found'})
-    }
-  },
-  async getUsers (req, res) {
-    // #swagger.tags = ['Users']
-    // #swagger.summary = 'Get All users'
-    const data = await userModel.findAll({
-      attributes: ['firstName', 'lastName', 'email', 'address', 'birthDate', 'balance', 'isAdmin']
-    })
-
-    if (data) {
-      res.json({status: true, message: 'Returnins users datas', data })
-    } else {
-      res.status(status.INTERNAL_SERVER_ERROR).json({status: false, message: 'Users not founds'})
+      res.status(status.NOT_FOUND).json({status: false, message: 'User not found'})
     }
   },
   async updateUser (req, res) {
@@ -101,6 +88,63 @@ module.exports = {
       attributes: ['id', 'email', 'password', 'firstName', 'lastName', 'address', 'birthDate']
     })
 
+    if (user) {
+      if (req.body.password) {
+        user.password = await bcrypt.hash(req.body.password, 2)
+      }
+      user.email = getFieldIfExist(req.body.email, user.email)
+      user.firstName = getFieldIfExist(req.body.firstName, user.firstName)
+      user.lastName = getFieldIfExist(req.body.lastName, user.lastName)
+      user.address = getFieldIfExist(req.body.address, user.address)
+      user.birthDate = getFieldIfExist(req.body.birthDate, user.birthDate)
+  
+      await user.save()
+  
+      res.json({status: true, message: 'User updated'})
+    } else {
+      res.status(status.NOT_FOUND).json({status: false, message: 'User not found'})
+    }
+  },
+  async deleteUser (req, res) {
+    // #swagger.tags = ['Users']
+    // #swagger.summary = 'Delete Current User'
+    const user = await userModel.findOne({
+      where: {email: req.login}
+    })
+
+    if (user) {
+      await user.destroy()
+
+      res.json({status: true, message: 'User deleted'})
+    } else {
+      res.status(status.NOT_FOUND).json({status: false, message: 'User not found'})
+    }
+  },
+  async getUsers (req, res) {
+    // #swagger.tags = ['Admin Users']
+    // #swagger.summary = 'Get All users'
+    const data = await userModel.findAll({
+      attributes: ['id', 'firstName', 'lastName', 'email', 'address', 'birthDate', 'balance', 'isAdmin']
+    })
+
+    if (data) {
+      res.json({status: true, message: 'Returnins users datas', data })
+    } else {
+      res.status(status.INTERNAL_SERVER_ERROR).json({status: false, message: 'Users not founds'})
+    }
+  },
+  async adminUpdateUser (req, res) {
+    // #swagger.tags = ['Admin Users']
+    // #swagger.summary = 'Update user passed parameters'
+    // #swagger.parameters['obj'] = { in: 'body', description:'Update Connected User', schema: { $email: 'John.Doe@acme.com', $password: '1m02P@SsF0rt!', $firstName: 'John', $lastName: 'Doe', $address: '8 avenue de la rue', $birthDate: '11/30/2000', $balance: 200, $isAdmin: false}}
+    if (!has(req.params, 'id')) throw new CodeError('You must specify the user id', status.BAD_REQUEST)
+    const { id } = req.params
+
+    const user = await userModel.findOne({
+      where: {id: id},
+      attributes: ['id', 'email', 'password', 'firstName', 'lastName', 'address', 'birthDate', 'balance', 'isAdmin']
+    })
+
     if (req.body.password) {
       user.password = await bcrypt.hash(req.body.password, 2)
     }
@@ -109,9 +153,29 @@ module.exports = {
     user.lastName = getFieldIfExist(req.body.lastName, user.lastName)
     user.address = getFieldIfExist(req.body.address, user.address)
     user.birthDate = getFieldIfExist(req.body.birthDate, user.birthDate)
+    user.balance = getFieldIfExist(req.body.balance, user.balance)
+    user.isAdmin = getFieldIfExist(req.body.isAdmin, user.isAdmin)
 
     await user.save()
 
     res.json({status: true, message: 'User updated'})
+  },
+  async adminDeleteUser (req, res) {
+    // #swagger.tags = ['Admin Users']
+    // #swagger.summary = 'Delete user passed in parameters'
+    if (!has(req.params, 'id')) throw new CodeError('You must specify the user id', status.BAD_REQUEST)
+    const { id } = req.params
+
+    const user = await userModel.findOne({
+      where: {id: id}
+    })
+
+    if (user) {
+      user.destroy()
+
+      res.json({status: true, message: 'User deleted'})
+    } else {
+      res.status(status.NOT_FOUND).json({status: false, message: 'User not found'})
+    }
   }
 }
