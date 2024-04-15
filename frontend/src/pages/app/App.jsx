@@ -13,7 +13,12 @@ function App() {
   function changePage(to){ 
     // stockant aussi la page demandée
     localStorage.setItem("page",to);
-    // En plus de changer l'état
+    // Supprission du token si déconnexion
+    if(['login', 'register'].includes(to)) {
+      setToken(null);
+      setUserConnected({});
+    }
+
     setPage(to);
   }
 
