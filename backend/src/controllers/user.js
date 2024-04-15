@@ -61,8 +61,21 @@ module.exports = {
     await userModel.create({ firstName, lastName, email, password: await bcrypt.hash(password, 2), birthDate: new Date(birthDate), balance: 0})
     res.json({ status: true, message: 'User Added' })
   },
+  async getUser (req, res) {
+    // #swagger.tags = ['Users']
+    // #swagger.summary = 'Get User Informations'
+    const data = await userModel.findOne({
+      where: {email: req.login},
+      attributes: ['firstName', 'lastName', 'email', 'birthDate', 'balance', 'isAdmin']
+    })
+
+    if (data) {
+      res.json({status: true, message: 'Returning user data', data})
+    } else {
+      res.status(status.INTERNAL_SERVER_ERROR).json({status: false, message: 'User not found'})
+    }
+  },
   async getUsers (req, res) {
-    // TODO : verify if the token is valid...
     // #swagger.tags = ['Users']
     // #swagger.summary = 'Get All users'
     const data = await userModel.findAll({ attributes: ['id', 'name', 'email'] })

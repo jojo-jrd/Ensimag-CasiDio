@@ -117,7 +117,7 @@ A compléter
 | /login  | *  | Obtention du token utilisateur/**email**,**password**  | *  | * |
 | /register  | *  | Crée un utilisateur/**email**,**password**,**firstName**,**lastName**,**address**,**birthDate**  | * | * |
 | /api/users  | (**TOKEN**,**ADMIN**)Lister tous les utilisateurs  | *  |  * |  * |
-| /api/user | * | * | (**TOKEN**)Modification du mot de passe/**email**,**password**,**firstName**,**lastName**,**address**,**birthDate** | * |
+| /api/user | (**TOKEN**)Récupération des informations de l'utilisateur | * | (**TOKEN**)Modification du mot de passe/**email**,**password**,**firstName**,**lastName**,**address**,**birthDate** | * |
 | /api/users/{id}| * | * | (**TOKEN**, **ADMIN**)Mettre à jour les informations de l'utilisateur/**email**,**password**,**firstName**,**lastName**,**address**,**birthDate**,**isAdmin** |*
 
 ## Architecture du code

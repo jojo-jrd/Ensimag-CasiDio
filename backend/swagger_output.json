@@ -109,6 +109,32 @@
         }
       }
     },
+    "/api/user": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get User Informations",
+        "description": "",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
     "/api/users": {
       "get": {
         "tags": [
