@@ -79,19 +79,6 @@ module.exports = {
       res.status(status.INTERNAL_SERVER_ERROR).json({status: false, message: 'User not found'})
     }
   },
-  async getUsers (req, res) {
-    // #swagger.tags = ['Users']
-    // #swagger.summary = 'Get All users'
-    const data = await userModel.findAll({
-      attributes: ['firstName', 'lastName', 'email', 'address', 'birthDate', 'balance', 'isAdmin']
-    })
-
-    if (data) {
-      res.json({status: true, message: 'Returnins users datas', data })
-    } else {
-      res.status(status.INTERNAL_SERVER_ERROR).json({status: false, message: 'Users not founds'})
-    }
-  },
   async updateUser (req, res) {
     // #swagger.tags = ['Users']
     // #swagger.summary = 'Update user'
@@ -109,6 +96,46 @@ module.exports = {
     user.lastName = getFieldIfExist(req.body.lastName, user.lastName)
     user.address = getFieldIfExist(req.body.address, user.address)
     user.birthDate = getFieldIfExist(req.body.birthDate, user.birthDate)
+
+    await user.save()
+
+    res.json({status: true, message: 'User updated'})
+  },
+  async getUsers (req, res) {
+    // #swagger.tags = ['Admin Users']
+    // #swagger.summary = 'Get All users'
+    const data = await userModel.findAll({
+      attributes: ['id', 'firstName', 'lastName', 'email', 'address', 'birthDate', 'balance', 'isAdmin']
+    })
+
+    if (data) {
+      res.json({status: true, message: 'Returnins users datas', data })
+    } else {
+      res.status(status.INTERNAL_SERVER_ERROR).json({status: false, message: 'Users not founds'})
+    }
+  },
+  async adminUpdateUser (req, res) {
+    // #swagger.tags = ['Admin Users']
+    // #swagger.summary = 'Update user that starts with id in parameters'
+    // #swagger.parameters['obj'] = { in: 'body', description:'Update Connected User', schema: { $email: 'John.Doe@acme.com', $password: '1m02P@SsF0rt!', $firstName: 'John', $lastName: 'Doe', $address: '8 avenue de la rue', $birthDate: '11/30/2000', $balance: 200, $isAdmin: false}}
+    if (!has(req.params, 'id')) throw new CodeError('You must specify the id', status.BAD_REQUEST)
+    const { id } = req.params
+
+    const user = await userModel.findOne({
+      where: {id: id},
+      attributes: ['id', 'email', 'password', 'firstName', 'lastName', 'address', 'birthDate', 'balance', 'isAdmin']
+    })
+
+    if (req.body.password) {
+      user.password = await bcrypt.hash(req.body.password, 2)
+    }
+    user.email = getFieldIfExist(req.body.email, user.email)
+    user.firstName = getFieldIfExist(req.body.firstName, user.firstName)
+    user.lastName = getFieldIfExist(req.body.lastName, user.lastName)
+    user.address = getFieldIfExist(req.body.address, user.address)
+    user.birthDate = getFieldIfExist(req.body.birthDate, user.birthDate)
+    user.balance = getFieldIfExist(req.body.balance, user.balance)
+    user.isAdmin = getFieldIfExist(req.body.isAdmin, user.isAdmin)
 
     await user.save()
 

@@ -209,7 +209,7 @@
     "/api/users": {
       "get": {
         "tags": [
-          "Users"
+          "Admin Users"
         ],
         "summary": "Get All users",
         "description": "",
@@ -218,6 +218,90 @@
             "name": "x-access-token",
             "in": "header",
             "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/user/{id}": {
+      "put": {
+        "tags": [
+          "Admin Users"
+        ],
+        "summary": "Update user that starts with id in parameters",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Update Connected User",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "John.Doe@acme.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "1m02P@SsF0rt!"
+                },
+                "firstName": {
+                  "type": "string",
+                  "example": "John"
+                },
+                "lastName": {
+                  "type": "string",
+                  "example": "Doe"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "8 avenue de la rue"
+                },
+                "birthDate": {
+                  "type": "string",
+                  "example": "11/30/2000"
+                },
+                "balance": {
+                  "type": "number",
+                  "example": 200
+                },
+                "isAdmin": {
+                  "type": "boolean",
+                  "example": false
+                }
+              },
+              "required": [
+                "email",
+                "password",
+                "firstName",
+                "lastName",
+                "address",
+                "birthDate",
+                "balance",
+                "isAdmin"
+              ]
+            }
           }
         ],
         "responses": {
