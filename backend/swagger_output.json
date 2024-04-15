@@ -204,6 +204,30 @@
             "apiKeyAuth": []
           }
         ]
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete Current User",
+        "description": "",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
       }
     },
     "/api/users": {
@@ -237,7 +261,7 @@
         "tags": [
           "Admin Users"
         ],
-        "summary": "Update user that starts with id in parameters",
+        "summary": "Update user passed parameters",
         "description": "",
         "parameters": [
           {
@@ -302,6 +326,36 @@
                 "isAdmin"
               ]
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Admin Users"
+        ],
+        "summary": "Delete user passed in parameters",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
