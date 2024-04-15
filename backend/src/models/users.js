@@ -14,7 +14,6 @@ const users = db.define('users', {
     }
   },
   email: {
-    primaryKey: true,
     type: Sequelize.STRING(128),
     unique: true,
     validate: {
@@ -26,6 +25,9 @@ const users = db.define('users', {
     validate: {
       is: /^[0-9a-z\\/$.]{60}$/i
     }
+  },
+  address: {
+    type: Sequelize.STRING(128)
   },
   birthDate: {
     type: Sequelize.DATE,
