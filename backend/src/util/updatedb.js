@@ -15,6 +15,7 @@ const bcrypt = require('bcrypt');
     lastName: 'Loiodice',
     email: 'Lukas.Loiodice@grenoble-inp.fr',
     password: passhash,
+    address: '12 rue hassoul',
     birthDate: Date('2002-09-17'),
     balance: 999999,
     isAdmin: true
@@ -24,9 +25,19 @@ const bcrypt = require('bcrypt');
     lastName: 'admin',
     email: 'a@a.com',
     password: passhash,
+    address: '12 rue hassoul',
     birthDate: Date('2002-09-17'),
     balance: 999999,
     isAdmin: true
   })
-  // Ajouter ici le code permettant d'initialiser par défaut la base de donnée
+  await userModel.create({
+    firstName: 'test',
+    lastName: 'test',
+    email: 'test@test.com',
+    password: passhash,
+    address: '12 rue hassoul',
+    birthDate: Date('2002-09-17'),
+    balance: 999999,
+    isAdmin: false
+  })
 })()

@@ -117,7 +117,7 @@ A compléter
 | /login  | *  | Obtention du token utilisateur/**email**,**password**  | *  | * |
 | /register  | *  | Crée un utilisateur/**email**,**password**,**firstName**,**lastName**,**address**,**birthDate**  | * | * |
 | /api/users  | (**TOKEN**,**ADMIN**)Lister tous les utilisateurs  | *  |  * |  * |
-| /api/user | (**TOKEN**)Récupération des informations de l'utilisateur | * | (**TOKEN**)Modification du mot de passe/**email**,**password**,**firstName**,**lastName**,**address**,**birthDate** | * |
+| /api/user | (**TOKEN**)Récupération des informations de l'utilisateur | * | (**TOKEN**)Modification des informations de l'utilisateur/**password**,**firstName**,**lastName**,**address**,**birthDate** | * |
 | /api/users/{id}| * | * | (**TOKEN**, **ADMIN**)Mettre à jour les informations de l'utilisateur/**email**,**password**,**firstName**,**lastName**,**address**,**birthDate**,**isAdmin** |*
 
 ## Architecture du code
@@ -134,6 +134,7 @@ A modifier/compléter...
 
 ```plantuml
 class User{
+  -id: Number
   -firstName: String
   -lastName: String
   -email: String
@@ -145,7 +146,7 @@ class User{
 }
 
 abstract Games{
-  -id: String
+  -id: Number
   -name: String
 }
 
@@ -157,7 +158,7 @@ class SlotMachine implements Games{
 }
 
 class History{
- -id: String;
+ -id: Number;
  -earnings: Float
  -timeStamp: Date
 }

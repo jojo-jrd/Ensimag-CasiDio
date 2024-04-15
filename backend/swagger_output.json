@@ -87,6 +87,10 @@
                   "type": "string",
                   "example": "1m02P@SsF0rt!"
                 },
+                "address": {
+                  "type": "string",
+                  "example": "8 avenue de la rue"
+                },
                 "birthDate": {
                   "type": "string",
                   "example": "11/30/2000"
@@ -97,6 +101,7 @@
                 "lastName",
                 "email",
                 "password",
+                "address",
                 "birthDate"
               ]
             }
@@ -121,6 +126,72 @@
             "name": "x-access-token",
             "in": "header",
             "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update user",
+        "description": "",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Update Connected User",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "John.Doe@acme.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "1m02P@SsF0rt!"
+                },
+                "firstName": {
+                  "type": "string",
+                  "example": "John"
+                },
+                "lastName": {
+                  "type": "string",
+                  "example": "Doe"
+                },
+                "address": {
+                  "type": "string",
+                  "example": "8 avenue de la rue"
+                },
+                "birthDate": {
+                  "type": "string",
+                  "example": "11/30/2000"
+                }
+              },
+              "required": [
+                "email",
+                "password",
+                "firstName",
+                "lastName",
+                "address",
+                "birthDate"
+              ]
+            }
           }
         ],
         "responses": {

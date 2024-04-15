@@ -11,6 +11,10 @@ function validPassword (password) {
   return /^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*])[\w!@#$%^&*]{8,}$/.test(password)
 }
 
+function getFieldIfExist (field, defaultValue) {
+  return field ? field : defaultValue 
+}
+
 module.exports = {
   validToken(req, res, next) {
     // #swagger.security = [{"apiKeyAuth": []}] 
@@ -52,13 +56,13 @@ module.exports = {
   async newUser (req, res) {
     // #swagger.tags = ['Users']
     // #swagger.summary = 'New User'
-    // #swagger.parameters['obj'] = { in: 'body', description:'Create a new user', schema: { $firstName: 'John', $lastName: 'Doe', $email: 'John.Doe@acme.com', $password: '1m02P@SsF0rt!', $birthDate: '11/30/2000'}}
+    // #swagger.parameters['obj'] = { in: 'body', description:'Create a new user', schema: { $firstName: 'John', $lastName: 'Doe', $email: 'John.Doe@acme.com', $password: '1m02P@SsF0rt!', $address: '8 avenue de la rue', $birthDate: '11/30/2000'}}
     if (!has(req.body, ['firstName', 'lastName', 'email', 'password', 'birthDate'])) throw new CodeError('You must specify all the fields', status.BAD_REQUEST)
 
-    const { firstName, lastName, email, password, birthDate } = req.body
+    const { firstName, lastName, email, password, address, birthDate } = req.body
 
     if (!validPassword(password)) throw new CodeError('Weak password!', status.BAD_REQUEST)
-    await userModel.create({ firstName, lastName, email, password: await bcrypt.hash(password, 2), birthDate: new Date(birthDate), balance: 0})
+    await userModel.create({firstName, lastName, email, password: await bcrypt.hash(password, 2), address, birthDate: new Date(birthDate), balance: 0})
     res.json({ status: true, message: 'User Added' })
   },
   async getUser (req, res) {
@@ -66,7 +70,7 @@ module.exports = {
     // #swagger.summary = 'Get User Informations'
     const data = await userModel.findOne({
       where: {email: req.login},
-      attributes: ['firstName', 'lastName', 'email', 'birthDate', 'balance', 'isAdmin']
+      attributes: ['firstName', 'lastName', 'email', 'address', 'birthDate', 'balance', 'isAdmin']
     })
 
     if (data) {
@@ -78,7 +82,36 @@ module.exports = {
   async getUsers (req, res) {
     // #swagger.tags = ['Users']
     // #swagger.summary = 'Get All users'
-    const data = await userModel.findAll({ attributes: ['id', 'name', 'email'] })
-    res.json({ status: true, message: 'Returning users', data })
+    const data = await userModel.findAll({
+      attributes: ['firstName', 'lastName', 'email', 'address', 'birthDate', 'balance', 'isAdmin']
+    })
+
+    if (data) {
+      res.json({status: true, message: 'Returnins users datas', data })
+    } else {
+      res.status(status.INTERNAL_SERVER_ERROR).json({status: false, message: 'Users not founds'})
+    }
+  },
+  async updateUser (req, res) {
+    // #swagger.tags = ['Users']
+    // #swagger.summary = 'Update user'
+    // #swagger.parameters['obj'] = { in: 'body', description:'Update Connected User', schema: { $email: 'John.Doe@acme.com', $password: '1m02P@SsF0rt!', $firstName: 'John', $lastName: 'Doe', $address: '8 avenue de la rue', $birthDate: '11/30/2000'}}
+    const user = await userModel.findOne({
+      where: {email: req.login},
+      attributes: ['id', 'email', 'password', 'firstName', 'lastName', 'address', 'birthDate']
+    })
+
+    if (req.body.password) {
+      user.password = await bcrypt.hash(req.body.password, 2)
+    }
+    user.email = getFieldIfExist(req.body.email, user.email)
+    user.firstName = getFieldIfExist(req.body.firstName, user.firstName)
+    user.lastName = getFieldIfExist(req.body.lastName, user.lastName)
+    user.address = getFieldIfExist(req.body.address, user.address)
+    user.birthDate = getFieldIfExist(req.body.birthDate, user.birthDate)
+
+    await user.save()
+
+    res.json({status: true, message: 'User updated'})
   }
 }
