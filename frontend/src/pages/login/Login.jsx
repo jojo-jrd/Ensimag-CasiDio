@@ -1,13 +1,13 @@
 import { useState, useRef, useContext } from 'react';
 import { AppContext } from '../../AppContext';
 
-function LoginView(){
+function LoginView() {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const [erreurMessage, setErreurMessage] = useState("");
-  const {setToken, changePage} = useContext(AppContext)
+  const { setToken, changePage, setUserConnected } = useContext(AppContext)
 
-  async function verifie(){
+  async function verifie() {
     let message = ""
     if (!emailRef.current.value.match(/[a-z0-9]{3,10}/)) {
       message += "Le login est incorrect."
@@ -16,18 +16,26 @@ function LoginView(){
       message += "Mot de passe trop court."
     }
     setErreurMessage(message)
-    if (message.length===0) {
-        const reponse = await (await fetch(`${import.meta.env.VITE_API_URL}/login`, 
+    if (message.length === 0) {
+      fetch(`${import.meta.env.VITE_API_URL}/login`,
+        {
+          method: 'POST',
+          headers: { 'Content-type': 'application/json' },
+          body: JSON.stringify({
+            email: emailRef.current.value,
+            password: passwordRef.current.value
+          })
+        }).then(res => res.json()).then(async reponse => {
+          // TODO message d'erreur
+          setToken(reponse.token);
+          const user = await (await fetch(`${import.meta.env.VITE_API_URL}/api/user`,
             {
-                method:'POST',
-                headers:{'Content-type':'application/json'},
-                body: JSON.stringify({
-                    email : emailRef.current.value,
-                    password : passwordRef.current.value
-                })
+              method: 'GET',
+              headers: { 'Content-type': 'application/json', 'x-access-token' : reponse.token},
             })).json()
-        setToken(reponse.token);
-        changePage('home');
+          setUserConnected(user.data);
+          changePage('home');
+        }).catch(err => console.error(err));
     }
   }
   return (
@@ -35,11 +43,11 @@ function LoginView(){
       <fieldset>
         <legend>Connectez vous</legend>
         <label>Email</label>
-        <input ref={emailRef} type="text"/>
+        <input ref={emailRef} type="text" />
         <label>Password</label>
-        <input ref={passwordRef} type="password"/>
+        <input ref={passwordRef} type="password" />
         <button onClick={verifie}>Connect</button>
-        <span style={{color:"red"}}> {erreurMessage}</span>
+        <span style={{ color: "red" }}> {erreurMessage}</span>
       </fieldset>
       <div>
         <p>Pas encore de compte ? <a onClick={() => changePage('register')}>Créez en un !</a></p>
