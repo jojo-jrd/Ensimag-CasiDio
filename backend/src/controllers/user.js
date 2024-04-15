@@ -36,7 +36,7 @@ module.exports = {
   async login (req, res) {
     // #swagger.tags = ['Users']
     // #swagger.summary = 'Verify credentials of user using email and password and return token'
-    // #swagger.parameters['obj'] = { in: 'body', schema: { $email: 'John.Doe@acme.com', $password: '12345'}}
+    // #swagger.parameters['obj'] = { in: 'body', schema: { $email: 'John.Doe@acme.com', $password: '1m02P@SsF0rt!'}}
     if (!has(req.body, ['email', 'password'])) throw new CodeError('You must specify the email and password', status.BAD_REQUEST)
     const { email, password } = req.body
     const user = await userModel.findOne({ where: { email } })

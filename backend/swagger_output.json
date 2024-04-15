@@ -39,7 +39,7 @@
                 },
                 "password": {
                   "type": "string",
-                  "example": "12345"
+                  "example": "1m02P@SsF0rt!"
                 }
               },
               "required": [
