@@ -21,8 +21,8 @@ const bcrypt = require('bcrypt');
     isAdmin: true
   })
   await userModel.create({
-    firstName: 'admin',
-    lastName: 'admin',
+    firstName: 'Admin',
+    lastName: 'Admin',
     email: 'a@a.com',
     password: passhash,
     address: '12 rue hassoul',
