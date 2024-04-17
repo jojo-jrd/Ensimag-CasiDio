@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import { AppContext } from '../../AppContext';
 import LoginView from '../login/Login';
+import SlotMachineView from '../slot_machine/SlotMachine';
 import HomeView from '../home/Home';
 import RegisterView from '../register/Register';
 
@@ -26,8 +27,9 @@ function App() {
     switch(page){
       case 'login' : return <LoginView/>;
       case 'register' : return <RegisterView/>;
+      case 'slot-machine' : return <SlotMachineView/>;
       case 'home' : return <HomeView/>;
-      default: return <HomeView/>; // TODO: mettre Login
+      default: return <SlotMachineView/>; // TODO: mettre Login
     }
   }
 

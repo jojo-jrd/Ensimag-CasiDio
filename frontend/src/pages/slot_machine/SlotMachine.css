@@ -1,0 +1,58 @@
+:root {
+    --nb-icons : 9;
+    --icon-size : 80px;
+}
+
+#slot-machine {
+    position: relative;
+    width: 3.5 * var(--icon-size);
+    height: calc(3 * var(--icon-size));
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+@keyframes twoOnLine {
+    0% {
+        background: linear-gradient(45deg, orange 0%, yellow 100%);
+        box-shadow: 0 0 80px orange
+    }
+
+    100% {
+        background: linear-gradient(45deg, grey 0%, lightgrey 100%);
+        box-shadow: -2px 2px 3px rgba(black, 0.3);
+    }
+}
+
+@keyframes threeOnLine {
+    0% {
+        background: linear-gradient(45deg, lightblue 0%, lightgreen 100%);
+        box-shadow: 0 0 80px lightgreen
+    }
+
+    100% {
+        background: linear-gradient(45deg, grey 0%, lightgrey 100%);
+        box-shadow: -2px 2px 3px rgba(black, 0.3);
+    }
+}
+
+#slot-machine.twoOnLine {
+    animation: twoOnLine 200ms steps(2, end) infinite;
+}
+
+#slot-machine.threeOnLine {
+    animation: threeOnLine 200ms steps(2, end) infinite;
+}
+
+.column {
+    position: relative;
+    width: var(--icon-size);
+    height: calc(3 * var(--icon-size));
+    border: 1px solid rgba(black, 0.3);
+    border-radius: 3px;
+    overflow: hidden;
+    /* TODO: */
+    background-image: url(./../../assets/slot-machine-icons.png);
+    /* background-position: 0 0; */
+    background-repeat: repeat-y;
+}
