@@ -1,11 +1,30 @@
 const app = require('../app')
 const request = require('supertest')
 
-test('Test if user can create an acount', async () => {
-  let response = await request(app)
+// --------------------------------------- //
+//            ACOUNT CREATION              //
+// --------------------------------------- //
+test('Acount creation : simple valid', async () => {
+  const response = await request(app)
     .post('/register')
-    .send({firstName: 'Test', lastName: 'TEST', email: 'test@test.com', password: '1m02P@SsF0rt!', address: '8 rue de gaulle', birthDate: new Date('2002-09-17')})
+    .send({ firstName: 'Test', lastName: 'TEST', email: 'test@test.com', password: '1m02P@SsF0rt!', address: '8 rue de gaulle', birthDate: new Date('2002-09-17') })
   expect(response.statusCode).toBe(200)
+})
+
+test('Acount creation : not specify a mandatory fields', async () => {
+  const response = await request(app)
+    .post('/register')
+    .send({ firstName: 'Test', email: 'test@test.com', password: '1m02P@SsF0rt!', address: '8 rue de gaulle', birthDate: new Date('2002-09-17') })
+
+  expect(response.statusCode).toBe(400)
+})
+
+test('Acount creation : weak password', async () => {
+  const response = await request(app)
+    .post('/register')
+    .send({ firstName: 'Test', lastName: 'TEST', email: 'test@test.com', password: 'weekpassword', address: '8 rue de gaulle', birthDate: new Date('2002-09-17') })
+  
+  expect(response.statusCode).toBe(400)
 })
 // test('Test if user can log in and list users', async () => {
 //   let response = await request(app)
