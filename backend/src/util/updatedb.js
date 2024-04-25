@@ -35,7 +35,7 @@ const bcrypt = require('bcrypt');
     email: 'jordan@josserand.com',
     password: passhash,
     address: '12 rue hassoul',
-    birthDate: Date('2002-09-17'),
+    birthDate: '2024-04-25T10:27:55.000Z',
     balance: 999999,
     isAdmin: false
   })
