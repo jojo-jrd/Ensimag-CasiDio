@@ -41,7 +41,7 @@ test('User creation : bad email', async () => {
 test('User connection : simple connection', async () => {
   let response = await request(app)
     .post('/login')
-    .send({ email: 'a@a.com', password: 'ab*123456' })
+    .send({ email: 'a@a.com', password: 'Ab*123-!' })
 
   expect(response.statusCode).toBe(200)
   expect(response.body).toHaveProperty('token')
@@ -50,7 +50,7 @@ test('User connection : simple connection', async () => {
 test('User connection : missing mandatory fields', async () => {
   let response = await request(app)
     .post('/login')
-    .send({ password: 'ab*123456' })
+    .send({ password: 'Ab*123-!' })
 
   expect(response.statusCode).toBe(400)
 })
@@ -58,7 +58,7 @@ test('User connection : missing mandatory fields', async () => {
 test('User connection : wrong email', async () => {
   let response = await request(app)
     .post('/login')
-    .send({ email: 'email@unknown.com', password: 'ab*123456' })
+    .send({ email: 'email@unknown.com', password: 'Ab*123-!' })
 
   expect(response.statusCode).toBe(403)
 })
@@ -66,7 +66,7 @@ test('User connection : wrong email', async () => {
 test('User connection : wrong password', async () => {
   let response = await request(app)
     .post('/login')
-    .send({ email: 'a@a.com', password: 'ab*123456invalid' })
+    .send({ email: 'a@a.com', password: 'Ab*123-!invalid' })
 
   expect(response.statusCode).toBe(403)
 })
@@ -79,7 +79,7 @@ test('User informations : simple get', async () => {
   // Connect to simple user
   let response = await request(app)
     .post('/login')
-    .send({ email: 'jordan@josserand.com', password: 'ab*123456' })
+    .send({ email: 'jordan@josserand.com', password: 'Ab*123-!' })
   expect(response.statusCode).toBe(200)
 
   // Get informations
@@ -115,16 +115,117 @@ test('User informations : invalid token', async () => {
   expect(response.status).toBe(403)
 })
 
-// test('Test if user can log in and list users', async () => {
-//   let response = await request(app)
-//     .post('/login')
-//     .send({ email: 'Sebastien.Viardot@grenoble-inp.fr', password: '123456' })
-//   expect(response.statusCode).toBe(200)
-//   expect(response.body).toHaveProperty('token')
-//   response = await request(app)
-//     .get('/api/users')
-//     .set('x-access-token', response.body.token)
-//   expect(response.statusCode).toBe(200)
-//   expect(response.body.message).toBe('Returning users')
-//   expect(response.body.data.length).toBeGreaterThan(0)
-// })
+// --------------------------------------- //
+//                USER UPDATE              //
+// --------------------------------------- //
+
+test('User update : update all fields', async () => {
+  // Connection to the user
+  let response = await request(app)
+    .post('/login')
+    .send({ email: 'Lukas.Loiodice@grenoble-inp.fr', password: 'Ab*123-!' })
+  expect(response.statusCode).toBe(200)
+
+  // Update the user
+  response = await request(app)
+    .put('/api/user')
+    .set('x-access-token', response.body.token)
+    .send({ email: 'edit.edit@grenoble-inp.fr', password: '1m02P@SsF0rt!', firstName: 'edit', lastName: 'edit', address: 'edit', birthDate: '2002-04-25T10:27:55.000Z' })
+
+  expect(response.statusCode).toBe(200)
+
+  // Check if the user has been updated
+  response = await request(app)
+    .post('/login')
+    .send({ email: 'edit.edit@grenoble-inp.fr', password: '1m02P@SsF0rt!' })
+  expect(response.statusCode).toBe(200)
+  response = await request(app)
+    .get('/api/user')
+    .set('x-access-token', response.body.token)
+  expect(response.statusCode).toBe(200)
+  expect(response.body.data).toStrictEqual({
+    "firstName": "edit",
+    "lastName": "edit",
+    "email": "edit.edit@grenoble-inp.fr",
+    "address": "edit",
+    "birthDate": "2002-04-25T10:27:55.000Z",
+    "balance": 999999,
+    "isAdmin": true
+  })
+})
+
+test('User update : update one field', async () => {
+  // Connection to the user
+  let response = await request(app)
+    .post('/login')
+    .send({ email: 'edit.edit@grenoble-inp.fr', password: '1m02P@SsF0rt!' })
+  expect(response.statusCode).toBe(200)
+
+  // Update the user
+  response = await request(app)
+    .put('/api/user')
+    .set('x-access-token', response.body.token)
+    .send({ firstName: 'newEdit' })
+
+  expect(response.statusCode).toBe(200)
+
+  // Check if the user has been updated
+  response = await request(app)
+    .post('/login')
+    .send({ email: 'edit.edit@grenoble-inp.fr', password: '1m02P@SsF0rt!' })
+  expect(response.statusCode).toBe(200)
+  response = await request(app)
+    .get('/api/user')
+    .set('x-access-token', response.body.token)
+  expect(response.statusCode).toBe(200)
+  expect(response.body.data).toStrictEqual({
+    "firstName": "newEdit",
+    "lastName": "edit",
+    "email": "edit.edit@grenoble-inp.fr",
+    "address": "edit",
+    "birthDate": "2002-04-25T10:27:55.000Z",
+    "balance": 999999,
+    "isAdmin": true
+  })
+})
+
+test('User update : update bad password', async () => {
+  // Connection to the user
+  let response = await request(app)
+    .post('/login')
+    .send({ email: 'edit.edit@grenoble-inp.fr', password: '1m02P@SsF0rt!' })
+  expect(response.statusCode).toBe(200)
+
+  // Update the user
+  response = await request(app)
+    .put('/api/user')
+    .set('x-access-token', response.body.token)
+    .send({ password: 'weekpassword' })
+
+  expect(response.statusCode).toBe(400)
+})
+
+// --------------------------------------- //
+//                USER DELETE              //
+// --------------------------------------- //
+
+test('User delete : simple user delete', async () => {
+  // Connection to the user
+  let response = await request(app)
+    .post('/login')
+    .send({ email: 'edit.edit@grenoble-inp.fr', password: '1m02P@SsF0rt!' })
+  expect(response.statusCode).toBe(200)
+
+  // Update the user
+  response = await request(app)
+    .delete('/api/user')
+    .set('x-access-token', response.body.token)
+
+  expect(response.statusCode).toBe(200)
+
+  // Check that we can't connect to the user anymore
+  response = await request(app)
+    .post('/login')
+    .send({ email: 'edit.edit@grenoble-inp.fr', password: '1m02P@SsF0rt!' })
+  expect(response.statusCode).toBe(403)
+})

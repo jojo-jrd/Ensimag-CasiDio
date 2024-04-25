@@ -94,6 +94,7 @@ module.exports = {
 
     if (user) {
       if (req.body.password) {
+        if (!validPassword(req.body.password)) throw new CodeError('Weak password!', status.BAD_REQUEST)
         user.password = await bcrypt.hash(req.body.password, 2)
       }
       user.email = getFieldIfExist(req.body.email, user.email)
