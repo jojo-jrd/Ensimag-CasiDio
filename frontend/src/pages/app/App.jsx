@@ -29,7 +29,7 @@ function App() {
       case 'register' : return <RegisterView/>;
       case 'slot-machine' : return <SlotMachineView/>;
       case 'home' : return <HomeView/>;
-      default: return <SlotMachineView/>; // TODO: mettre Login
+      default: return <HomeView/>; // TODO: mettre Login
     }
   }
 

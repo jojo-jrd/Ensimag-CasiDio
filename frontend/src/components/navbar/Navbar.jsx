@@ -10,10 +10,10 @@ function NavBar() {
     };
     return (
         <header>
-            <nav className="bg-black p-4">
+            <nav className="bg-gray-800 p-4">
                 <div className="flex flex-wrap items-center justify-between">
                     <div className="flex-shrink-0">
-                        <a href="#" className="text-gold text-xl font-bold">Mon Casino</a>
+                        <a href="#" className="text-white text-xl font-bold">Mon Casino</a>
                     </div>
                     <div className="hidden md:flex justify-end md:flex-grow">
                         <a href="#" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Accueil</a>

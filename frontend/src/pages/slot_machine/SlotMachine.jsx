@@ -1,5 +1,6 @@
 import { useState, useRef, useContext } from 'react';
 import { AppContext } from '../../AppContext';
+import NavBar from './../../components/navbar/Navbar';
 import $ from 'jquery';
 import './SlotMachine.css'
 
@@ -40,7 +41,7 @@ function SlotMachineView() {
             deltas.forEach((delta, i) => indexesColumns[i] = (indexesColumns[i] + delta) % nbIcones);
 
             const hasWin = indexesColumns[0] == indexesColumns[1] || indexesColumns[1] == indexesColumns[2] || indexesColumns[0] == indexesColumns[2];
-            // SI l'utilisateur a au moins 2 symboles alignés
+            // Si l'utilisateur a au moins 2 symboles alignés
             if (hasWin) {
                 let className = 'twoOnLine';
                 if (indexesColumns[0] == indexesColumns[1] == indexesColumns[2]) {
@@ -59,12 +60,20 @@ function SlotMachineView() {
 
     return (
         <div>
-            <div ref={slotMachineEl} id="slot-machine">
-                <div className="column"></div>
-                <div className="column"></div>
-                <div className="column"></div>
+            <NavBar/>
+            <div className="bg-slate-300 mt-4 flex h-full justify-center items-center">
+                <div className="max-w-lg w-full">
+                    <div className="border border-solid border-red-700 bg-gray-800 rounded-lg p-8">
+                        <h1 className="text-white text-4xl font-bold text-center mb-8">Machine à sous</h1>
+                    <div ref={slotMachineEl} id="slot-machine">
+                        <div className="column"></div>
+                        <div className="column"></div>
+                        <div className="column"></div>
+                    </div>
+                    <button onClick={() => launchRoll()} className="bg-red-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">Roll</button>
+                    </div>
+                </div>
             </div>
-            <button onClick={() => launchRoll()}>Roll</button>
         </div>
     )
 }
