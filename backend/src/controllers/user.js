@@ -19,12 +19,16 @@ module.exports = {
   validToken(req, res, next) {
     // #swagger.security = [{"apiKeyAuth": []}] 
     // If not x-access-token in headers => error
-    if (!req.headers || !req.headers.hasOwnProperty('x-access-token'))
-      throw new CodeError('Token missing', status.FORBIDDEN);
+    if (!req.headers || !req.headers.hasOwnProperty('x-access-token')) {
+      res.status(status.FORBIDDEN).json({ status: false, message: 'You must be logged !' })
+      throw new CodeError('Token missing', status.BAD_REQUEST);
+    }
 
     // If the token is not valid
-    if (!jws.verify(req.headers['x-access-token'], 'HS256', TOKENSECRET))
-      throw new CodeError('Token invalid', status.FORBIDDEN);
+    if (!jws.verify(req.headers['x-access-token'], 'HS256', TOKENSECRET)) {
+      res.status(status.FORBIDDEN).json({ status: false, message: 'You must be logged !' })
+      throw new CodeError('Token missing', status.FORBIDDEN);
+    }
 
     req.login = jws.decode(req.headers['x-access-token']).payload;
     next();
@@ -90,6 +94,7 @@ module.exports = {
 
     if (user) {
       if (req.body.password) {
+        if (!validPassword(req.body.password)) throw new CodeError('Weak password!', status.BAD_REQUEST)
         user.password = await bcrypt.hash(req.body.password, 2)
       }
       user.email = getFieldIfExist(req.body.email, user.email)

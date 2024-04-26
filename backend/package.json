@@ -6,10 +6,14 @@
     "scripts": {
         "setup": "npm install && npm run doc && npm run updatedb",
         "updatedb": "rm -f ${BD:=bd.sqlite} && node src/util/updatedb.js",
-        "doc": "node src/util/swagger.js",
         "start": "npm run doc && npm run updatedb  && node src/server.js",
+        "test": "DB=bdtest.sqlite npm run updatedb && DB=bdtest.sqlite jest --coverage",
+        "setupWIN": "npm install && npm run doc && npm run updatedbWIN",
+        "updatedbWIN": "del bd.sqlite && node src/util/updatedb.js",
+        "startWIN": "npm run doc && npm run updatedbWIN  && node src/server.js",
         "startdev": "npm run doc && nodemon src/server.js",
-        "test": "DB=bdtest.sqlite npm run updatedb && DB=bdtest.sqlite jest --coverage"
+        "testWIN": "npm run updatedbWIN && jest --coverage",
+        "doc": "node src/util/swagger.js"
     },
     "keywords": [
         "express",
