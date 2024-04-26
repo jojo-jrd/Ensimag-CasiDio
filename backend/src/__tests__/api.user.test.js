@@ -229,3 +229,42 @@ test('User delete : simple user delete', async () => {
     .send({ email: 'edit.edit@grenoble-inp.fr', password: '1m02P@SsF0rt!' })
   expect(response.statusCode).toBe(403)
 })
+
+// --------------------------------------- //
+//          USER ADMIN GET USERS           //
+// --------------------------------------- //
+
+test('User admin get users : simple fetch', async () => {
+  let response = await request(app)
+    .post('/login')
+    .send({ email: 'a@a.com', password: 'Ab*123-!' })
+  expect(response.statusCode).toBe(200)
+
+  response = await request(app)
+    .get('/api/users')
+    .set('x-access-token', response.body.token)
+  expect(response.statusCode).toBe(200)
+  expect(response.body.data.length == 2)
+})
+
+test('User admin get users : not admin', async () => {
+  let response = await request(app)
+    .post('/login')
+    .send({ email: 'jordan@josserand.com', password: 'Ab*123-!' })
+  expect(response.statusCode).toBe(200)
+
+  response = await request(app)
+    .get('/api/users')
+    .set('x-access-token', response.body.token)
+  expect(response.statusCode).toBe(403)
+})
+
+test('User admin get users : not logged', async () => {
+  const response = await request(app)
+    .get('/api/users')
+  expect(response.statusCode).toBe(403)
+})
+
+// --------------------------------------- //
+//          USER ADMIN UPDATE USER         //
+// --------------------------------------- //
