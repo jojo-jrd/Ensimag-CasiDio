@@ -126,6 +126,8 @@ A compléter
 |Endpoint | GET  | POST | PUT  | DELETE  |
 |---|---|---|---|---|
 | /games  | Obtention de tout les jeux actuellement disponibles | * | *  | * |
+| /api/game  | * | (**TOKEN**, **ADMIN**)Ajouter un nouveau jeu/**name, picturePath, description** | *  | * |
+| /api/game/{id}  | * | * | (**TOKEN**, **ADMIN**)Modifier le jeu *id*/**name, picturePath, description** | (**TOKEN**, **ADMIN**)Supprimer le jeu *id* |
 
 
 ## Architecture du code

@@ -383,6 +383,148 @@
           }
         }
       }
+    },
+    "/api/game": {
+      "post": {
+        "tags": [
+          "Admin Games"
+        ],
+        "summary": "Add a new game",
+        "description": "",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Game informations",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Poker"
+                },
+                "picturePath": {
+                  "type": "string",
+                  "example": "pictures/poker"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Jeu de poker simple"
+                }
+              },
+              "required": [
+                "name",
+                "picturePath",
+                "description"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/game/{id}": {
+      "put": {
+        "tags": [
+          "Admin Games"
+        ],
+        "summary": "Update existing game",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Game informations",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Poker"
+                },
+                "picturePath": {
+                  "type": "string",
+                  "example": "pictures/poker"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Jeu de poker simple"
+                }
+              },
+              "required": [
+                "name",
+                "picturePath",
+                "description"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Admin Games"
+        ],
+        "summary": "Delete existing game",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
     }
   }
 }
