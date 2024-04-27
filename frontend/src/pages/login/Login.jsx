@@ -46,11 +46,11 @@ function LoginView() {
           </div>
           <div className="mb-4">
             <label className="block text-white text-sm font-bold mb-2" for="email">Email</label>
-            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" id="email" ref={emailRef} type="text" />
+            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" id="email" ref={emailRef} type="email" />
           </div>
           <div className="mb-4">
-            <label className="block text-white text-sm font-bold mb-2" for="password">Password</label>
-            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" id="password" ref={passwordRef} type="password" />
+            <label className="block text-white text-sm font-bold mb-2" for="password">Mot de passe</label>
+            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" id="password" ref={passwordRef} type="password" />
           </div>
           <span className="text-red-500 text-xs italic"> {erreurMessage}</span>
         <div className="flex items-center justify-between">

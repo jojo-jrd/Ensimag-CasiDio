@@ -12,7 +12,7 @@ function App() {
   const [userConnected, setUserConnected] = useState({});
 
   useEffect(() => {
-    //setPage(localStorage.getItem("page"));
+    setPage(localStorage.getItem("page"));
   })
 
   function changePage(to){ 
@@ -26,14 +26,6 @@ function App() {
 
     setPage(to);
   }
-
-  // function loadApplication(){
-  //   const currentPage = localStorage.getItem("page")
-  //   if (currentPage) {
-  //     setPage(currentPage);
-  //   }
-  //   return getCurrentPage();
-  // }
 
   function getCurrentPage(){
     switch(page){
