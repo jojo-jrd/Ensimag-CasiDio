@@ -149,21 +149,24 @@ module.exports = {
       where: {id: id},
       attributes: ['id', 'email', 'password', 'firstName', 'lastName', 'address', 'birthDate', 'balance', 'isAdmin']
     })
-
-    if (req.body.password) {
-      user.password = await bcrypt.hash(req.body.password, 2)
+    if (user) {
+      if (req.body.password) {
+        user.password = await bcrypt.hash(req.body.password, 2)
+      }
+      user.email = getFieldIfExist(req.body.email, user.email)
+      user.firstName = getFieldIfExist(req.body.firstName, user.firstName)
+      user.lastName = getFieldIfExist(req.body.lastName, user.lastName)
+      user.address = getFieldIfExist(req.body.address, user.address)
+      user.birthDate = getFieldIfExist(req.body.birthDate, user.birthDate)
+      user.balance = getFieldIfExist(req.body.balance, user.balance)
+      user.isAdmin = getFieldIfExist(req.body.isAdmin, user.isAdmin)
+  
+      await user.save()
+  
+      res.json({status: true, message: 'User updated'})
+    } else {
+      res.status(status.NOT_FOUND).json({status: false, message: 'User not found'})
     }
-    user.email = getFieldIfExist(req.body.email, user.email)
-    user.firstName = getFieldIfExist(req.body.firstName, user.firstName)
-    user.lastName = getFieldIfExist(req.body.lastName, user.lastName)
-    user.address = getFieldIfExist(req.body.address, user.address)
-    user.birthDate = getFieldIfExist(req.body.birthDate, user.birthDate)
-    user.balance = getFieldIfExist(req.body.balance, user.balance)
-    user.isAdmin = getFieldIfExist(req.body.isAdmin, user.isAdmin)
-
-    await user.save()
-
-    res.json({status: true, message: 'User updated'})
   },
   async adminDeleteUser (req, res) {
     // #swagger.tags = ['Admin Users']
