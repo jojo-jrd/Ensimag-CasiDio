@@ -15,6 +15,7 @@ backendTest:
       expire_in: 30 days
       paths:
         - backendTest_report.txt
+        - backend/coverage/lcov-report/
     only:
       changes:
         - backend/*
