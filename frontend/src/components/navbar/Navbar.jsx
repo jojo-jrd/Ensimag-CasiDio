@@ -3,7 +3,7 @@ import { AppContext } from '../../AppContext';
 
 function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
-    const {changePage } = useContext(AppContext);
+    const {changePage, userConnected} = useContext(AppContext);
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -13,26 +13,40 @@ function NavBar() {
             <nav className="bg-gray-800 p-4">
                 <div className="flex flex-wrap items-center justify-between">
                     <div className="flex-shrink-0">
-                        <a href="#" className="text-white text-xl font-bold">Mon Casino</a>
+                    <span onClick={() => changePage('home')} className="text-white text-xl cursor-pointer font-bold">Mon Casino</span>
                     </div>
                     <div className="hidden md:flex justify-end md:flex-grow">
-                        <a href="#" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Accueil</a>
-                        <a href="#" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Jeux</a>
-                        <a href="#" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Promotions</a>
-                        <a href="#" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Aide</a>
-                        <a href="#" className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Connexion</a>
+                        <span onClick={() => changePage('home')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Accueil</span>
+                        { userConnected?.email ? (
+                            <>
+                                <span onClick={() => changePage('TODO')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Profil</span>
+                                <span onClick={() => changePage('TODO')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Déconnexion</span>
+                            </>
+                        ) : (
+                            <>
+                                <span onClick={() => changePage('login')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Connexion</span>
+                                <span onClick={() => changePage('register')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Inscription</span>
+                            </>
+                        )}
                     </div>
                     <div className="block md:hidden">
-                        <button onClick={toggleMenu} className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                        <button onClick={toggleMenu} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">
                             Menu
                         </button>
                         {isOpen && (
-                            <div className="absolute right-0 mt-2 w-48 bg-black rounded-md shadow-lg z-10">
-                                <a href="#" className="block px-4 py-2 text-gray-300 hover:text-white">Accueil</a>
-                                <a href="#" className="block px-4 py-2 text-gray-300 hover:text-white">Jeux</a>
-                                <a href="#" className="block px-4 py-2 text-gray-300 hover:text-white">Promotions</a>
-                                <a href="#" className="block px-4 py-2 text-gray-300 hover:text-white">Aide</a>
-                                <a href="#" className="block px-4 py-2 text-gray-300 hover:text-white">Connexion</a>
+                            <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
+                                <span onClick={() => changePage('home')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Accueil</span>
+                                { userConnected?.email ? (
+                                    <>
+                                        <span onClick={() => changePage('TODO')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Profil</span>
+                                        <span onClick={() => changePage('TODO')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Déconnexion</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span onClick={() => changePage('login')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Connexion</span>
+                                        <span onClick={() => changePage('register')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Inscription</span>
+                                    </>
+                                )}
                             </div>
                         )}
                     </div>

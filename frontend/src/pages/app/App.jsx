@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { AppContext } from '../../AppContext';
 import LoginView from '../login/Login';
@@ -11,6 +11,10 @@ function App() {
   const [page, setPage] = useState("");
   const [userConnected, setUserConnected] = useState({});
 
+  useEffect(() => {
+    setPage(localStorage.getItem("page"));
+  })
+
   function changePage(to){ 
     // stockant aussi la page demandée
     localStorage.setItem("page",to);
@@ -22,6 +26,14 @@ function App() {
 
     setPage(to);
   }
+
+  // function loadApplication(){
+  //   const currentPage = localStorage.getItem("page")
+  //   if (currentPage) {
+  //     setPage(currentPage);
+  //   }
+  //   return getCurrentPage();
+  // }
 
   function getCurrentPage(){
     switch(page){
