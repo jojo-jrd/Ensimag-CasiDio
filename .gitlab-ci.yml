@@ -21,7 +21,7 @@ backendTest:
         - .gitlab-ci.yml
 
 pages:
-  stage: page
+  stage: pages
   script:
     - mkdir -p public
     - cp -r backend/coverage/lcov-report/ public/
