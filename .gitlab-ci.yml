@@ -2,6 +2,7 @@ image: node:latest
 
 stages:
   - backendTest
+  - pages
 
 backendTest:
     stage: backendTest
@@ -14,8 +15,16 @@ backendTest:
       expire_in: 30 days
       paths:
         - backendTest_report.txt
-        - coverage/*
     only:
       changes:
         - backend/*
         - .gitlab-ci.yml
+
+pages:
+  stage: page
+  script:
+    - mkdir -p public
+    - cp -r backend/coverage/lcov-report/ public/
+  artifacts:
+    paths:
+      - public
