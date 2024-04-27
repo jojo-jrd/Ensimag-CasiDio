@@ -268,3 +268,97 @@ test('User admin get users : not logged', async () => {
 // --------------------------------------- //
 //          USER ADMIN UPDATE USER         //
 // --------------------------------------- //
+
+test('User admin update user : update all fields', async () => {
+  // Connection to the user
+  let response = await request(app)
+    .post('/login')
+    .send({ email: 'a@a.com', password: 'Ab*123-!' })
+  expect(response.statusCode).toBe(200)
+
+  const userToken = response.body.token
+
+  // Update the user
+  response = await request(app)
+    .put('/api/user/3')
+    .set('x-access-token', userToken)
+    .send({ email: 'edit.edit@grenoble-inp.fr', password: '1m02P@SsF0rt!', firstName: 'edit', lastName: 'edit', address: 'edit', birthDate: '2002-04-25T10:27:55.000Z' })
+
+  expect(response.statusCode).toBe(200)
+
+  // Check if the user has been updated
+  response = await request(app)
+    .get('/api/users')
+    .set('x-access-token', userToken)
+  expect(response.statusCode).toBe(200)
+  expect(response.body.data.find((user => user.id === 3))).toStrictEqual({
+    "id": 3,
+    "firstName": "edit",
+    "lastName": "edit",
+    "email": "edit.edit@grenoble-inp.fr",
+    "address": "edit",
+    "birthDate": "2002-04-25T10:27:55.000Z",
+    "balance": 999999,
+    "isAdmin": false
+  })
+})
+
+test('User admin update user : update one field', async () => {
+  // Connection to an admin
+  let response = await request(app)
+    .post('/login')
+    .send({ email: 'a@a.com', password: 'Ab*123-!' })
+  expect(response.statusCode).toBe(200)
+
+  const userToken = response.body.token
+
+  // Update the user
+  response = await request(app)
+    .put('/api/user/3')
+    .set('x-access-token', userToken)
+    .send({ firstName: 'newEdit' })
+
+  expect(response.statusCode).toBe(200)
+
+  // Check if the user has been updated
+  response = await request(app)
+    .get('/api/users')
+    .set('x-access-token', userToken)
+  expect(response.statusCode).toBe(200)
+  expect(response.body.data.find((user => user.id === 3))).toStrictEqual({
+    "id": 3,
+    "firstName": "newEdit",
+    "lastName": "edit",
+    "email": "edit.edit@grenoble-inp.fr",
+    "address": "edit",
+    "birthDate": "2002-04-25T10:27:55.000Z",
+    "balance": 999999,
+    "isAdmin": false
+  })
+})
+// --------------------------------------- //
+//          USER ADMIN DELETE USER         //
+// --------------------------------------- //
+
+test('User admin delete user : simple delete', async () => {
+  // Connection to an admin
+  let response = await request(app)
+    .post('/login')
+    .send({ email: 'a@a.com', password: 'Ab*123-!' })
+  expect(response.statusCode).toBe(200)
+
+  const userToken = response.body.token
+
+  // Delete the user
+  response = await request(app)
+    .delete('/api/user/3')
+    .set('x-access-token', userToken)
+  expect(response.statusCode).toBe(200)
+
+  // Check that the user is deleted
+  response = await request(app)
+    .get('/api/users')
+    .set('x-access-token', userToken)
+  expect(response.statusCode).toBe(200)
+  expect(response.body.data.map(user => user.id)).not.toContain(3)
+})
