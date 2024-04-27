@@ -1,6 +1,7 @@
 const status = require('http-status')
 const userModel = require('../models/users.js')
 const has = require('has-keys')
+const utils = require('../util/utils.js')
 const CodeError = require('../util/CodeError.js')
 const bcrypt = require('bcrypt')
 const jws = require('jws')
@@ -9,10 +10,6 @@ const { TOKENSECRET } = process.env
 
 function validPassword (password) {
   return /^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*])[\w!@#$%^&*]{8,}$/.test(password)
-}
-
-function getFieldIfExist (field, defaultValue) {
-  return field ? field : defaultValue 
 }
 
 module.exports = {
@@ -97,11 +94,11 @@ module.exports = {
         if (!validPassword(req.body.password)) throw new CodeError('Weak password!', status.BAD_REQUEST)
         user.password = await bcrypt.hash(req.body.password, 2)
       }
-      user.email = getFieldIfExist(req.body.email, user.email)
-      user.firstName = getFieldIfExist(req.body.firstName, user.firstName)
-      user.lastName = getFieldIfExist(req.body.lastName, user.lastName)
-      user.address = getFieldIfExist(req.body.address, user.address)
-      user.birthDate = getFieldIfExist(req.body.birthDate, user.birthDate)
+      user.email = utils.getFieldsIfExist(req.body.email, user.email)
+      user.firstName = utils.getFieldsIfExist(req.body.firstName, user.firstName)
+      user.lastName = utils.getFieldsIfExist(req.body.lastName, user.lastName)
+      user.address = utils.getFieldsIfExist(req.body.address, user.address)
+      user.birthDate = utils.getFieldsIfExist(req.body.birthDate, user.birthDate)
   
       await user.save()
   
@@ -153,13 +150,13 @@ module.exports = {
       if (req.body.password) {
         user.password = await bcrypt.hash(req.body.password, 2)
       }
-      user.email = getFieldIfExist(req.body.email, user.email)
-      user.firstName = getFieldIfExist(req.body.firstName, user.firstName)
-      user.lastName = getFieldIfExist(req.body.lastName, user.lastName)
-      user.address = getFieldIfExist(req.body.address, user.address)
-      user.birthDate = getFieldIfExist(req.body.birthDate, user.birthDate)
-      user.balance = getFieldIfExist(req.body.balance, user.balance)
-      user.isAdmin = getFieldIfExist(req.body.isAdmin, user.isAdmin)
+      user.email = utils.getFieldsIfExist(req.body.email, user.email)
+      user.firstName = utils.getFieldsIfExist(req.body.firstName, user.firstName)
+      user.lastName = utils.getFieldsIfExist(req.body.lastName, user.lastName)
+      user.address = utils.getFieldsIfExist(req.body.address, user.address)
+      user.birthDate = utils.getFieldsIfExist(req.body.birthDate, user.birthDate)
+      user.balance = utils.getFieldsIfExist(req.body.balance, user.balance)
+      user.isAdmin = utils.getFieldsIfExist(req.body.isAdmin, user.isAdmin)
   
       await user.save()
   
