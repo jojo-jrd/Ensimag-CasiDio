@@ -12,7 +12,7 @@ function App() {
   const [userConnected, setUserConnected] = useState({});
 
   useEffect(() => {
-    setPage(localStorage.getItem("page"));
+    //setPage(localStorage.getItem("page"));
   })
 
   function changePage(to){ 
