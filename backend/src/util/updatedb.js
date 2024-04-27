@@ -1,4 +1,5 @@
 const userModel = require('../models/users.js')
+const gameModel = require('../models/games.js')
 const bcrypt = require('bcrypt');
 // Ajouter ici les nouveaux require des nouveaux modèles
 
@@ -38,5 +39,10 @@ const bcrypt = require('bcrypt');
     birthDate: '2024-04-25T10:27:55.000Z',
     balance: 999999,
     isAdmin: false
+  })
+  await gameModel.create({
+    name: 'roulette',
+    picturePath: 'documents/notes.txt',
+    description: 'roulette classique'
   })
 })()

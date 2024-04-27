@@ -112,6 +112,8 @@ A compléter
 
 ### API mise en place
 
+**User :**
+
 |Endpoint | GET  | POST | PUT  | DELETE  |
 |---|---|---|---|---|
 | /login  | *  | Obtention du token utilisateur/**email**,**password**  | *  | * |
@@ -119,6 +121,12 @@ A compléter
 | /api/users  | (**TOKEN**,**ADMIN**)Lister tous les utilisateurs  | *  |  * |  * |
 | /api/user | (**TOKEN**)Récupération des informations de l'utilisateur | * | (**TOKEN**)Modification des informations de l'utilisateur/**password**,**firstName**,**lastName**,**address**,**birthDate** | (**TOKEN**)Suppression de l'utilisateur courant|
 | /api/users/{id}| * | * | (**TOKEN**, **ADMIN**)Mettre à jour les informations de l'utilisateur/**email**,**password**,**firstName**,**lastName**,**address**,**birthDate**,**isAdmin** | (**TOKEN**, **ADMIN**) Suppression de l'utilisateur
+
+**Game :**
+|Endpoint | GET  | POST | PUT  | DELETE  |
+|---|---|---|---|---|
+| /games  | Obtention de tout les jeux actuellement disponibles | * | *  | * |
+
 
 ## Architecture du code
 
