@@ -24,7 +24,7 @@ pages:
   stage: pages
   script:
     - mkdir -p public
-    - cp -r backend/coverage/lcov-report/ public/
+    - cp -r backend/coverage/lcov-report public
   artifacts:
     paths:
       - public
