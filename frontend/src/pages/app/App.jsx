@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { AppContext } from '../../AppContext';
 import LoginView from '../login/Login';
@@ -10,6 +10,10 @@ function App() {
   const [token, setToken] = useState(null);
   const [page, setPage] = useState("");
   const [userConnected, setUserConnected] = useState({});
+
+  useEffect(() => {
+    setPage(localStorage.getItem("page"));
+  })
 
   function changePage(to){ 
     // stockant aussi la page demandée
