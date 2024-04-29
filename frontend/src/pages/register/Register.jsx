@@ -12,15 +12,22 @@ function RegisterView(){
 
   async function verifie(){
     let message = ""
-    if (!emailRef.current.value.match(/[a-z0-9]{3,10}/)) {
+    if (!emailRef.current?.value?.match(/[a-z0-9]{3,10}/)) {
       message += "Le login est incorrect."
     }
-    if (passwordRef.current.value.length < 6) {
+    if (passwordRef.current?.value?.length < 6) {
       message += "Mot de passe trop court."
     }
+    if (!firstNameRef?.current?.value  || 
+        !lastNameRef?.current?.value ||
+        !emailRef?.current?.value ||
+        !passwordRef?.current?.value ||
+        !birthDateRef?.current?.value) {
+        message += "Vous devez remplir tous les champs."
+      }
     setErreurMessage(message)
     if (message.length===0) {
-        const reponse = await (await fetch(`${import.meta.env.VITE_API_URL}/register`, 
+        fetch(`${import.meta.env.VITE_API_URL}/register`, 
             {
                 method:'POST',
                 headers:{'Content-type':'application/json'},
@@ -31,10 +38,16 @@ function RegisterView(){
                   password : passwordRef.current.value,
                   birthDate : birthDateRef.current.value
                 })
-            })).json()
-        if (reponse.status == 200) {
-          changePage('login')
-        }
+            }).then(res => res.json()).then(reponse => {
+              // TODO voir après création problème
+              if (reponse.status == 200) {
+                changePage('login')
+              } else {
+                setErreurMessage(reponse?.message);
+              }
+            }).catch(error => {
+              console.error(error)
+            })
     }
   }
   return (
@@ -44,23 +57,23 @@ function RegisterView(){
             <h2>Inscrivez-vous</h2>
           </div>
           <div className="mb-4">
-            <label className="block text-white text-sm font-bold mb-2" for="firstname">Prénom</label>
+            <label className="block text-white text-sm font-bold mb-2" htmlFor="firstname">Prénom</label>
             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" id="firstname" ref={firstNameRef} type="text" />
           </div>
           <div className="mb-4">
-            <label className="block text-white text-sm font-bold mb-2" for="lastname">Nom</label>
-            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" id="lastname" ref={firstNameRef} type="text" />
+            <label className="block text-white text-sm font-bold mb-2" htmlFor="lastname">Nom</label>
+            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" id="lastname" ref={lastNameRef} type="text" />
           </div>
           <div className="mb-4">
-            <label className="block text-white text-sm font-bold mb-2" for="birthdate">Date de naissance</label>
+            <label className="block text-white text-sm font-bold mb-2" htmlFor="birthdate">Date de naissance</label>
             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" id="birthdate" ref={birthDateRef} type="date" />
           </div>
           <div className="mb-4">
-            <label className="block text-white text-sm font-bold mb-2" for="email">Email</label>
+            <label className="block text-white text-sm font-bold mb-2" htmlFor="email">Email</label>
             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" id="email" ref={emailRef} type="email" />
           </div>
           <div className="mb-4">
-            <label className="block text-white text-sm font-bold mb-2" for="password">Mot de passe</label>
+            <label className="block text-white text-sm font-bold mb-2" htmlFor="password">Mot de passe</label>
             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" id="password" ref={passwordRef} type="password" />
           </div>
           <span className="text-red-500 text-xs italic"> {erreurMessage}</span>

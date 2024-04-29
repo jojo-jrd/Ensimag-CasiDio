@@ -26,15 +26,18 @@ function LoginView() {
             password: passwordRef.current.value
           })
         }).then(res => res.json()).then(async reponse => {
-          // TODO message d'erreur
-          setToken(reponse.token);
-          const user = await (await fetch(`${import.meta.env.VITE_API_URL}/api/user`,
-            {
-              method: 'GET',
-              headers: { 'Content-type': 'application/json', 'x-access-token' : reponse.token},
-            })).json()
-          setUserConnected(user.data);
-          changePage('home');
+          if(reponse.token) {
+            setToken(reponse.token);
+            const user = await (await fetch(`${import.meta.env.VITE_API_URL}/api/user`,
+              {
+                method: 'GET',
+                headers: { 'Content-type': 'application/json', 'x-access-token' : reponse.token},
+              })).json()
+            setUserConnected(user.data);
+            changePage('home');
+          } else {
+            setErreurMessage(reponse.message);
+          }
         }).catch(err => console.error(err));
     }
   }
@@ -45,11 +48,11 @@ function LoginView() {
             <h2>Connectez-vous</h2>
           </div>
           <div className="mb-4">
-            <label className="block text-white text-sm font-bold mb-2" for="email">Email</label>
+            <label className="block text-white text-sm font-bold mb-2" htmlFor="email">Email</label>
             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" id="email" ref={emailRef} type="email" />
           </div>
           <div className="mb-4">
-            <label className="block text-white text-sm font-bold mb-2" for="password">Mot de passe</label>
+            <label className="block text-white text-sm font-bold mb-2" htmlFor="password">Mot de passe</label>
             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" id="password" ref={passwordRef} type="password" />
           </div>
           <span className="text-red-500 text-xs italic"> {erreurMessage}</span>

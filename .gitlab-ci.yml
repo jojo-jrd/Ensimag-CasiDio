@@ -2,6 +2,7 @@ image: node:latest
 
 stages:
   - backendTest
+  - frontendTest
   - badges
   - pages
 
@@ -18,15 +19,32 @@ backendTest:
       - backendTest_report.txt
       - backend/coverage/lcov-report/
 
+frontendTest:
+    stage: frontendTest
+    tags:
+        - docker  # Comme on utilise une image pour isoler on doit utiliser un runner docker 
+    image: cypress/base:16.18.1 # Image fournie par cypress avec ce qu'il faut
+    script:
+        - npm i # Installe ce qui est décrit dans package.json
+        - ./node_modules/.bin/serve & # Lance le serveur
+        - npx cypress run > frontendTest_report.txt # Lance les tests
+    #    - kill -9 $(ps | grep node | awk '{print $1}') # Cette ligne pourrait permettre de tuer serve
+    artifacts:
+        when: always
+        paths:
+            - frontendTest_report.txt # mise a disposition du compte rendu
+
 badges:
   stage: badges
   image: python
   script:
     - pip install anybadge
     - ./backend_badge.sh
+    - ./frontend_badge.sh
   artifacts:
     paths:
       - backend_test.svg
+      - frontend_test.svg
     
 pages:
   stage: pages
