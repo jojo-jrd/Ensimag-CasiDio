@@ -412,6 +412,10 @@
                   "type": "string",
                   "example": "pictures/poker"
                 },
+                "page": {
+                  "type": "string",
+                  "example": "poker"
+                },
                 "description": {
                   "type": "string",
                   "example": "Jeu de poker simple"
@@ -420,6 +424,7 @@
               "required": [
                 "name",
                 "picturePath",
+                "page",
                 "description"
               ]
             }
@@ -471,6 +476,10 @@
                   "type": "string",
                   "example": "pictures/poker"
                 },
+                "page": {
+                  "type": "string",
+                  "example": "poker"
+                },
                 "description": {
                   "type": "string",
                   "example": "Jeu de poker simple"
@@ -479,6 +488,7 @@
               "required": [
                 "name",
                 "picturePath",
+                "page",
                 "description"
               ]
             }
