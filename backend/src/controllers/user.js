@@ -36,14 +36,13 @@ module.exports = {
       throw new CodeError('Server error', status.INTERNAL_SERVER_ERROR);
     }
 
-    req.login = login
     req.userID = user.id
 
     next();
   },
   async verifyAdmin(req, res, next) {
 		// Si l'utilisateur n'est pas admin on renvoie une erreur
-		const user = await userModel.findOne({ where: {email: req.login}});
+		const user = await userModel.findOne({ where: {id: req.userID}});
 		if (!user?.isAdmin)
 			throw new CodeError('You must be admin', status.FORBIDDEN);
 
@@ -81,7 +80,7 @@ module.exports = {
     // #swagger.tags = ['Users']
     // #swagger.summary = 'Get User Informations'
     const data = await userModel.findOne({
-      where: {email: req.login},
+      where: {id: req.userID},
       attributes: ['firstName', 'lastName', 'email', 'address', 'birthDate', 'balance', 'isAdmin']
     })
 
@@ -96,7 +95,7 @@ module.exports = {
     // #swagger.summary = 'Update user'
     // #swagger.parameters['obj'] = { in: 'body', description:'Update Connected User', schema: { $email: 'John.Doe@acme.com', $password: '1m02P@SsF0rt!', $firstName: 'John', $lastName: 'Doe', $address: '8 avenue de la rue', $birthDate: '11/30/2000'}}
     const user = await userModel.findOne({
-      where: {email: req.login},
+      where: {id: req.userID},
       attributes: ['id', 'email', 'password', 'firstName', 'lastName', 'address', 'birthDate']
     })
 
@@ -122,7 +121,7 @@ module.exports = {
     // #swagger.tags = ['Users']
     // #swagger.summary = 'Delete Current User'
     const user = await userModel.findOne({
-      where: {email: req.login}
+      where: {id: req.userID}
     })
 
     if (user) {
