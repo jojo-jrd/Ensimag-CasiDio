@@ -17,10 +17,6 @@ backendTest:
     paths:
       - backendTest_report.txt
       - backend/coverage/lcov-report/
-  only:
-    changes:
-      - backend/*
-      - .gitlab-ci.yml
 
 badges:
   stage: badges
