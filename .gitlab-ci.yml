@@ -2,25 +2,36 @@ image: node:latest
 
 stages:
   - backendTest
+  - badges
   - pages
 
 backendTest:
-    stage: backendTest
-    script:
-        - cd backend/
-        - npm i
-        - npm run test > $CI_PROJECT_DIR/backendTest_report.txt
-    artifacts:
-      when: always
-      expire_in: 30 days
-      paths:
-        - backendTest_report.txt
-        - backend/coverage/lcov-report/
-    only:
-      changes:
-        - backend/*
-        - .gitlab-ci.yml
+  stage: backendTest
+  script:
+    - cd backend/
+    - npm i
+    - npm run test 2> $CI_PROJECT_DIR/backendTest_report.txt
+  artifacts:
+    when: always
+    expire_in: 30 days
+    paths:
+      - backendTest_report.txt
+      - backend/coverage/lcov-report/
+  only:
+    changes:
+      - backend/*
+      - .gitlab-ci.yml
 
+badges:
+  stage: badges
+  image: python
+  script:
+    - pip install anybadge
+    - ./backend_badge.sh
+  artifacts:
+    paths:
+      - backend_test.svg
+    
 pages:
   stage: pages
   script:
