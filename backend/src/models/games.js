@@ -5,14 +5,17 @@ const games = db.define('games', {
     type: Sequelize.STRING(128),
     unique: true,
     validate: {
-      is: /^[a-z\-'\s]{1,128}$/i
+      is: /^[a-zA-Z\-'\s]{1,128}/i
     }
   },
   picturePath: {
     type: Sequelize.STRING(128),
     validate: {
-      is: /^(\/?[a-zA-Z0-9_\-]+)+(\.[a-zA-Z0-9]+)?$/i
+      is: /^(\/?(\.\/)?(\.\.\/)*[a-zA-Z0-9_\-]+)+(\.[a-zA-Z0-9]+)?$/i
     }
+  },
+  gameLink : {
+    type: Sequelize.STRING(128)
   },
   description: {
     type: Sequelize.STRING(1024),

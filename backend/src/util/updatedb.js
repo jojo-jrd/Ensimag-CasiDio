@@ -41,8 +41,9 @@ const bcrypt = require('bcrypt');
     isAdmin: false
   })
   await gameModel.create({
-    name: 'roulette',
-    picturePath: 'documents/notes.txt',
-    description: 'roulette classique'
+    name: 'Machine à sous',
+    gameLink : 'slot-machine',
+    picturePath: './../../assets/slot-machine.png',
+    description: 'Une machine à sous'
   })
 })()
