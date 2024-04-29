@@ -1,5 +1,6 @@
 const userModel = require('../models/users.js')
 const gameModel = require('../models/games.js')
+const historyModel = require('../models/histories.js')
 const bcrypt = require('bcrypt');
 // Ajouter ici les nouveaux require des nouveaux modèles
 
@@ -30,7 +31,7 @@ const bcrypt = require('bcrypt');
     balance: 999999,
     isAdmin: true
   })
-  await userModel.create({
+  const u1 = await userModel.create({
     firstName: 'Jordan',
     lastName: 'Josserand',
     email: 'jordan@josserand.com',
@@ -40,10 +41,28 @@ const bcrypt = require('bcrypt');
     balance: 999999,
     isAdmin: false
   })
-  await gameModel.create({
+  const g1 = await gameModel.create({
     name: 'Machine à sous',
     page : 'slot-machine',
     picturePath: './../../assets/slot-machine.png',
     description: 'Une machine à sous'
   })
+  const g2 = await gameModel.create({
+    name: 'Mines',
+    page : 'mines',
+    picturePath: './../../assets/mines.png',
+    description: 'Un démineur'
+  })
+  const h1 = await historyModel.create({
+    profit: -2,
+    gameDate: '2024-04-25T10:27:55.000Z'
+  })
+  h1.setUser(u1)
+  h1.setGame(g1)
+  const h2 = await historyModel.create({
+    profit: 4,
+    gameDate: '2024-04-23T10:27:55.000Z'
+  })
+  h2.setUser(u1)
+  h2.setGame(g2)
 })()

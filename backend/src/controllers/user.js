@@ -13,7 +13,7 @@ function validPassword (password) {
 }
 
 module.exports = {
-  validToken(req, res, next) {
+  async validToken(req, res, next) {
     // #swagger.security = [{"apiKeyAuth": []}] 
     // If not x-access-token in headers => error
     if (!req.headers || !req.headers.hasOwnProperty('x-access-token')) {
@@ -27,7 +27,18 @@ module.exports = {
       throw new CodeError('Token missing', status.FORBIDDEN);
     }
 
-    req.login = jws.decode(req.headers['x-access-token']).payload;
+    const login = jws.decode(req.headers['x-access-token']).payload;
+
+    const user = await userModel.findOne({ where: {email: login}});
+
+    if (!user) {
+      res.status(status.INTERNAL_SERVER_ERROR).json({ status: false, message: 'Server error' })
+      throw new CodeError('Server error', status.INTERNAL_SERVER_ERROR);
+    }
+
+    req.login = login
+    req.userID = user.id
+
     next();
   },
   async verifyAdmin(req, res, next) {

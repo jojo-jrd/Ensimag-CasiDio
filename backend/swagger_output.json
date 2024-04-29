@@ -535,6 +535,32 @@
           }
         ]
       }
+    },
+    "/api/history": {
+      "get": {
+        "tags": [
+          "Histories"
+        ],
+        "summary": "Get all history of the user",
+        "description": "",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
     }
   }
 }

@@ -129,6 +129,11 @@ A compléter
 | /api/game  | * | (**TOKEN**, **ADMIN**)Ajouter un nouveau jeu/**name, picturePath, description** | *  | * |
 | /api/game/{id}  | * | * | (**TOKEN**, **ADMIN**)Modifier le jeu *id*/**name, picturePath, description** | (**TOKEN**, **ADMIN**)Supprimer le jeu *id* |
 
+**History :**
+|Endpoint | GET  | POST | PUT  | DELETE  |
+|---|---|---|---|---|
+| /api/globalHistory  | (**TOKEN**, **ADMIN**)Récupérer l'historique global | * | *  | * |
+| /api/history  | (**TOKEN**)Récupérer l'historique de l'utilisateur connecté | (**TOKEN**)Ajoute l'historique à l'utilisateur/**idUser, idGame, profit, gameDate** | *  | * |
 
 ## Architecture du code
 
@@ -139,8 +144,6 @@ Indiquer ici l'organisation de votre code. Et les choix faits pour le frontend.
 ### Backend
 
 #### Schéma de votre base de donnée
-
-A modifier/compléter...
 
 ```plantuml
 class User{
@@ -158,6 +161,8 @@ class User{
 abstract Games{
   -id: Number
   -name: String
+  -page: String
+  -description: String
 }
 
 class Rocket implements Games{
@@ -169,8 +174,8 @@ class SlotMachine implements Games{
 
 class History{
  -id: Number;
- -earnings: Float
- -timeStamp: Date
+ -profit: Float
+ -gameDate: Date
 }
 
 
