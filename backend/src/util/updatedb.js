@@ -44,7 +44,7 @@ const bcrypt = require('bcrypt');
   const g1 = await gameModel.create({
     name: 'Machine à sous',
     page : 'slot-machine',
-    picturePath: './../../assets/slot-machine.png',
+    picturePath: './images/slot-machine.png',
     description: 'Une machine à sous'
   })
   const g2 = await gameModel.create({

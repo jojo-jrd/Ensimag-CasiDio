@@ -1,5 +1,7 @@
 import { useState, useRef, useContext } from 'react';
 import { AppContext } from '../../AppContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons/faBars';
 
 function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -30,8 +32,8 @@ function NavBar() {
                         )}
                     </div>
                     <div className="block md:hidden">
-                        <button onClick={toggleMenu} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">
-                            Menu
+                        <button onClick={toggleMenu} className="text-gray-300 bg-gray-800 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">
+                            <FontAwesomeIcon icon={faBars} />
                         </button>
                         {isOpen && (
                             <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
