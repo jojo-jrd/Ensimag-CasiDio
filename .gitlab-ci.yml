@@ -30,7 +30,6 @@ frontendTest:
         - npm run start &
         - cd ../frontend/
         - npm i # Installe ce qui est décrit dans package.json
-        - ./node_modules/.bin/serve & # Lance le serveur
         - npx cypress run > $CI_PROJECT_DIR/frontendTest_report.txt # Lance les tests
     #    - kill -9 $(ps | grep node | awk '{print $1}') # Cette ligne pourrait permettre de tuer serve
     artifacts:
