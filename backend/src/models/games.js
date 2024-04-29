@@ -14,11 +14,11 @@ const games = db.define('games', {
       is: /^(\/?(\.\/)?(\.\.\/)*[a-zA-Z0-9_\-]+)+(\.[a-zA-Z0-9]+)?$/i
     }
   },
-  gameLink : {
+  page : {
     type: Sequelize.STRING(128)
   },
   description: {
-    type: Sequelize.STRING(1024),
+    type: Sequelize.STRING(1024)
   }
 }, { timestamps: false })
 module.exports = games

@@ -42,7 +42,7 @@ const bcrypt = require('bcrypt');
   })
   await gameModel.create({
     name: 'Machine à sous',
-    gameLink : 'slot-machine',
+    page : 'slot-machine',
     picturePath: './../../assets/slot-machine.png',
     description: 'Une machine à sous'
   })
