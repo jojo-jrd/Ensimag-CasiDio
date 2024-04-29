@@ -27,7 +27,7 @@ badges:
   image: python
   script:
     - pip install anybadge
-    - ./backend_test.sh
+    - ./backend_badge.sh
   artifacts:
     paths:
       - backend_test.svg
