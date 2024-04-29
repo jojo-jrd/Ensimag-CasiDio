@@ -19,19 +19,19 @@ module.exports = {
   async addGame(req, res) {
     // #swagger.tags = ['Admin Games']
     // #swagger.summary = 'Add a new game'
-    // #swagger.parameters['obj'] = { in: 'body', description:'Game informations', schema: { $name: 'Poker', $picturePath: 'pictures/poker', $description: 'Jeu de poker simple' }}
-    if (!has(req.body, ['name', 'picturePath', 'description'])) throw new CodeError('You must specify the mandatory fiels', status.BAD_REQUEST)
+    // #swagger.parameters['obj'] = { in: 'body', description:'Game informations', schema: { $name: 'Poker', $picturePath: 'pictures/poker', $page: 'poker', $description: 'Jeu de poker simple' }}
+    if (!has(req.body, ['name', 'picturePath', 'page', 'description'])) throw new CodeError('You must specify the mandatory fiels', status.BAD_REQUEST)
 
-    const { name, picturePath, description } = req.body
+    const { name, picturePath, page, description } = req.body
 
-    await gameModel.create({name, picturePath, description})
+    await gameModel.create({name, picturePath, page, description})
     
     res.json({status: true, message: 'Game added'})
   },
   async updateGame(req, res) {
     // #swagger.tags = ['Admin Games']
     // #swagger.summary = 'Update existing game'
-    // #swagger.parameters['obj'] = { in: 'body', description:'Game informations', schema: { $name: 'Poker', $picturePath: 'pictures/poker', $description: 'Jeu de poker simple' }}
+    // #swagger.parameters['obj'] = { in: 'body', description:'Game informations', schema: { $name: 'Poker', $picturePath: 'pictures/poker', $page: 'poker', $description: 'Jeu de poker simple' }}
     if (!has(req.params, 'id')) throw new CodeError('You must specify the game id', status.BAD_REQUEST)
     const { id } = req.params
 
@@ -40,6 +40,7 @@ module.exports = {
     if (game) {
       game.name = util.getFieldsIfExist(req.body.name, game.name)
       game.picturePath = util.getFieldsIfExist(req.body.picturePath, game.picturePath)
+      game.page = util.getFieldsIfExist(req.body.page, game.page)
       game.description = util.getFieldsIfExist(req.body.description, game.description)
 
       await game.save()
