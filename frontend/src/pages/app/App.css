@@ -1,13 +1,6 @@
-.dropdown.show {
-  display: block;
-  position: absolute;
-  bottom: -102px;
-  right: 5px;
-  background: white;
-  text-align: center;
-  border: solid 1px red;
-  padding: 5px;
-  border-top: none;
+html, body, #root, #root>div {
+  height: 100%;
+  width: 100%;
 }
 
 /* #root {

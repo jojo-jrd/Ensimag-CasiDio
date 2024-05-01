@@ -5,6 +5,7 @@ import LoginView from '../login/Login';
 import SlotMachineView from '../slot_machine/SlotMachine';
 import HomeView from '../home/Home';
 import RegisterView from '../register/Register';
+import DashBoardView from '../dashboard/Dashboard';
 
 function App() {
   const [token, setToken] = useState(null);
@@ -12,7 +13,7 @@ function App() {
   const [userConnected, setUserConnected] = useState({});
 
   useEffect(() => {
-    //setPage(localStorage.getItem("page"));
+    //setPage(localStorage.getItem("page")); TODO remettre
   })
 
   function changePage(to){ 
@@ -33,7 +34,8 @@ function App() {
       case 'register' : return <RegisterView/>;
       case 'slot-machine' : return <SlotMachineView/>;
       case 'home' : return <HomeView/>;
-      default: return <LoginView/>; // TODO: mettre Login
+      case 'dashboard' : return <DashBoardView/>;
+      default: return <HomeView/>; // TODO: mettre Login
     }
   }
 
