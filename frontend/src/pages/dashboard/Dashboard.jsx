@@ -56,25 +56,25 @@ function DashBoardView({ isAdmin = false}){
         </div>
 
         <div className="col-span-4 md:col-span-2 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 w-full h-full md">
-            <h2 className="text-xl font-bold">Solde actuel</h2>
+            <h2 className="text-white text-xl font-bold">Solde actuel</h2>
             <p className={actualSolde > 100 ? 'text-lime-500' : 'text-red-500'}>{actualSolde} Viardot</p>
         </div>
         <div className="col-span-4 md:col-span-2 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 w-full h-full">
-            <h2 className="text-xl font-bold">Evolution du solde sur la dernière semaine</h2>
+            <h2 className="text-white text-xl font-bold">Evolution du solde sur la dernière semaine</h2>
             <p className={evolutionSoldeWeek >= 0 ? 'text-lime-500' : 'text-red-500'}>{(evolutionSoldeWeek >= 0 ? '+ ' : '- ') + evolutionSoldeWeek} Viardot</p>
         </div>
         <div className="col-span-4 md:col-span-1 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 w-full h-full">
             <div className="mb-4">
-                <h2 className="text-xl font-bold">Une data</h2>
-                <p>???</p>
+                <h2 className="text-white text-xl font-bold">Une data</h2>
+                <p className="text-gray-400">???</p>
             </div>
             <div className="mb-4">
-                <h2 className="text-xl font-bold">Une autre</h2>
-                <p>???</p>
+                <h2 className="text-white text-xl font-bold">Une autre</h2>
+                <p className="text-gray-400">???</p>
             </div>
         </div>
         <div className="col-span-4 md:col-span-3 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 w-full h-full">
-            <h2 className="text-xl font-bold">Evolution du solde</h2>
+            <h2 className="text-white text-xl font-bold">Evolution du solde</h2>
             <canvas id="chart"></canvas>
         </div>
       </div>
