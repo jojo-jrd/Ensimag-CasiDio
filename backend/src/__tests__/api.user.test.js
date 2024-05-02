@@ -336,6 +336,92 @@ test('User admin update user : update one field', async () => {
     "isAdmin": false
   })
 })
+
+// --------------------------------------- //
+//        USER ADMIN UPDATE BALANCE        //
+// --------------------------------------- //
+
+test('User admin update balance : simple update', async () => {
+  // Connection to an admin
+  let response = await request(app)
+    .post('/login')
+    .send({ email: 'a@a.com', password: 'Ab*123-!' })
+  expect(response.statusCode).toBe(200)
+
+  const userToken = response.body.token
+
+  // Update the balance of the user third
+  response = await request(app)
+    .put('/api/userBalance/3')
+    .set('x-access-token', userToken)
+    .send({ gains: 100 })
+  expect(response.statusCode).toBe(200)
+
+  // Check that the user is deleted
+  response = await request(app)
+    .get('/api/users')
+    .set('x-access-token', userToken)
+  expect(response.statusCode).toBe(200)
+  expect(response.body.data.find(user => user.id === 3).balance).toBe(1000099)
+})
+
+test('User admin update balance : negative update', async () => {
+  // Connection to an admin
+  let response = await request(app)
+    .post('/login')
+    .send({ email: 'a@a.com', password: 'Ab*123-!' })
+  expect(response.statusCode).toBe(200)
+
+  const userToken = response.body.token
+
+  // Update the balance of the user third
+  response = await request(app)
+    .put('/api/userBalance/3')
+    .set('x-access-token', userToken)
+    .send({ gains: -70 })
+  expect(response.statusCode).toBe(200)
+
+  // Check that the user is deleted
+  response = await request(app)
+    .get('/api/users')
+    .set('x-access-token', userToken)
+  expect(response.statusCode).toBe(200)
+  expect(response.body.data.find(user => user.id === 3).balance).toBe(1000029)
+})
+
+test('User admin update balance : no user found', async () => {
+  // Connection to an admin
+  let response = await request(app)
+    .post('/login')
+    .send({ email: 'a@a.com', password: 'Ab*123-!' })
+  expect(response.statusCode).toBe(200)
+
+  const userToken = response.body.token
+
+  // Update the balance of the user third
+  response = await request(app)
+    .put('/api/userBalance/5')
+    .set('x-access-token', userToken)
+    .send({ gains: 100 })
+  expect(response.statusCode).toBe(404)
+})
+
+test('User admin update balance : no gains', async () => {
+  // Connection to an admin
+  let response = await request(app)
+    .post('/login')
+    .send({ email: 'a@a.com', password: 'Ab*123-!' })
+  expect(response.statusCode).toBe(200)
+
+  const userToken = response.body.token
+
+  // Update the balance of the user third
+  response = await request(app)
+    .put('/api/userBalance/5')
+    .set('x-access-token', userToken)
+  expect(response.statusCode).toBe(400)
+})
+
 // --------------------------------------- //
 //          USER ADMIN DELETE USER         //
 // --------------------------------------- //
