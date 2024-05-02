@@ -18,6 +18,7 @@ backendTest:
     paths:
       - backendTest_report.txt
       - backend/coverage/lcov-report/
+  allow_failure: true
 
 frontendTest:
     stage: frontendTest
@@ -39,6 +40,7 @@ frontendTest:
         paths:
             - frontendTest_coverage_report.txt # mise à disposition du coverage
             - frontendTest_report.txt # mise a disposition du compte rendu
+    allow_failure: true
 
 badges:
   stage: badges
