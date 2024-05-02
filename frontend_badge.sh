@@ -10,5 +10,5 @@ fi
 
 coverage=$(grep "%" frontendTest_coverage_report.txt | head -n 1 | tr " " "\n" | head -n 5 | tail -n1 | tr -d "%") || 0.0
 
-anybadge -o -l "Frontend coverage" -v "$coverage" --suffix='%' 1=red 30=yellow 60=green 90=lime -f "frontend_coverage_test.svg"
+anybadge -o -l "Frontend coverage" -v "$coverage" --suffix='%' -f "frontend_coverage_test.svg"  1=red 30=yellow 60=green 90=lime 
 anybadge -o -l "Frontend tests" -v "$text" -c "$color" -f "frontend_test.svg"
