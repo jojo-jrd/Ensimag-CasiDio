@@ -53,6 +53,7 @@ badges:
     paths:
       - backend_test.svg
       - frontend_test.svg
+      - frontend_coverage_test.svg
     
 pages:
   stage: pages
