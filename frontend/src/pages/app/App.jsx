@@ -35,7 +35,7 @@ function App() {
       case 'slot-machine' : return <SlotMachineView/>;
       case 'home' : return <HomeView/>;
       case 'dashboard' : return <DashBoardView/>;
-      default: return <HomeView/>; // TODO: mettre Login
+      default: return <LoginView/>; // TODO: mettre Login
     }
   }
 
