@@ -13,22 +13,32 @@ function App() {
   const [userConnected, setUserConnected] = useState({});
 
   useEffect(() => {
-    //setPage(localStorage.getItem("page")); TODO remettre
-  })
+    setPage(localStorage.getItem("page")); // TODO remettre
+    setToken(localStorage.getItem("token"));
+    setUserConnected(JSON.parse(localStorage.getItem("user") || '{}'));
+  }, [])
 
-  function changePage(to){ 
+  function changePage(to) {
+    // Redirection si déconnection ou page non autorisé
+    if (['login', 'register', 'logout'].includes(to)) {
+      if (to == 'logout') {
+        to = 'login';
+      }
+      localStorage.setItem('token', "");
+      localStorage.setItem('user', JSON.stringify({}));
+      setToken("");
+      setUserConnected({});
+    } else if (!['login', 'home', 'register'].includes(to) && !token) {
+      to = 'login';
+    }
     // stockant aussi la page demandée
     localStorage.setItem("page",to);
-    // Supprission du token si déconnexion
-    if(['login', 'register'].includes(to)) {
-      setToken(null);
-      setUserConnected({});
-    }
-
     setPage(to);
   }
 
   function getCurrentPage(){
+    
+
     switch(page){
       case 'login' : return <LoginView/>;
       case 'register' : return <RegisterView/>;
