@@ -192,5 +192,29 @@ module.exports = {
     } else {
       res.status(status.NOT_FOUND).json({status: false, message: 'User not found'})
     }
+  },
+  async updateBalance (req, res) {
+    // #swagger.tags = ['Admin Users']
+    // #swagger.summary = 'Increment/Decrement user balance'
+    // #swagger.parameters['obj'] = { in: 'body', description: 'Gains of the user', schema: { $gains: 14 }}
+    if (!has(req.params, 'id')) throw new CodeError('You must specify the user id', status.BAD_REQUEST)
+    if (!has(req.body, 'gains')) throw new CodeError('You must specify the user gains', status.BAD_REQUEST)
+
+    const { id }  = req.params
+    const { gains }  = req.body
+
+    const user = await userModel.findOne({
+      where: {id: id}
+    })
+
+    if (user) {
+      user.balance += gains
+
+      user.save()
+
+      res.json({status: true, message: 'Balance updated'})
+    } else {
+      res.status(status.NOT_FOUND).json({status: false, message: 'User not found'})
+    }
   }
 }
