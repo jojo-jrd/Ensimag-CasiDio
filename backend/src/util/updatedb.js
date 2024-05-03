@@ -65,4 +65,10 @@ const bcrypt = require('bcrypt');
   })
   h2.setUser(u1)
   h2.setGame(g2)
+  const h3 = await historyModel.create({
+    profit: 15,
+    gameDate: '2024-05-23T10:27:55.000Z'
+  })
+  h3.setUser(u1)
+  h3.setGame(g2)
 })()
