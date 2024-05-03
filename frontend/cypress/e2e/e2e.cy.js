@@ -13,7 +13,7 @@ describe('Test E2E', () => {
         cy.get("input#email").type('jordan.josserand@grenoble-inp.com');
 
         // Valide les données
-        cy.get('button').click();
+        cy.get('button[data-cy="validate-login"]').click();
 
         // Récupération du message d'erreur
         cy.get('span.text-red-500').should('have.text', ' Mot de passe trop court.');
@@ -29,7 +29,7 @@ describe('Test E2E', () => {
         cy.get("input#email").type('aa');
 
         // Valide les données
-        cy.get('button').click();
+        cy.get('button[data-cy="validate-login"]').click();
 
         // Récupération du message d'erreur
         cy.get('span.text-red-500').should('have.text', ' Le login est incorrect.');
@@ -47,7 +47,7 @@ describe('Test E2E', () => {
         cy.get("input#password").type('abcaaaaaaaa12');
 
         // Valide les données
-        cy.get('button').click();
+        cy.get('button[data-cy="validate-login"]').click();
 
         // Attente de la requête
         cy.wait('@login');
@@ -68,7 +68,7 @@ describe('Test E2E', () => {
         cy.get("input#password").type('Ab*123-!');
 
         // Valide les données
-        cy.get('button').click();
+        cy.get('button[data-cy="validate-login"]').click();
 
         // Attente de la requête
         cy.wait('@login').then((interception) => {
@@ -93,7 +93,7 @@ describe('Test E2E', () => {
         cy.get("input#firstname").type('Arthur');
 
         // Valide les données
-        cy.get('button').click();
+        cy.get('button[data-cy="validate-register"]').click();
 
         // Récupération du message d'erreur
         cy.get('span.text-red-500').should('have.text', ' Mot de passe trop court.');
@@ -109,7 +109,7 @@ describe('Test E2E', () => {
         cy.get("input#email").type('aa');
 
         // Valide les données
-        cy.get('button').click();
+        cy.get('button[data-cy="validate-register"]').click();
 
         // Récupération du message d'erreur
         cy.get('span.text-red-500').should('have.text', ' Le login est incorrect.');
@@ -126,7 +126,7 @@ describe('Test E2E', () => {
         cy.get("input#email").type('aabbb@a.com');
 
         // Valide les données
-        cy.get('button').click();
+        cy.get('button[data-cy="validate-register"]').click();
 
         // Récupération du message d'erreur
         cy.get('span.text-red-500').should('have.text', ' Vous devez remplir tous les champs.');
@@ -139,7 +139,7 @@ describe('Test E2E', () => {
         cy.get("input#firstname").type('Dupond');
 
         // Valide les données
-        cy.get('button').click();
+        cy.get('button[data-cy="validate-register"]').click();
 
         cy.wait('@register').then((interception) => {
             expect(interception.response.statusCode).to.equal(400);
@@ -160,7 +160,7 @@ describe('Test E2E', () => {
         cy.get("input#password").type('1m02P@SsF0rt!');
 
         // Valide les données
-        cy.get('button').click();
+        cy.get('button[data-cy="validate-register"]').click();
 
         cy.wait('@register').then((interception) => {
             expect(interception.response.statusCode).to.equal(200);

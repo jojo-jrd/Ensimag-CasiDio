@@ -62,7 +62,7 @@ function LoginView() {
             </div>
             <span className="text-red-500 text-xs italic"> {erreurMessage}</span>
           <div className="flex items-center justify-between">
-            <button className="bg-blue-700 hover:bg-blue-800 rounded-lg text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={verifie}>Se connecter</button>
+            <button data-cy="validate-login" className="bg-blue-700 hover:bg-blue-800 rounded-lg text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={verifie}>Se connecter</button>
             <p className="inline-block align-baseline font-bold text-sm text-white">Pas encore de compte ? <a className="text-blue-700 cursor-pointer" onClick={() => changePage('register')}>Créez en un !</a></p>
           </div>
         </div>
