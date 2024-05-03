@@ -57,11 +57,11 @@ badges:
       - frontend_test.svg
       - frontend_coverage_test.svg
     
-pages:
-  stage: pages
-  script:
-    - mkdir -p public
+#pages:
+  #stage: pages
+  #script:
+    #- mkdir -p public
     # - cp -r backend/coverage/lcov-report/* public
-  artifacts:
-    paths:
-      - public
+  #artifacts:
+    #paths:
+      #- public
