@@ -11,12 +11,13 @@ backendTest:
   script:
     - cd backend/
     - npm i
-    - npm run test 2> $CI_PROJECT_DIR/backendTest_report.txt
+    - npm run test > $CI_PROJECT_DIR/backendTest_coverage_report.txt 2> $CI_PROJECT_DIR/backendTest_report.txt
   artifacts:
     when: always
     expire_in: 30 days
     paths:
       - backendTest_report.txt
+      - backendTest_coverage_report.txt
       - backend/coverage/lcov-report/
   allow_failure: true
 
@@ -52,6 +53,7 @@ badges:
   artifacts:
     paths:
       - backend_test.svg
+      - backend_coverage_test.svg
       - frontend_test.svg
       - frontend_coverage_test.svg
     

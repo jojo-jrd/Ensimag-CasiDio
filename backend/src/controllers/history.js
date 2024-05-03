@@ -9,6 +9,12 @@ module.exports = {
   async getHistory(req, res) {
     // #swagger.tags = ['Histories']
     // #swagger.summary = 'Get all history of the user'
+
+    // SELECT Date(gameDate, month-years), sum(profit)
+    // FROM histories
+    // WHERE userID = req.userID
+    // GROUP BY Date(gameDate, month-years)
+    // ORDER BY gameDate
     const data = await historyModel.findAll({
       attributes: [
         [sequelize.fn('strftime', '%m-%Y', sequelize.col('gameDate')), 'date'],

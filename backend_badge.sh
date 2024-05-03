@@ -7,4 +7,8 @@ then
   color="red"
   text="Failed"
 fi
+
+coverage=$(grep "%" backendTest_coverage_report.txt | head -n 1 | tr " " "\n" | head -n 5 | tail -n1 | tr -d "%") || 0.0
+
+anybadge -o -l "Backend coverage" -v "$coverage" --suffix='%' -f "backend_coverage_test.svg" 1=red 60=yellow 80=green 90=lime 
 anybadge -o -l "Backend tests " -v "$text" -c "$color" -f "backend_test.svg"
