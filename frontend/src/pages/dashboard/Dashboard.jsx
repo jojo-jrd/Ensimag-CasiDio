@@ -2,38 +2,41 @@ import { useState, useContext, useEffect, useRef } from 'react';
 import { AppContext } from '../../AppContext';
 import NavBar from '../../components/navbar/Navbar';
 import Chart from 'chart.js/auto';
+import moment from 'moment';
 
 function DashBoardView({ isAdmin = false}){
-  const {changePage, userConnected } = useContext(AppContext);
+  const {changePage, userConnected, token } = useContext(AppContext);
   const filterRef = useRef(null);
-  const [actualSolde, setActualSolde] = useState(0.0);
   const [evolutionSoldeWeek, setEvolutionSoldeWeek] = useState(0.0);
 
   useEffect(() => {
-    // TODO récupération des données avec la route
-    const data = [
-        { label: 2010, data: 10 },
-        { label: 2011, data: 20 },
-        { label: 2012, data: 15 },
-        { label: 2013, data: 25 },
-        { label: 2014, data: 22 },
-        { label: 2015, data: 30 },
-        { label: 2016, data: 28 },
-      ];
-
-    Chart.defaults.color = "#fff";
-    Chart.defaults.borderColor = "#324258";
-    Chart.color
-    const myChart = new Chart(
+    var myChart;
+    async function loadData() {
+      let data = [];
+      const reponse = await (await fetch(`${import.meta.env.VITE_API_URL}/api/history`, { method : 'GET',
+        headers : {
+          'x-access-token' : token
+      }})).json();
+      if (reponse?.['data']) {
+        data = reponse['data'];
+      } else {
+        console.error(reponse.message);
+      }
+      Chart.defaults.color = "#fff";
+      Chart.defaults.borderColor = "#324258";
+      if(Chart.getChart("chart")) {
+        Chart.getChart("chart")?.destroy()
+      }
+      myChart = new Chart(
         'chart',
         {
           type: 'line',
           data: {
-            labels: data.map(row => row.label),
+            labels: data.map(row => moment(row.gameDate).format('L')),
             datasets: [
               {
                 label: 'Evolution du solde',
-                data: data.map(row => row.data),
+                data: data.map(row => row.profit),
                 borderColor : "#FF9F40",
                 backgroundColor : "#FF9F40"
               }
@@ -41,9 +44,12 @@ function DashBoardView({ isAdmin = false}){
           }
         }
       );
-      return () => {
-        myChart.destroy()
-      }
+    }
+    loadData();
+
+    return () => {
+      Chart.getChart("chart")?.destroy()
+    }
   }, [])
 
   return (
@@ -57,7 +63,7 @@ function DashBoardView({ isAdmin = false}){
 
         <div className="col-span-4 md:col-span-2 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 w-full h-full md">
             <h2 className="text-white text-xl font-bold">Solde actuel</h2>
-            <p className={actualSolde > 100 ? 'text-lime-500' : 'text-red-500'}>{actualSolde} Viardot</p>
+            <p className={userConnected.balance > 100 ? 'text-lime-500' : 'text-red-500'}>{userConnected.balance} Viardot</p>
         </div>
         <div className="col-span-4 md:col-span-2 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 w-full h-full">
             <h2 className="text-white text-xl font-bold">Evolution du solde sur la dernière semaine</h2>

@@ -9,7 +9,8 @@ module.exports = {
     // #swagger.tags = ['Histories']
     // #swagger.summary = 'Get all history of the user'
     const data = await historyModel.findAll({
-      where: { userID: req.userID }
+      where: { userID: req.userID },
+      order :[['gameDate', 'ASC']]
     })
     
     if (data) {
