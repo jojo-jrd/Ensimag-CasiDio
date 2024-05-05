@@ -3,6 +3,8 @@ import './App.css'
 import { AppContext } from '../../AppContext';
 import LoginView from '../login/Login';
 import SlotMachineView from '../slot_machine/SlotMachine';
+import MineGameView from '../mines/MineGame';
+
 import HomeView from '../home/Home';
 import RegisterView from '../register/Register';
 import DashBoardView from '../dashboard/Dashboard';
@@ -43,6 +45,7 @@ function App() {
       case 'login' : return <LoginView/>;
       case 'register' : return <RegisterView/>;
       case 'slot-machine' : return <SlotMachineView/>;
+      case 'mine-game' : return <MineGameView/>;
       case 'home' : return <HomeView/>;
       case 'dashboard' : return <DashBoardView/>;
       default: return <LoginView/>; // TODO: mettre Login
