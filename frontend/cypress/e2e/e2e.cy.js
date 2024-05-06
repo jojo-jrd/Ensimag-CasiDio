@@ -168,11 +168,59 @@ describe('Test E2E', () => {
             expect(interception.response.body.message).to.equal('User Added');
         });
 
-        
-        
     });
 
-    // On est sur la page login
-    // TODO se connecter avant de tester le reste
+    it('[SLOT-MACHINE] : test slot-machine win with 3 in row', () => {
+        cy.intercept('http://localhost:3000/login').as('login') // route matcher
+        cy.intercept('http://localhost:3000/games').as('home')
+        // On est sur la page login
+        // Clear les inputs
+        cy.get("input#password").clear();
+        cy.get("input#email").clear();
+
+        // Remplit les inputs
+        cy.get("input#password").type('Ab*123-!');
+        cy.get("input#email").type('a@a.com');
+
+
+        // Valide les données
+        cy.get('button[data-cy="validate-login"]').click();
+
+        cy.wait('@login');
+
+        // On est sur la page home
+        cy.wait('@home');
+        cy.get('div.card-home:first-child button').click();
+
+        // On est sur la page slot-machine
+
+        cy.get('button.bg-red-700').click();
+
+        cy.wait(2000);
+
+        // TODO: TEST route credit a faire
+
+        cy.get('div#slot-machine').should('satisfy', ($el) => {
+            return $el.hasClass('threeOnLine');
+        });
+
+        cy.wait(1000);
+    })
+
+    // it('[SLOT-MACHINE] : test slot-machine win with 2 in row', () => {
+    //     cy.get('button.bg-red-700').click();
+
+    //     cy.wait(2000);
+
+    //     // TODO: TEST route credit a faire
+
+    //     cy.get('div#slot-machine').should('satisfy', ($el) => {
+    //         return $el.hasClass('twoOnLine');
+    //     });
+
+    //     cy.wait(1000);
+    // })
+
+    // // TODO se connecter avant de tester le reste
     
 })

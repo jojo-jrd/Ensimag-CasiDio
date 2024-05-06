@@ -6,7 +6,7 @@ import { useContext } from 'react';
 function Card({ title, description, image, pageClick }) {
     const {changePage } = useContext(AppContext);
     return (
-        <div className="m-1.5 p-1.5 w-full sm:w-1/3 border rounded-lg shadow bg-gray-800 border-gray-700">
+        <div className="card-home m-1.5 p-1.5 w-full sm:w-1/3 border rounded-lg shadow bg-gray-800 border-gray-700">
             <img className="rounded-t-lg" src={image} alt={title} />
             <div className="p-5">
                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 text-white">{title}</h5>

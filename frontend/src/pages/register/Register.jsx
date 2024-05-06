@@ -40,8 +40,7 @@ function RegisterView(){
                   birthDate : birthDateRef.current.value
                 })
             }).then(res => res.json()).then(reponse => {
-              // TODO voir après création problème
-              if (reponse.status == 200) {
+              if (reponse.status) {
                 changePage('login')
               } else {
                 setErreurMessage(reponse?.message);
