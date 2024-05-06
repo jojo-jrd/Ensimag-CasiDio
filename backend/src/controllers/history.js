@@ -15,7 +15,7 @@ module.exports = {
     // WHERE userID = req.userID
     // GROUP BY Date(gameDate, month-years)
     // ORDER BY gameDate
-    const data = await historyModel.findAll({
+    const evolutionSolde = await historyModel.findAll({
       attributes: [
         [sequelize.fn('strftime', '%m-%Y', sequelize.col('gameDate')), 'date'],
         [sequelize.fn('sum', sequelize.col('profit')), 'total_amount']
@@ -24,11 +24,26 @@ module.exports = {
       group: [sequelize.fn('strftime', '%m-%Y', sequelize.col('gameDate'))],
       order :[['gameDate', 'ASC']]
     })
+    var d = new Date();
+    d.setDate(d.getDate() - 7);
+
+    const evolutionSoldeWeek = await historyModel.findAll({
+      attributes: [
+        [sequelize.fn('sum', sequelize.col('profit')), 'total_amount']
+      ],
+      where: { userID: req.userID, gameDate : {
+        $between: [new Date(), d]
+      }},
+      
+    })
     
-    if (data) {
-      res.json({status: true, message: 'Returning user history', data})
-    } else {
-      res.status(status.NOT_FOUND).json({status: false, message: 'History not found'})
-    }
+    // if (data) {
+      res.json({status: true, message: 'Returning user history', data : {
+        'evolutionSolde' : evolutionSolde || [],
+        'evolutionSoldeWeek' : evolutionSoldeWeek?.['total_amount'] || 0.0
+      }})
+    // } else {
+    //   res.status(status.NOT_FOUND).json({status: false, message: 'History not found'})
+    // }
   }
 }

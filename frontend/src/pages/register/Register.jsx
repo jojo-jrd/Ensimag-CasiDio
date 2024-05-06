@@ -51,10 +51,11 @@ function RegisterView(){
   }
   return (
     <>
-      <div className="flex items-center justify-between w-full">
+      <NavBar/>
+      <div className="flex items-center justify-center w-full">
         <div className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md">
             <div className="mb-4">
-              <h2>Inscrivez-vous</h2>
+              <h2 className="text-2xl font-bold tracking-tight text-white">Inscrivez-vous</h2>
             </div>
             <div className="mb-4">
               <label className="block text-white text-sm font-bold mb-2" htmlFor="firstname">Prénom</label>
