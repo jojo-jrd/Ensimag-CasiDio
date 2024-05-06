@@ -41,6 +41,7 @@ frontendTest:
         paths:
             - frontendTest_coverage_report.txt # mise à disposition du coverage
             - frontendTest_report.txt # mise a disposition du compte rendu
+            - frontend/coverage/lcov-report/ # mise a disposition de la couverture de code
     allow_failure: true
 
 badges:
@@ -57,11 +58,14 @@ badges:
       - frontend_test.svg
       - frontend_coverage_test.svg
     
-#pages:
-  #stage: pages
-  #script:
-    #- mkdir -p public
-    # - cp -r backend/coverage/lcov-report/* public
-  #artifacts:
-    #paths:
-      #- public
+pages:
+  stage: pages
+  script:
+    - mkdir -p public
+    - mkdir -p public/backend
+    - mkdir -p public/frontend
+    - cp -r backend/coverage/lcov-report/* public/backend
+    - cp -r frontend/coverage/lcov-report/* public/frontend
+  artifacts:
+    paths:
+      - public
