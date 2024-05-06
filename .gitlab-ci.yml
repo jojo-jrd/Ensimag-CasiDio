@@ -3,6 +3,7 @@ image: node:latest
 stages:
   - backendTest
   - frontendTest
+  - frontendLint
   - badges
   - pages
 
@@ -44,6 +45,20 @@ frontendTest:
             - frontend/coverage/lcov-report/ # mise a disposition de la couverture de code
     allow_failure: true
 
+# Vérification de code
+frontendLint:
+    stage: frontendLint
+    allow_failure: true
+    script:
+      - cd frontend/
+      - npm i
+      # Run eslint
+      - npm run lint > frontend_lint_report.txt
+    artifacts:
+        when: always
+        paths:
+            - frontend_lint_report.txt # mise a disposition du compte rendu
+
 badges:
   stage: badges
   image: python
@@ -51,6 +66,7 @@ badges:
     - pip install anybadge
     - ./backend_badge.sh
     - ./frontend_badge.sh
+    - ./frontend_lint.sh # lancement du script générant le badge lint
   artifacts:
     paths:
       - backend_test.svg
