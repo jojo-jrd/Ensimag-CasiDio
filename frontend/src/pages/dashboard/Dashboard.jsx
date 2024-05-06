@@ -3,11 +3,15 @@ import { AppContext } from '../../AppContext';
 import NavBar from '../../components/navbar/Navbar';
 import Chart from 'chart.js/auto';
 import moment from 'moment';
+import Viardot from './../../assets/viardot-coin.png';
 
 function DashBoardView({ isAdmin = false}){
   const {changePage, userConnected, token } = useContext(AppContext);
   const filterRef = useRef(null);
-  const [evolutionSoldeWeek, setEvolutionSoldeWeek] = useState(0.0);
+  const [dataDashboard, setDataDashboard] = useState({
+    'evolutionSolde' : [],
+    'evolutionSoldeWeek' : 0.0,
+  });
 
   useEffect(() => {
     var myChart;
@@ -17,8 +21,9 @@ function DashBoardView({ isAdmin = false}){
         headers : {
           'x-access-token' : token
       }})).json();
-      if (reponse?.['data']) {
-        data = reponse['data'];
+      setDataDashboard(reponse?.['data'] || {});
+      if (reponse?.['data']?.['evolutionSolde']) {
+        data = reponse['data']['evolutionSolde'];
       } else {
         console.error(reponse.message);
       }
@@ -61,13 +66,15 @@ function DashBoardView({ isAdmin = false}){
             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="TODO Voir filtre" ref={filterRef} />
         </div>
 
-        <div className="col-span-4 md:col-span-2 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 w-full h-full md">
+        <div className="col-span-4 md:col-span-2 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 w-full h-full">
             <h2 className="text-white text-xl font-bold">Solde actuel</h2>
-            <p className={userConnected.balance > 100 ? 'text-lime-500' : 'text-red-500'}>{userConnected.balance} Viardot</p>
+            <p className={(userConnected.balance > 100 ? 'text-lime-500' : 'text-red-500') +' inline'}>{userConnected.balance}</p>
+            <img src={Viardot} alt="Viardot Money" className="w-10 ml-1 inline"/>
         </div>
         <div className="col-span-4 md:col-span-2 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 w-full h-full">
             <h2 className="text-white text-xl font-bold">Evolution du solde sur la dernière semaine</h2>
-            <p className={evolutionSoldeWeek >= 0 ? 'text-lime-500' : 'text-red-500'}>{(evolutionSoldeWeek >= 0 ? '+ ' : '- ') + evolutionSoldeWeek} Viardot</p>
+            <p className={(dataDashboard?.evolutionSoldeWeek >= 0 ? 'text-lime-500' : 'text-red-500') +' inline'}>{(dataDashboard.evolutionSoldeWeek >= 0 ? '+ ' : '- ') + dataDashboard.evolutionSoldeWeek}</p>
+            <img src={Viardot} alt="Viardot Money" className="w-10 ml-1 inline"/>
         </div>
         <div className="col-span-4 md:col-span-1 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 w-full h-full">
             <div className="mb-4">
