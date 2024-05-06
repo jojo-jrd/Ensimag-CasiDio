@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./MineGame.css"; // Import CSS file for styling
-import NavBar from './../../components/navbar/Navbar';
+import "./MineGame.css";
 
 const gridSize = 5;
 const totalCells = gridSize * gridSize;
@@ -12,10 +11,10 @@ let multiplier = 1;
 const calculateMultiplier = () => {
   // Calculate the base for the exponential function
   const base = 15 ** (1 / (totalCells - bombCount));
-  
+
   // Calculate the multiplier based on the number of discovered cells
   const multiplier = base ** discoveredCells;
-  
+
   return Math.round(multiplier * 100) / 100;
 };
 
@@ -50,7 +49,7 @@ const initializeGrid = () => {
 const Cell = ({ value, isRevealed, gameOver, onClick }) => {
   return (
     <div
-      className={`cell ${isRevealed ? "revealed" : ""}`}
+      className={`cell ${isRevealed ? "revealed" : ""} w-14 h-14 bg-white flex justify-center items-center text-xl`}
       onClick={onClick}
       style={{ cursor: gameOver ? "default" : "pointer" }} // Disable clicking when game is over
     >
@@ -98,6 +97,7 @@ const MineGameView = () => {
   };
 
   const cashOut = () => {
+    // TODO
     // Adjust balance based on the gain amount
     // Restart the game
     handleRestart();
@@ -118,63 +118,69 @@ const MineGameView = () => {
   };
 
   return (
-    <div className="game-container">
-      <NavBar/>
-      <h1>Mines Game</h1>
-      <div className="controls">
-        <label>
-          Number of Bombs:
-          <input
-            type="number"
-            value={bombCount}
-            onChange={handleBombCountChange}
-            min={1}
-            max={totalCells - 1} // Maximum number of bombs cannot exceed total cells - 1
-            disabled={gameOver || discoveredCells > 0} // Disable changing bomb count when game is running
-          />
-        </label>
-        <label>
-          Bet Amount:
-          <input
-            type="number"
-            value={betAmount}
-            onChange={handleBetAmountChange}
-            min={1}
-            disabled={gameOver || discoveredCells > 0} // Disable changing bet amount when game is running
-          />
-        </label>
+    <div>
+      <div className="mt-4 flex h-full justify-center items-center">
+        <div className="border border-solid border-red-700 bg-gray-800 rounded-lg p-8">
+          <h1 className="text-white text-center">Mines Game</h1>
+
+          <div className="text-white py-5">
+            <div>
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="bombQuantity">Quantité de bombes : </label>
+              <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                id="bombQuantity"
+                type="number"
+                value={bombCount}
+                onChange={handleBombCountChange}
+                min={1}
+                max={totalCells - 1} // Maximum number of bombs cannot exceed total cells - 1
+                disabled={gameOver || discoveredCells > 0} // Disable changing bomb count when game is running
+              />
+            </div>
+            <div>
+              <label className="block text-white text-sm font-bold mb-2" htmlFor="betAmount">Montant du pari : </label>
+              <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                id="betAmount"
+                type="number"
+                value={betAmount}
+                onChange={handleBetAmountChange}
+                min={1}
+                // TODO : Max betamout : solde
+                disabled={gameOver || discoveredCells > 0} // Disable changing bet amount when game is running
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-5 grid-rows-5 gap-2">
+            {grid.map((row, rowIndex) =>
+              row.map((cell, colIndex) => (
+                <Cell
+                  key={`${rowIndex}-${colIndex}`}
+                  value={cell.value}
+                  isRevealed={cell.isRevealed}
+                  gameOver={gameOver}
+                  onClick={() => handleCellClick(rowIndex, colIndex)}
+                />
+              ))
+            )}
+          </div>
+          {discoveredCells > 0 && (
+            <div className="text-white text-center mt-4">
+              <h2>Multiplier: x{multiplier}</h2>
+              <h2>Gain Amount: {gainAmount}</h2> {/* Display the gain amount */}
+            </div>
+          )}
+          {!gameOver && discoveredCells > 0 && (
+            <div>
+              <button onClick={cashOut} className="bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">Cash Out</button>
+            </div>
+          )}
+          {gameOver && (
+            <div>
+              <h2 className="text-white text-center" >Game Over!</h2>
+              <button onClick={handleRestart} className="bg-red-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">Play Again</button>
+            </div>
+          )}
+        </div>
       </div>
-      <div className="grid">
-        {grid.map((row, rowIndex) =>
-          row.map((cell, colIndex) => (
-            <Cell
-              key={`${rowIndex}-${colIndex}`}
-              value={cell.value}
-              isRevealed={cell.isRevealed}
-              gameOver={gameOver}
-              onClick={() => handleCellClick(rowIndex, colIndex)}
-            />
-          ))
-        )}
-      </div>
-      
-      {discoveredCells > 0 && (
-        <div>
-          <h2>Multiplier: x{multiplier}</h2>
-          <h2>Gain Amount: {gainAmount}</h2> {/* Display the gain amount */}
-        </div>
-      )}
-      {!gameOver && discoveredCells > 0 && (
-        <div>
-          <button onClick={cashOut}>Cash Out</button>
-        </div>
-      )}
-      {gameOver && (
-        <div>
-          <h2>Game Over!</h2>
-          <button onClick={handleRestart}>Play Again</button>
-        </div>
-      )}
     </div>
   );
 };
