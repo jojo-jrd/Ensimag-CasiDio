@@ -7,7 +7,7 @@
         "setup": "npm install && npm run doc && npm run updatedb",
         "updatedb": "rm -f ${BD:=bd.sqlite} && node src/util/updatedb.js",
         "start": "npm run doc && npm run updatedb  && node src/server.js",
-        "test": "DB=bdtest.sqlite npm run updatedb && DB=bdtest.sqlite jest --coverage --coverageReporters='text-summary'",
+        "test": "DB=bdtest.sqlite npm run updatedb && DB=bdtest.sqlite jest --coverage",
         "setupWIN": "npm install && npm run doc && npm run updatedbWIN",
         "updatedbWIN": "del bd.sqlite && node src/util/updatedb.js",
         "startWIN": "npm run doc && npm run updatedbWIN  && node src/server.js",
