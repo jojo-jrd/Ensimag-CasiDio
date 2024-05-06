@@ -8,11 +8,9 @@ router.get('/gameSocket', function(req, res, next){
 
 router.ws('/gameSocket', function(ws, req) {
     ws.on('message', function(msg) {
-        if (msg === '1') {
-            ws.send('2')
-        } else {
-            ws.send('3')
-        }
+        const jsonMSG = JSON.parse(msg)
+
+        gameWS[`${jsonMSG.game}`](jsonMSG, ws)
     })
 })
 

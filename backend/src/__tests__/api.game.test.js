@@ -14,14 +14,14 @@ test('Game get : simple valid', async () => {
       "id": 1,
       "name": "Machine à sous",
       "picturePath": "./images/slot-machine.png",
-      "page": "slot-machine",
+      "page": "SlotMachine",
       "description": "Plongez dans l\'excitation de notre machine à sous en ligne où vous alignerez trois symboles pour gagner des Viardots. Avec des graphismes captivants et des récompenses éblouissantes, chaque tour est une aventure en soi. Tournez les rouleaux et laissez-vous emporter par le frisson de la victoire !"
     },
     {
       "id": 2,
       "name": "Mines",
       "picturePath": "./images/mines.png",
-      "page": "mine-game",
+      "page": "MineGame",
       "description": "Plongez dans le Casino des Mines, où chaque tuile cache un secret : les étoiles mènent à la richesse, tandis que les bombes annoncent la catastrophe. Naviguez intelligemment à travers la grille pour révéler les étoiles, multipliant vos gains à chaque choix sûr. Mais attention ! Un seul faux pas pourrait faire exploser vos chances, mettant fin à la manche et réinitialisant vos gains. Testez votre chance et votre stratégie dans ce jeu palpitant de risque et de récompense !"
     }
   ])

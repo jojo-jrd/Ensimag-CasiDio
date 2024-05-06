@@ -3,7 +3,7 @@
     --icon-size : 80px;
 }
 
-#slot-machine {
+#SlotMachine {
     position: relative;
     width: 3.5 * var(--icon-size);
     height: calc(3 * var(--icon-size));
@@ -36,11 +36,11 @@
     }
 }
 
-#slot-machine.twoOnLine {
+#SlotMachine.twoOnLine {
     animation: twoOnLine 200ms steps(2, end) infinite;
 }
 
-#slot-machine.threeOnLine {
+#SlotMachine.threeOnLine {
     animation: threeOnLine 200ms steps(2, end) infinite;
 }
 
