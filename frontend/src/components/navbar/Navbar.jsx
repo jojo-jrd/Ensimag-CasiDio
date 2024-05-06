@@ -2,6 +2,7 @@ import { useState, useRef, useContext } from 'react';
 import { AppContext } from '../../AppContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons/faBars';
+import Viardot from './../../assets/viardot-coin.png';
 
 function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -15,9 +16,15 @@ function NavBar() {
             <nav className="bg-gray-800 p-4">
                 <div className="flex flex-wrap items-center justify-between">
                     <div className="flex-shrink-0">
-                    <span onClick={() => changePage('home')} className="text-white text-xl cursor-pointer font-bold">Mon Casino</span>
+                        <span onClick={() => changePage('home')} className="text-white text-xl cursor-pointer font-bold">Mon Casino</span>
                     </div>
                     <div className="hidden md:flex justify-end md:flex-grow">
+                        { userConnected?.email ? (
+                            <span>
+                                <p className={(userConnected.balance > 100 ? 'text-lime-500' : 'text-red-500') +' inline'}>{userConnected.balance}</p>
+                                <img src={Viardot} alt="Viardot Money" className="w-10 ml-1 inline"/>
+                            </span>
+                        ) : <></>}
                         <span onClick={() => changePage('home')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Accueil</span>
                         { userConnected?.email ? (
                             <>
@@ -33,6 +40,12 @@ function NavBar() {
                         )}
                     </div>
                     <div className="block md:hidden">
+                        { userConnected?.email ? (
+                            <span>
+                                <p className={(userConnected.balance > 100 ? 'text-lime-500' : 'text-red-500') +' inline'}>{userConnected.balance}</p>
+                                <img src={Viardot} alt="Viardot Money" className="w-10 ml-1 inline"/>
+                            </span>
+                        ) : <></>}
                         <button onClick={toggleMenu} className="text-gray-300 bg-gray-800 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">
                             <FontAwesomeIcon icon={faBars} />
                         </button>
