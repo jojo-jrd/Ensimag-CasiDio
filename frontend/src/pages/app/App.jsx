@@ -8,6 +8,8 @@ import MineGameView from '../mines/MineGame';
 import HomeView from '../home/Home';
 import RegisterView from '../register/Register';
 import DashBoardView from '../dashboard/Dashboard';
+import NavBar from './../../components/navbar/Navbar';
+
 
 function App() {
   const [token, setToken] = useState(null);
@@ -54,6 +56,7 @@ function App() {
 
   return (
     <AppContext.Provider value = {{token, setToken, changePage, setUserConnected, userConnected}}>
+      <NavBar />
       {getCurrentPage()}
     </AppContext.Provider>
   )

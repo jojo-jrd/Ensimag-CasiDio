@@ -82,7 +82,6 @@ function SlotMachineView() {
 
     return (
         <div>
-            <NavBar/>
             <div className="mt-4 flex h-full justify-center items-center">
                 <div className="max-w-lg w-full">
                     <div className="border border-solid border-red-700 bg-gray-800 rounded-lg p-8">

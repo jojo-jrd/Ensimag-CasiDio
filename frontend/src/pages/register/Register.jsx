@@ -1,6 +1,5 @@
 import { useState, useRef, useContext } from 'react';
 import { AppContext } from '../../AppContext';
-import NavBar from '../../components/navbar/Navbar';
 
 function RegisterView(){
   const firstNameRef = useRef(null);
@@ -52,7 +51,6 @@ function RegisterView(){
   }
   return (
     <>
-      <NavBar/>
       <div className="flex items-center justify-center w-full">
         <div className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md">
             <div className="mb-4">
