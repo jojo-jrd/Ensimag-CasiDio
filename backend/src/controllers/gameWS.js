@@ -5,6 +5,18 @@ const gridSize = 5;
 const totalCells = gridSize * gridSize;
 
 
+function applyUserBet(user, msg) {
+  // handle user bet
+  if (msg.Payload.betAmount < 0 || msg.Payload.betAmount > user.balance) {
+    return false
+  }
+
+  // Update user balance
+  user.balance -= msg.Payload.betAmount
+  user.save()
+  return true
+}
+
 function getRandomInt (max) {
   return Math.floor(Math.random() * max)
 }
@@ -20,8 +32,14 @@ function calculateMultiplier(bombCount, discoveredCells) {
 }
 
 module.exports = {
-  async initMineGame(msg, ws) {
-    // initialize grid w stars and bombs
+  async initMineGame(msg, ws, user) {
+    // Check msg request
+    if (!msg.Payload.bombCount || !msg.Payload.betAmount) {
+      ws.send(JSON.stringify({error: 'bombCount nor betAmout not specified'}))
+      return
+    }
+
+    // initialize grid w stars
     const grid = Array(gridSize)
       .fill(null)
       .map(() => Array(gridSize).fill(null))
@@ -32,6 +50,7 @@ module.exports = {
       }
     }
 
+    // Initialize bombs
     let bombsPlaced = 0;
     while (bombsPlaced < msg.Payload.bombCount) {
       const row = getRandomInt(gridSize)
@@ -43,7 +62,7 @@ module.exports = {
     }
 
     // Initialize player data
-    curentGames['user-MineGame'] = {
+    curentGames[`${user.id}-MineGame`] = {
       discoveredCells: 0,
       bombCount: msg.Payload.bombCount,
       betAmount: msg.Payload.betAmount,
@@ -54,30 +73,46 @@ module.exports = {
     const userGrid = JSON.parse(JSON.stringify(grid))
     userGrid.forEach(row => row.forEach(cell => !cell.isRevealed ? cell.value = '' : null))
 
-    // TODO RETIRER LA THUNE
+    if (!applyUserBet(user, msg)) {
+      ws.send(JSON.stringify({error: 'bet is not defined, below 0 or over the user balance'}))
+      return
+    }
 
     // send back data
     ws.send(JSON.stringify({grid: userGrid, multiplier: calculateMultiplier(msg.Payload.bombCount, 0), gainAmount: msg.Payload.betAmount, state: 'playing'}))
   },
-  async playMineGame(msg, ws) {
+  async playMineGame(msg, ws, user) {
+    // Check workflow status
+    if (!curentGames[`${user.id}-MineGame`]?.betAmount) {
+      ws.send(JSON.stringify({error: 'invalid game state'}))
+      return
+    }
+
+    // Check msg request
+    if ((msg.Payload.row ? (msg.Payload.row > gridSize) : true) || (msg.Payload.col ? (msg.Payload.col > gridSize) : true)) {
+      ws.send(JSON.stringify({error: `bombCount nor betAmout are not specified or greater than ${gridSize}`}))
+      return
+    }
+
+
     const row = msg.Payload.row
     const col = msg.Payload.col
     let state = 'playing'
     let gainAmount = 0
     let multipler = 0
 
-    let newGrid = [...curentGames['user-MineGame'].grid]
+    let newGrid = [...curentGames[`${user.id}-MineGame`].grid]
     newGrid[row][col]["isRevealed"] = true
-    curentGames['user-MineGame'].discoveredCells++;
+    curentGames[`${user.id}-MineGame`].discoveredCells++;
 
-    if (curentGames['user-MineGame'].grid[row][col].value === "bomb") {
+    if (curentGames[`${user.id}-MineGame`].grid[row][col].value === "bomb") {
       state = 'loose'
-      newGrid = curentGames['user-MineGame'].grid
+      newGrid = curentGames[`${user.id}-MineGame`].grid
     } else {
       newGrid.forEach(row => row.forEach(cell => !cell.isRevealed ? cell.value = '' : null))
 
-      multipler = calculateMultiplier(curentGames['user-MineGame'].bombCount, curentGames['user-MineGame'].discoveredCells)
-      gainAmount = curentGames['user-MineGame'].betAmount * multipler
+      multipler = calculateMultiplier(curentGames[`${user.id}-MineGame`].bombCount, curentGames[`${user.id}-MineGame`].discoveredCells)
+      gainAmount = curentGames[`${user.id}-MineGame`].betAmount * multipler
     }
 
     ws.send(JSON.stringify({grid: newGrid, multiplier: multipler, gainAmount: gainAmount, state: state}))

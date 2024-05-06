@@ -1,16 +1,48 @@
 const express = require('express')
 const router = express.Router()
 const gameWS = require('../controllers/gameWS')
+const userModel = require('../models/users')
+const jws = require('jws')
+const { TOKENSECRET } = process.env
 
 router.get('/gameSocket', function(req, res, next){
     res.end();
 });
 
 router.ws('/gameSocket', function(ws, req) {
-    ws.on('message', function(msg) {
-        const jsonMSG = JSON.parse(msg)
+    ws.on('message', async function(msg) {
+        if (!msg) {
+            ws.send(JSON.stringify({error: 'msg required'}))
+            return
+        }
 
-        gameWS[`${jsonMSG.game}`](jsonMSG, ws)
+        const jsonMSG = JSON.parse(msg)
+        
+        // Check user msg
+        if (!jsonMSG?.game || !jsonMSG?.Payload || !jsonMSG?.userToken) {
+            ws.send(JSON.stringify({error: 'invalid msg request'}))
+            return
+        }
+
+        // Get and check user
+        console.log(jsonMSG.userToken)
+        console.log(TOKENSECRET)
+        if (!jws.verify(jsonMSG.userToken, 'HS256', TOKENSECRET)) {
+            ws.send(JSON.stringify({error: 'invalid token'}))
+            return
+        }
+
+        const user = await userModel.findOne({
+            where: {email:  jws.decode(jsonMSG.userToken).payload}
+        })
+
+        if (!user) {
+            ws.send(JSON.stringify({error: 'user not found'}))
+            return
+        }
+
+        // Call right game
+        gameWS[`${jsonMSG.game}`](jsonMSG, ws, user)
     })
 })
 
