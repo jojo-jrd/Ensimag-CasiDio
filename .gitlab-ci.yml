@@ -53,7 +53,7 @@ frontendLint:
       - cd frontend/
       - npm i
       # Run eslint
-      - npm run lint > frontend_lint_report.txt
+      - npm run lint > $CI_PROJECT_DIR/frontend_lint_report.txt
     artifacts:
         when: always
         paths:
