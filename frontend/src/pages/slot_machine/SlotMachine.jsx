@@ -87,7 +87,7 @@ function SlotMachineView() {
                 <div className="max-w-lg w-full">
                     <div className="border border-solid border-red-700 bg-gray-800 rounded-lg p-8">
                         <h1 className="text-white text-4xl font-bold text-center mb-8">Machine à sous</h1>
-                    <div ref={slotMachineEl} id="slot-machine">
+                    <div ref={slotMachineEl} id="SlotMachine">
                         <div className="column"></div>
                         <div className="column"></div>
                         <div className="column"></div>

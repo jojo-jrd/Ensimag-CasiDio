@@ -44,8 +44,8 @@ function App() {
     switch(page){
       case 'login' : return <LoginView/>;
       case 'register' : return <RegisterView/>;
-      case 'slot-machine' : return <SlotMachineView/>;
-      case 'mine-game' : return <MineGameView/>;
+      case 'SlotMachine' : return <SlotMachineView/>;
+      case 'MineGame' : return <MineGameView/>;
       case 'home' : return <HomeView/>;
       case 'dashboard' : return <DashBoardView/>;
       default: return <LoginView/>; // TODO: mettre Login

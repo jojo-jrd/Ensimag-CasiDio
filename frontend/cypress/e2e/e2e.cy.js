@@ -192,7 +192,7 @@ describe('Test E2E', () => {
         cy.wait('@home');
         cy.get('div.card-home:first-child button').click();
 
-        // On est sur la page slot-machine
+        // On est sur la page SlotMachine
 
         cy.get('button.bg-red-700').click();
 
@@ -200,21 +200,21 @@ describe('Test E2E', () => {
 
         // TODO: TEST route credit a faire
 
-        cy.get('div#slot-machine').should('satisfy', ($el) => {
+        cy.get('div#SlotMachine').should('satisfy', ($el) => {
             return $el.hasClass('threeOnLine');
         });
 
         cy.wait(1000);
     })
 
-    // it('[SLOT-MACHINE] : test slot-machine win with 2 in row', () => {
+    // it('[SlotMachine] : test SlotMachine win with 2 in row', () => {
     //     cy.get('button.bg-red-700').click();
 
     //     cy.wait(2000);
 
     //     // TODO: TEST route credit a faire
 
-    //     cy.get('div#slot-machine').should('satisfy', ($el) => {
+    //     cy.get('div#SlotMachine').should('satisfy', ($el) => {
     //         return $el.hasClass('twoOnLine');
     //     });
 
