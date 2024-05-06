@@ -73,6 +73,7 @@ badges:
       - backend_coverage_test.svg
       - frontend_test.svg
       - frontend_coverage_test.svg
+      - frontend_lint.svg
     
 pages:
   stage: pages
