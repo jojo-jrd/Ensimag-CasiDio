@@ -20,8 +20,8 @@ test('Game get : simple valid', async () => {
     {
       "id": 2,
       "name": "Mines",
-      "picturePath": "./../../assets/mines.png",
-      "page": "mines",
+      "picturePath": "./images/mines.png",
+      "page": "mine-game",
       "description": "Un démineur"
     }
   ])
