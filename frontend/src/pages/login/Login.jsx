@@ -1,6 +1,5 @@
 import { useState, useRef, useContext } from 'react';
 import { AppContext } from '../../AppContext';
-import NavBar from '../../components/navbar/Navbar';
 
 function LoginView() {
   const emailRef = useRef(null);

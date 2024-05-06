@@ -1,6 +1,5 @@
 import { useState, useContext, useEffect, useRef } from 'react';
 import { AppContext } from '../../AppContext';
-import NavBar from '../../components/navbar/Navbar';
 import Chart from 'chart.js/auto';
 import moment from 'moment';
 import Viardot from './../../assets/viardot-coin.png';
@@ -59,7 +58,6 @@ function DashBoardView({ isAdmin = false}){
 
   return (
     <div>
-      <NavBar/>
       <div className="grid grid-cols-4 gap-4 m-4">
         {/* Bloc de filtre */}
         <div className="col-span-4 md:col-span-2 md:col-start-2 bg-gray-800 shadow-md rounded px-8 py-6 w-full h-full md relative">
