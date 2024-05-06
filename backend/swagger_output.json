@@ -610,6 +610,16 @@
           }
         ]
       }
+    },
+    "/gameSocket": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   }
 }

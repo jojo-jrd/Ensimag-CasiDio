@@ -15,7 +15,7 @@ test('Game get : simple valid', async () => {
       "name": "Machine à sous",
       "picturePath": "./images/slot-machine.png",
       "page": "slot-machine",
-      "description": "'Plongez dans l\'excitation de notre machine à sous en ligne où vous alignerez trois symboles pour gagner des Viardots. Avec des graphismes captivants et des récompenses éblouissantes, chaque tour est une aventure en soi. Tournez les rouleaux et laissez-vous emporter par le frisson de la victoire !'"
+      "description": "Plongez dans l\'excitation de notre machine à sous en ligne où vous alignerez trois symboles pour gagner des Viardots. Avec des graphismes captivants et des récompenses éblouissantes, chaque tour est une aventure en soi. Tournez les rouleaux et laissez-vous emporter par le frisson de la victoire !"
     },
     {
       "id": 2,
