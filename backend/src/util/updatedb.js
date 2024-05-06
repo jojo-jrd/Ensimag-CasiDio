@@ -49,8 +49,8 @@ const bcrypt = require('bcrypt');
   })
   const g2 = await gameModel.create({
     name: 'Mines',
-    page : 'mines',
-    picturePath: './../../assets/mines.png',
+    page : 'mine-game',
+    picturePath: './images/mines.png',
     description: 'Un démineur'
   })
   const h1 = await historyModel.create({
