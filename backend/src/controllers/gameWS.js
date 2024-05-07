@@ -91,6 +91,21 @@ module.exports = {
       return
     }
 
+    // Check if input is to cashout
+    if (msg.Payload.cashOut) {
+      // Update balance of the player
+      const win = curentGames[`${user.id}-MineGame`].betAmount * calculateMultiplier(curentGames[`${user.id}-MineGame`].bombCount, curentGames[`${user.id}-MineGame`].discoveredCells)
+      user.balance += win
+      user.save()
+
+      // Send informaitons
+      ws.send(JSON.stringify({currentBalance: user.balance, gains: win}))
+      
+      // Remove user curentGames data
+      delete curentGames[`${user.id}-MineGame`]
+      return
+    }
+
     // Check msg request
     if ((msg.Payload.row !== undefined ? (msg.Payload.row > gridSize) : true) || (msg.Payload.col !== undefined ? (msg.Payload.col > gridSize) : true)) {
       ws.send(JSON.stringify({error: `row nor col are not specified or greater than ${gridSize}`}))

@@ -8,25 +8,15 @@ let gameSocket;
 let bombCount = 5;
 let discoveredCells = 0;
 
-const calculateMultiplier = () => {
-  // Calculate the base for the exponential function
-  const base = 15 ** (1 / (totalCells - bombCount));
-
-  // Calculate the multiplier based on the number of discovered cells
-  const multiplier = base ** discoveredCells;
-
-  return Math.round(multiplier * 100) / 100;
-};
-
 
 const Cell = ({ value, isRevealed, gameOver, onClick }) => {
   return (
     <div
       className={`cell ${isRevealed ? "revealed" : ""} w-14 h-14 bg-white flex justify-center items-center text-xl`}
       onClick={onClick}
-      style={{ cursor: gameOver ? "default" : "pointer" }} // Disable clicking when game is over
+      style={{ cursor: gameOver || isRevealed ? "default" : "pointer" }} // Disable clicking when game is over
     >
-      {value === "star" && (isRevealed || gameOver) ? "⭐️" : value === "bomb" && (isRevealed || gameOver) ? "💣" : ""}
+      {value === "star" && (isRevealed) ? "⭐️" : value === "bomb" && (isRevealed) ? "💣" : ""}
     </div>
   );
 };
@@ -44,48 +34,36 @@ const MineGameView = () => {
     gameSocket = new WebSocket("ws://localhost:3000/gameSocket");
 
     gameSocket.onopen = () => {
-      gameSocket.send(JSON.stringify({game: 'initMineGame', Payload: {bombCount: 5, betAmount: 1}, userToken: token}));
-    }
-    
-    gameSocket.onmessage = (msg) => {
-      setGrid(JSON.parse(msg.data).grid)
-      gameSocket.onmessage = (msg) => mineGameHandler(msg);
+      initGame()
     }
   }, []);
 
-  const handleCellClick = (row, col) => {
-    if (!gameOver && !grid[row][col].isRevealed) {
-      gameSocket.send(JSON.stringify({game: 'playMineGame', Payload: {row: row, col: col}, userToken: token}))
-      // const newGrid = [...grid];
-      // newGrid[row][col]["isRevealed"] = true;
-      // setGrid(newGrid);
-      // discoveredCells++;
+  const initGame = () => {
+    gameSocket.send(JSON.stringify({game: 'initMineGame', Payload: {bombCount: bombCount, betAmount: betAmount}, userToken: token}));
 
-      // if (grid[row][col].value === "bomb") {
-      //   setGameOver(true);
-      //   setMultiplier(0);
-      //   setGainAmount(0); // Reset gain amount if bomb is clicked
-      // } else {
-      //   const newMultiplier = calculateMultiplier();
-      //   setMultiplier(newMultiplier);
-      //   setGainAmount(betAmount * newMultiplier); // Calculate and set the gain amount using the new multiplier
-      // }
+    gameSocket.onmessage = (msg) => {
+      const data = JSON.parse(msg.data)
+      if (data.gains) {
+        // nothing TODO : FAIRE QUELQUE CHOSE
+      } else {
+        setMultiplier(data.multiplier)
+        setGainAmount(data.gainAmount)
+        setGameOver(false)
+        setGrid(data.grid)
+        discoveredCells = data.discoveredCells
+        gameSocket.onmessage = (msg) => mineGameHandler(msg);
+      }
     }
-  };
+  }
 
-  const handleRestart = () => {
-    discoveredCells = 0;
-    setGrid(initializeGrid());
-    setGameOver(false);
-    setMultiplier(1);
-    setGainAmount(0); // Reset gain amount when restarting the game
+  const handleCellClick = (row, col) => {
+    if (!gameOver && !grid[row][col].isRevealed)
+      gameSocket.send(JSON.stringify({game: 'playMineGame', Payload: {row: row, col: col}, userToken: token}));
   };
 
   const cashOut = () => {
-    // TODO
-    // Adjust balance based on the gain amount
-    // Restart the game
-    handleRestart();
+    gameSocket.send(JSON.stringify({game: 'playMineGame', Payload: {cashOut: true}, userToken: token}));
+    initGame();
   };
 
   // Function to handle changes in the bet amount
@@ -99,7 +77,7 @@ const MineGameView = () => {
     const newBombCount = parseInt(event.target.value);
     bombCount = newBombCount;
     setGrid(initializeGrid()); // Update grid with new bomb count
-    handleRestart(); // Restart game with the new bomb count
+    initGame(); // Restart game with the new bomb count
   };
 
   const mineGameHandler = (msg) => {
@@ -109,6 +87,9 @@ const MineGameView = () => {
     setMultiplier(data.multiplier)
     setGainAmount(data.gainAmount)
     discoveredCells = data.discoveredCells
+
+    if (data.state === 'loose') 
+      setGameOver(true);
   }
 
   return (
@@ -170,7 +151,7 @@ const MineGameView = () => {
           {gameOver && (
             <div>
               <h2 className="text-white text-center" >Game Over!</h2>
-              <button onClick={handleRestart} className="bg-red-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">Play Again</button>
+              <button onClick={initGame} className="bg-red-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">Play Again</button>
             </div>
           )}
         </div>
