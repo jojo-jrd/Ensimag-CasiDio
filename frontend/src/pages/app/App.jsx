@@ -10,6 +10,7 @@ import RegisterView from '../register/Register';
 import DashBoardView from '../dashboard/Dashboard';
 import NavBar from './../../components/navbar/Navbar';
 import QuestionAPI from './../../components/questionAPI/QuestionAPI';
+import AdminUsers from '../admin_users/AdminUsers';
 
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
       case 'SlotMachine' : return <SlotMachineView/>;
       case 'MineGame' : return <MineGameView/>;
       case 'home' : return <HomeView/>;
+      case 'adminUsers' : return <AdminUsers/>
       case 'dashboard' : return <DashBoardView/>;
       default: return <LoginView/>; // TODO: mettre Login
     }
