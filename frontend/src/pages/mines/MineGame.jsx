@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AppContext } from '../../AppContext';
 import "./MineGame.css";
 
 const gridSize = 5;
 const totalCells = gridSize * gridSize;
+let gameSocket;
 let bombCount = 5;
 let discoveredCells = 0;
-let winProbability = 0.54;
-let multiplier = 1;
 
 const calculateMultiplier = () => {
   // Calculate the base for the exponential function
@@ -18,33 +18,6 @@ const calculateMultiplier = () => {
   return Math.round(multiplier * 100) / 100;
 };
 
-const getRandomInt = (max) => {
-  return Math.floor(Math.random() * max);
-};
-
-const initializeGrid = () => {
-  const grid = Array(gridSize)
-    .fill(null)
-    .map(() => Array(gridSize).fill(null));
-
-  for (let row = 0; row < gridSize; row++) {
-    for (let col = 0; col < gridSize; col++) {
-      grid[row][col] = { value: "star", isRevealed: false };
-    }
-  }
-
-  let bombsPlaced = 0;
-  while (bombsPlaced < bombCount) {
-    const row = getRandomInt(gridSize);
-    const col = getRandomInt(gridSize);
-    if (grid[row][col].value !== "bomb") {
-      grid[row][col].value = "bomb";
-      bombsPlaced++;
-    }
-  }
-
-  return grid;
-};
 
 const Cell = ({ value, isRevealed, gameOver, onClick }) => {
   return (
@@ -64,27 +37,39 @@ const MineGameView = () => {
   const [multiplier, setMultiplier] = useState(false);
   const [betAmount, setBetAmount] = useState(1); // Default bet amount
   const [gainAmount, setGainAmount] = useState(0); // State for the gain amount
+  const { token } = useContext(AppContext);
 
   useEffect(() => {
-    setGrid(initializeGrid());
+    // Define web socket and define handlers
+    gameSocket = new WebSocket("ws://localhost:3000/gameSocket");
+
+    gameSocket.onopen = () => {
+      gameSocket.send(JSON.stringify({game: 'initMineGame', Payload: {bombCount: 5, betAmount: 1}, userToken: token}));
+    }
+    
+    gameSocket.onmessage = (msg) => {
+      setGrid(JSON.parse(msg.data).grid)
+      gameSocket.onmessage = (msg) => mineGameHandler(msg);
+    }
   }, []);
 
   const handleCellClick = (row, col) => {
     if (!gameOver && !grid[row][col].isRevealed) {
-      const newGrid = [...grid];
-      newGrid[row][col]["isRevealed"] = true;
-      setGrid(newGrid);
-      discoveredCells++;
+      gameSocket.send(JSON.stringify({game: 'playMineGame', Payload: {row: row, col: col}, userToken: token}))
+      // const newGrid = [...grid];
+      // newGrid[row][col]["isRevealed"] = true;
+      // setGrid(newGrid);
+      // discoveredCells++;
 
-      if (grid[row][col].value === "bomb") {
-        setGameOver(true);
-        setMultiplier(0);
-        setGainAmount(0); // Reset gain amount if bomb is clicked
-      } else {
-        const newMultiplier = calculateMultiplier();
-        setMultiplier(newMultiplier);
-        setGainAmount(betAmount * newMultiplier); // Calculate and set the gain amount using the new multiplier
-      }
+      // if (grid[row][col].value === "bomb") {
+      //   setGameOver(true);
+      //   setMultiplier(0);
+      //   setGainAmount(0); // Reset gain amount if bomb is clicked
+      // } else {
+      //   const newMultiplier = calculateMultiplier();
+      //   setMultiplier(newMultiplier);
+      //   setGainAmount(betAmount * newMultiplier); // Calculate and set the gain amount using the new multiplier
+      // }
     }
   };
 
@@ -116,6 +101,15 @@ const MineGameView = () => {
     setGrid(initializeGrid()); // Update grid with new bomb count
     handleRestart(); // Restart game with the new bomb count
   };
+
+  const mineGameHandler = (msg) => {
+    const data = JSON.parse(msg.data)
+
+    setGrid(data.grid)
+    setMultiplier(data.multiplier)
+    setGainAmount(data.gainAmount)
+    discoveredCells = data.discoveredCells
+  }
 
   return (
     <div>

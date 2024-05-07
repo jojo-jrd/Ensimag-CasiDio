@@ -25,8 +25,6 @@ router.ws('/gameSocket', function(ws, req) {
         }
 
         // Get and check user
-        console.log(jsonMSG.userToken)
-        console.log(TOKENSECRET)
         if (!jws.verify(jsonMSG.userToken, 'HS256', TOKENSECRET)) {
             ws.send(JSON.stringify({error: 'invalid token'}))
             return
@@ -41,8 +39,14 @@ router.ws('/gameSocket', function(ws, req) {
             return
         }
 
+        // Verify game
+        if (!gameWS[jsonMSG.game]) {
+            ws.send(JSON.stringify({error: 'game not found'}))
+            return
+        }
+
         // Call right game
-        gameWS[`${jsonMSG.game}`](jsonMSG, ws, user)
+        gameWS[jsonMSG.game](jsonMSG, ws, user)
     })
 })
 

@@ -39,6 +39,9 @@ module.exports = {
       return
     }
 
+    // Delete player data if it was not done before
+    delete curentGames[`${user.id}-MineGame`]
+
     // initialize grid w stars
     const grid = Array(gridSize)
       .fill(null)
@@ -89,32 +92,45 @@ module.exports = {
     }
 
     // Check msg request
-    if ((msg.Payload.row ? (msg.Payload.row > gridSize) : true) || (msg.Payload.col ? (msg.Payload.col > gridSize) : true)) {
-      ws.send(JSON.stringify({error: `bombCount nor betAmout are not specified or greater than ${gridSize}`}))
+    if ((msg.Payload.row !== undefined ? (msg.Payload.row > gridSize) : true) || (msg.Payload.col !== undefined ? (msg.Payload.col > gridSize) : true)) {
+      ws.send(JSON.stringify({error: `row nor col are not specified or greater than ${gridSize}`}))
       return
     }
 
-
+    // Define data
     const row = msg.Payload.row
     const col = msg.Payload.col
     let state = 'playing'
     let gainAmount = 0
     let multipler = 0
+    let discoveredCells = 0
 
-    let newGrid = [...curentGames[`${user.id}-MineGame`].grid]
-    newGrid[row][col]["isRevealed"] = true
+    // Copy the grid and reveal user inputs
+    curentGames[`${user.id}-MineGame`].grid[row][col]["isRevealed"] = true
     curentGames[`${user.id}-MineGame`].discoveredCells++;
+    discoveredCells = curentGames[`${user.id}-MineGame`].discoveredCells
 
+    let newGrid = JSON.parse(JSON.stringify(curentGames[`${user.id}-MineGame`].grid))
+
+    // Update game variable according to the cell clicked
     if (curentGames[`${user.id}-MineGame`].grid[row][col].value === "bomb") {
+      // Update states variable according to the loose
       state = 'loose'
       newGrid = curentGames[`${user.id}-MineGame`].grid
+
+      // Remove user curentGames data
+      delete curentGames[`${user.id}-MineGame`]
     } else {
+      // hide unrevelead cell
       newGrid.forEach(row => row.forEach(cell => !cell.isRevealed ? cell.value = '' : null))
 
+      // Update multiplier and game amount
       multipler = calculateMultiplier(curentGames[`${user.id}-MineGame`].bombCount, curentGames[`${user.id}-MineGame`].discoveredCells)
       gainAmount = curentGames[`${user.id}-MineGame`].betAmount * multipler
+
     }
 
-    ws.send(JSON.stringify({grid: newGrid, multiplier: multipler, gainAmount: gainAmount, state: state}))
+    // Send back data
+    ws.send(JSON.stringify({grid: newGrid, multiplier: multipler, gainAmount: gainAmount, state: state, discoveredCells: discoveredCells}))
   }
 }
