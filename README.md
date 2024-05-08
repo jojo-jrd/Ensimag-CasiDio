@@ -1,7 +1,9 @@
 ---
-title: Projet React 
+title: CasiDio 
 author:  
-- A compléter avec vos noms
+- JOSSERAND Jordan
+- LOIOIDICE Lukas
+- NOGUEIRA Clement
 --- 
 
 ## Cahier des charges

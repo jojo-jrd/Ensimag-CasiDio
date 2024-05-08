@@ -97,14 +97,11 @@ function AdminUsers() {
           .then(async (willDelete) => {
             if (willDelete) {
                 // Suppression de l'utilisateur
-                const reponse = await(await fetch(`${import.meta.env.VITE_API_URL}/api/user`, {
+                const reponse = await(await fetch(`${import.meta.env.VITE_API_URL}/api/user/${user.id}`, {
                     method: 'DELETE',
                     headers: {
                         'x-access-token': token,
                     },
-                    body : {
-                        userId : user.id
-                    }
                 })).json();
                 if (reponse.status) {
                     toast.success("Utilisateur supprimé", {

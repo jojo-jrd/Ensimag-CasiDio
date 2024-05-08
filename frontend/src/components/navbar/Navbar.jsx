@@ -16,7 +16,7 @@ function NavBar() {
             <nav className="bg-gray-800 p-4">
                 <div className="flex flex-wrap items-center justify-between">
                     <div className="flex-shrink-0">
-                        <span onClick={() => changePage('home')} className="text-white text-xl cursor-pointer font-bold">Mon Casino</span>
+                        <span onClick={() => changePage('home')} className="text-white text-xl cursor-pointer font-bold">CasiDio</span>
                     </div>
                     <div className="hidden md:flex justify-end md:flex-grow">
                         { userConnected?.email ? (
