@@ -5,8 +5,6 @@ import "./MineGame.css";
 const gridSize = 5;
 const totalCells = gridSize * gridSize;
 let gameSocket;
-let bombCount = 5;
-let discoveredCells = 0;
 
 
 const Cell = ({ value, isRevealed, gameOver, onClick }) => {
@@ -24,18 +22,16 @@ const Cell = ({ value, isRevealed, gameOver, onClick }) => {
 const MineGameView = () => {
   const [grid, setGrid] = useState([]);
   const [gameOver, setGameOver] = useState(false);
-  const [multiplier, setMultiplier] = useState(false);
+  const [multiplier, setMultiplier] = useState(1);
   const [betAmount, setBetAmount] = useState(1); // Default bet amount
+  const [bombCount, setBombCount] = useState(5);
   const [gainAmount, setGainAmount] = useState(0); // State for the gain amount
+  const [discoveredCells, setDiscoveredCells] = useState(0);
   const { token } = useContext(AppContext);
 
   useEffect(() => {
-    // Define web socket and define handlers
+    // Define web socket
     gameSocket = new WebSocket("ws://localhost:3000/gameSocket");
-
-    gameSocket.onopen = () => {
-      initGame()
-    }
   }, []);
 
   const initGame = () => {
@@ -43,16 +39,18 @@ const MineGameView = () => {
 
     gameSocket.onmessage = (msg) => {
       const data = JSON.parse(msg.data)
-      if (data.gains) {
-        // nothing TODO : FAIRE QUELQUE CHOSE
-      } else {
-        setMultiplier(data.multiplier)
-        setGainAmount(data.gainAmount)
-        setGameOver(false)
-        setGrid(data.grid)
-        discoveredCells = data.discoveredCells
-        gameSocket.onmessage = (msg) => mineGameHandler(msg);
+
+      if (data.error) {
+        console.error(data.error)
+        return
       }
+
+      setMultiplier(data.multiplier)
+      setGainAmount(data.gainAmount)
+      setGameOver(false)
+      setGrid(data.grid)
+      setDiscoveredCells(data.discoveredCells)
+      gameSocket.onmessage = (msg) => mineGameHandler(msg);
     }
   }
 
@@ -63,7 +61,7 @@ const MineGameView = () => {
 
   const cashOut = () => {
     gameSocket.send(JSON.stringify({game: 'playMineGame', Payload: {cashOut: true}, userToken: token}));
-    initGame();
+    setDiscoveredCells(0); // to display the play button
   };
 
   // Function to handle changes in the bet amount
@@ -75,21 +73,27 @@ const MineGameView = () => {
   // Function to handle changes in the number of bombs
   const handleBombCountChange = (event) => {
     const newBombCount = parseInt(event.target.value);
-    bombCount = newBombCount;
-    setGrid(initializeGrid()); // Update grid with new bomb count
-    initGame(); // Restart game with the new bomb count
+    setBombCount(newBombCount);
   };
 
   const mineGameHandler = (msg) => {
     const data = JSON.parse(msg.data)
 
-    setGrid(data.grid)
-    setMultiplier(data.multiplier)
-    setGainAmount(data.gainAmount)
-    discoveredCells = data.discoveredCells
+    if (data.error) {
+      console.error(data.error)
+      return
+    }
 
-    if (data.state === 'loose') 
-      setGameOver(true);
+    if (!data.gains) { // data.gains => cashout
+      setGrid(data.grid)
+      setMultiplier(data.multiplier)
+      setGainAmount(data.gainAmount)
+      setDiscoveredCells(data.discoveredCells)
+  
+      if (data.state === 'loose') 
+        setGameOver(true);
+        setDiscoveredCells(0);
+    }
   }
 
   return (
@@ -108,7 +112,7 @@ const MineGameView = () => {
                 onChange={handleBombCountChange}
                 min={1}
                 max={totalCells - 1} // Maximum number of bombs cannot exceed total cells - 1
-                disabled={gameOver || discoveredCells > 0} // Disable changing bomb count when game is running
+                disabled={discoveredCells > 0} // Disable changing bomb count when game is running
               />
             </div>
             <div>
@@ -120,7 +124,7 @@ const MineGameView = () => {
                 onChange={handleBetAmountChange}
                 min={1}
                 // TODO : Max betamout : solde
-                disabled={gameOver || discoveredCells > 0} // Disable changing bet amount when game is running
+                disabled={discoveredCells > 0} // Disable changing bet amount when game is running
               />
             </div>
           </div>
@@ -137,15 +141,18 @@ const MineGameView = () => {
               ))
             )}
           </div>
-          {discoveredCells > 0 && (
-            <div className="text-white text-center mt-4">
-              <h2>Multiplier: x{multiplier}</h2>
-              <h2>Gain Amount: {gainAmount}</h2> {/* Display the gain amount */}
-            </div>
-          )}
+          <div className="text-white text-center mt-4">
+            <h2>Multiplier: x{multiplier}</h2>
+            <h2>Gain Amount: {gainAmount}</h2> {/* Display the gain amount */}
+          </div>
           {!gameOver && discoveredCells > 0 && (
             <div>
               <button onClick={cashOut} className="bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">Cash Out</button>
+            </div>
+          )}
+          {!gameOver && discoveredCells == 0 && (
+            <div>
+              <button onClick={initGame} className="bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">Play</button>
             </div>
           )}
           {gameOver && (

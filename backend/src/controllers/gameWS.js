@@ -82,7 +82,7 @@ module.exports = {
     }
 
     // send back data
-    ws.send(JSON.stringify({grid: userGrid, multiplier: calculateMultiplier(msg.Payload.bombCount, 0), gainAmount: msg.Payload.betAmount, state: 'playing'}))
+    ws.send(JSON.stringify({grid: userGrid, multiplier: calculateMultiplier(msg.Payload.bombCount, 0), gainAmount: msg.Payload.betAmount, state: 'playing', discoveredCells: 0}))
   },
   async playMineGame(msg, ws, user) {
     // Check workflow status
