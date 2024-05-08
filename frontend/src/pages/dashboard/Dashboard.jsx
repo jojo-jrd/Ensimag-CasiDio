@@ -66,7 +66,7 @@ function DashBoardView({ isAdmin = false}){
 
         <div className="col-span-4 md:col-span-2 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 w-full h-full">
             <h2 className="text-white text-xl font-bold">Solde actuel</h2>
-            <p className={(userConnected.balance > 100 ? 'text-lime-500' : 'text-red-500') +' inline'}>{userConnected.balance}</p>
+            <p className={(userConnected.balance > 100 ? 'text-lime-500' : 'text-amber-500') +' inline'}>{userConnected.balance}</p>
             <img src={Viardot} alt="Viardot Money" className="w-10 ml-1 inline"/>
         </div>
         <div className="col-span-4 md:col-span-2 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 w-full h-full">

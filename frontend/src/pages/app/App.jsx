@@ -11,6 +11,7 @@ import DashBoardView from '../dashboard/Dashboard';
 import NavBar from './../../components/navbar/Navbar';
 import QuestionAPI from './../../components/questionAPI/QuestionAPI';
 import AdminUsers from '../admin_users/AdminUsers';
+import ProfilView from '../profil/Profil';
 
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
       case 'home' : return <HomeView/>;
       case 'adminUsers' : return <AdminUsers/>
       case 'dashboard' : return <DashBoardView/>;
+      case 'profil' : return <ProfilView/>;
       default: return <LoginView/>; // TODO: mettre Login
     }
   }
