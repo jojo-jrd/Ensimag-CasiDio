@@ -1,11 +1,6 @@
 const curentGames = {}
-
-// Mines game
-const gridSize = 5;
-const totalCells = gridSize * gridSize;
-
-
-function applyUserBet(user, msg) {
+// Global
+async function applyUserBet(user, msg) {
   // handle user bet
   if (msg.Payload.betAmount < 0 || msg.Payload.betAmount > user.balance) {
     return false
@@ -13,9 +8,13 @@ function applyUserBet(user, msg) {
 
   // Update user balance
   user.balance -= msg.Payload.betAmount
-  user.save()
+  await user.save()
   return true
 }
+
+// Mines game
+const gridSize = 5;
+const totalCells = gridSize * gridSize;
 
 function getRandomInt (max) {
   return Math.floor(Math.random() * max)
@@ -32,6 +31,51 @@ function calculateMultiplier(bombCount, discoveredCells) {
 }
 
 module.exports = {
+  async playSlotMachine(msg, ws, user) {
+    // Check msg resquest
+    if (!msg.Payload.nbIcons || !msg.Payload.indexesColumns || !msg.Payload.betAmount) {
+      ws.send(JSON.stringify({error: 'nbIcons, indexesColumns nor betAmout not specified'}))
+      return
+    }
+    
+    // Apply user bet
+    if (! await applyUserBet(user, msg)) {
+      ws.send(JSON.stringify({error: 'bet is not defined, below 0 or over the user balance'}))
+      return
+    }
+
+    // Roll columns
+    const deltas = Array(3)
+    const finalIndexes = Array(3)
+    for (let i = 0; i < 3; i++) {
+      const index = msg.Payload.indexesColumns[i]
+      deltas[i] = Math.round(Math.random() * msg.Payload.nbIcons) + msg.Payload.nbIcons * 2
+      finalIndexes[i] = (index + deltas[i]) % msg.Payload.nbIcons
+    }
+
+    // Check game state
+    const hasWin = finalIndexes[0] === finalIndexes[1] || finalIndexes[1] === finalIndexes[2] || finalIndexes[0] === finalIndexes[2]
+    let gains = 0
+    let state = 'loose'
+    if (hasWin) {
+      let multipler = 2
+      state = 'win'
+
+      if (finalIndexes[0] === finalIndexes[1] && finalIndexes[1] === finalIndexes[2]) {
+        multipler = 10
+        state = 'bigWIN'
+      }
+      
+      gains = msg.Payload.betAmount * multipler
+
+      // Update user balance
+      user.balance += gains
+      await user.save()
+    }
+    
+    // Send back data
+    ws.send(JSON.stringify({finalIndexes: finalIndexes, deltas: deltas, gains: gains, currentBalance: user.balance, state: state}))
+  }, 
   async initMineGame(msg, ws, user) {
     // Check msg request
     if (!msg.Payload.bombCount || !msg.Payload.betAmount) {
@@ -76,7 +120,7 @@ module.exports = {
     const userGrid = JSON.parse(JSON.stringify(grid))
     userGrid.forEach(row => row.forEach(cell => !cell.isRevealed ? cell.value = '' : null))
 
-    if (!applyUserBet(user, msg)) {
+    if (! await applyUserBet(user, msg)) {
       ws.send(JSON.stringify({error: 'bet is not defined, below 0 or over the user balance'}))
       return
     }
@@ -96,7 +140,7 @@ module.exports = {
       // Update balance of the player
       const win = curentGames[`${user.id}-MineGame`].betAmount * calculateMultiplier(curentGames[`${user.id}-MineGame`].bombCount, curentGames[`${user.id}-MineGame`].discoveredCells)
       user.balance += win
-      user.save()
+      await user.save()
 
       // Send informaitons
       ws.send(JSON.stringify({currentBalance: user.balance, gains: win}))

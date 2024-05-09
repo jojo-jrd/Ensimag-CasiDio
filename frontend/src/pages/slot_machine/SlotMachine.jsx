@@ -1,83 +1,79 @@
-import { useState, useRef, useContext } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
 import { AppContext } from '../../AppContext';
 import NavBar from './../../components/navbar/Navbar';
 import $ from 'jquery';
 import './SlotMachine.css'
-const TEST_LAUNCH = [
-    [6, 6, 6],
-    [2, 2, 1],
-    [3, 4, 7]
-];
 
-function SlotMachineView() {
-    const [indexesColumns, setIndexesColumns] = useState([0, 0, 0]);
-    const slotMachineEl = useRef();
-    const [isClicked, setIsClicked] = useState(false);
-    const [nbLaunchTest, setNbLaunchTest] = useState(0);
-    const nbIcones = 9,
+const   nbIcones = 9,
         timeIcon = 100,
         iconSize = 80;
-    
+let     gameSocket,
+        indexesColumns;
 
-    function rollColumn(offset, column) {
-            var delta;
-            // GESTION DU TEST
-            if (import.meta.env.VITE_TEST === '1') {
-                delta = TEST_LAUNCH[nbLaunchTest][offset];
-            } else {
-                delta = (offset + 2) * nbIcones + Math.round(Math.random() * nbIcones);
+function SlotMachineView() {
+    const slotMachineEl = useRef();
+    const [isClicked, setIsClicked] = useState(false);
+    const { token } = useContext(AppContext);
+
+    useEffect(() => {
+        // Define web socket and initial indexes
+        gameSocket = new WebSocket("ws://localhost:3000/gameSocket");
+        indexesColumns = [0, 0, 0];
+        
+        // Define web socket handler
+        gameSocket.onmessage = (msg) => {
+            const data = JSON.parse(msg.data);
+
+            // Check errors
+            if (data.error) {
+                console.error(msg.error);
+                return;
             }
-        
-            return new Promise((resolve, reject) => {
-                const sizeBackgroundPositionY = parseFloat(column.style.backgroundPositionY) || 0;
-                // Gestion de l'animation
-                setTimeout(() => {
-                    column.style.transition = `background-position-y ${(8 + 1 * delta) * timeIcon}ms cubic-bezier(.41,-0.01,.63,1.09)`;
-                    column.style.backgroundPositionY = (sizeBackgroundPositionY + delta * iconSize).toString() + 'px';
-                }, offset * 150);
-        
-                setTimeout(() => {
-                    column.style.transition = `none`;
-                    column.style.backgroundPositionY = (sizeBackgroundPositionY + delta * iconSize % (nbIcones * iconSize)).toString() + 'px';
-                    resolve(delta % nbIcones);
-                }, (8 + 1 * delta) * timeIcon + offset * 150);
-        
-            });
+            
+            // Rolls each column
+            $(slotMachineEl.current).find('.column').map((columnIndex, htmlElement) => {
+                rollColumn(columnIndex, htmlElement, data.deltas[columnIndex], afterRolls);
+                indexesColumns[columnIndex] = data.finalIndexes[columnIndex];
+            })
+
+            // Check game state
+            function afterRolls() {
+                if (data.state === 'win') {
+                    $(slotMachineEl.current).addClass('twoOnLine');
+                    setTimeout(() => $(slotMachineEl.current).removeClass('twoOnLine'), 2000);
+                } else if (data.state === 'bigWIN') {
+                    $(slotMachineEl.current).addClass('twoOnLine');
+                    setTimeout(() => $(slotMachineEl.current).removeClass('threeOnLine'), 2000);
+                }
+                
+                setIsClicked(false);
+            }
+        }
+    }, []);
+
+
+    function rollColumn(offset, column, delta, callback) {
+        const sizeBackgroundPositionY = parseFloat(column.style.backgroundPositionY) || 0;
+
+        // Gestion de l'animation
+        setTimeout(() => {
+            column.style.transition = `background-position-y ${(8 + 1 * delta) * timeIcon}ms cubic-bezier(.41,-0.01,.63,1.09)`;
+            column.style.backgroundPositionY = (sizeBackgroundPositionY + delta * iconSize).toString() + 'px';
+        }, offset * 150);
+
+        setTimeout(() => {
+            column.style.transition = `none`;
+            column.style.backgroundPositionY = (sizeBackgroundPositionY + delta * iconSize % (nbIcones * iconSize)).toString() + 'px';
+
+            if (offset == 2) // On the last roll, call the callback function
+                callback()
+        }, (8 + 1 * delta) * timeIcon + offset * 150);
     }
 
     function launchRoll() {
-        
-        // TODO utiliser ? crédits
-
         setIsClicked(true);
 
-        // Lancement de chaque colonne
-        Promise.all($(slotMachineEl.current).find('.column').map((column, i) => rollColumn(column, i))).then((deltas) => {
-            // Mise à jour des index en fonction de l'index précédent et du nouvel index
-            deltas.forEach((delta, i) => indexesColumns[i] = (indexesColumns[i] + delta) % nbIcones);
-
-            const hasWin = indexesColumns[0] == indexesColumns[1] || indexesColumns[1] == indexesColumns[2] || indexesColumns[0] == indexesColumns[2];
-            // Si l'utilisateur a au moins 2 symboles alignés
-            if (hasWin) {
-                let className = 'twoOnLine';
-                if (indexesColumns[0] == indexesColumns[1] && indexesColumns[1] == indexesColumns[2]) {
-                    className = 'threeOnLine';
-                    // TODO ajouter ? credit
-                } else {
-                    // TODO Ajouter ? credit
-                }
-                
-                // Gestion de l'animation
-                $(slotMachineEl.current).addClass(className);
-                setTimeout(() => $(slotMachineEl.current).removeClass(className), 2000);
-                
-                // Incrémentation du test
-                if (import.meta.env.VITE_TEST === '1') {
-                    setNbLaunchTest(nbLaunchTest+1);
-                }
-            }
-            setIsClicked(false);
-        });
+        gameSocket.send(JSON.stringify({game: 'playSlotMachine', Payload: {nbIcons: nbIcones, indexesColumns: indexesColumns, betAmount: 10}, userToken: token}));
     }
 
     return (
