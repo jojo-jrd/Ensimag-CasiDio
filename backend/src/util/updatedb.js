@@ -21,7 +21,7 @@ const bcrypt = require('bcrypt');
     balance: 999999,
     isAdmin: true
   })
-  await userModel.create({
+  const u2 = await userModel.create({
     firstName: 'Admin',
     lastName: 'Admin',
     email: 'a@a.com',
@@ -71,4 +71,10 @@ const bcrypt = require('bcrypt');
   })
   h3.setUser(u1)
   h3.setGame(g2)
+  const h4 = await historyModel.create({
+    profit: 200,
+    gameDate: '2024-04-23T10:27:55.000Z'
+  })
+  h4.setUser(u2)
+  h4.setGame(g1)
 })()

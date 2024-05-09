@@ -90,9 +90,10 @@ const MineGameView = () => {
       setGainAmount(data.gainAmount)
       setDiscoveredCells(data.discoveredCells)
   
-      if (data.state === 'loose') 
+      if (data.state === 'loose') {
         setGameOver(true);
         setDiscoveredCells(0);
+      }
     }
   }
 

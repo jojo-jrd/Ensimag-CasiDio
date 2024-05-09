@@ -36,11 +36,11 @@ function DashBoardView({ isAdmin = false}){
         {
           type: 'line',
           data: {
-            labels: data.map(row => moment(row.gameDate).format('L')),
+            labels: data.map(row => row.date),
             datasets: [
               {
                 label: 'Evolution du solde',
-                data: data.map(row => row.profit),
+                data: data.map(row => row.total_amount),
                 borderColor : "#FF9F40",
                 backgroundColor : "#FF9F40"
               }
@@ -71,7 +71,7 @@ function DashBoardView({ isAdmin = false}){
         </div>
         <div className="col-span-4 md:col-span-2 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 w-full h-full">
             <h2 className="text-white text-xl font-bold">Evolution du solde sur la dernière semaine</h2>
-            <p className={(dataDashboard?.evolutionSoldeWeek >= 0 ? 'text-lime-500' : 'text-red-500') +' inline'}>{(dataDashboard.evolutionSoldeWeek >= 0 ? '+ ' : '- ') + dataDashboard.evolutionSoldeWeek}</p>
+            <p className={(dataDashboard?.evolutionSoldeWeek?.total_amount >= 0 ? 'text-lime-500' : 'text-red-500') +' inline'}>{dataDashboard.evolutionSoldeWeek.total_amount ? dataDashboard.evolutionSoldeWeek.total_amount : 0}</p>
             <img src={Viardot} alt="Viardot Money" className="w-10 ml-1 inline"/>
         </div>
         <div className="col-span-4 md:col-span-1 bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 w-full h-full">

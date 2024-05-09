@@ -1,5 +1,7 @@
-const curentGames = {}
+const historyModel = require('../models/histories.js')
+
 // Global
+const curentGames = {}
 async function applyUserBet(user, msg) {
   // handle user bet
   if (msg.Payload.betAmount < 0 || msg.Payload.betAmount > user.balance) {
@@ -10,6 +12,12 @@ async function applyUserBet(user, msg) {
   user.balance -= msg.Payload.betAmount
   await user.save()
   return true
+}
+
+async function saveUserHistory(user, purProfit, gameID) {
+  const history = await historyModel.create({profit: purProfit, gameDate: Date.now()})
+  history.setUser(user)
+  history.setGame(gameID)
 }
 
 // Mines game
@@ -71,6 +79,9 @@ module.exports = {
       // Update user balance
       user.balance += gains
       await user.save()
+      await saveUserHistory(user, gains - msg.Payload.betAmount, 1)
+    } else {
+      await saveUserHistory(user, -msg.Payload.betAmount, 1)
     }
     
     // Send back data
@@ -141,6 +152,7 @@ module.exports = {
       const win = curentGames[`${user.id}-MineGame`].betAmount * calculateMultiplier(curentGames[`${user.id}-MineGame`].bombCount, curentGames[`${user.id}-MineGame`].discoveredCells)
       user.balance += win
       await user.save()
+      await saveUserHistory(user, win - curentGames[`${user.id}-MineGame`].betAmount, 2)
 
       // Send informaitons
       ws.send(JSON.stringify({currentBalance: user.balance, gains: win}))
@@ -176,6 +188,8 @@ module.exports = {
       // Update states variable according to the loose
       state = 'loose'
       newGrid = curentGames[`${user.id}-MineGame`].grid
+
+      await saveUserHistory(user, -curentGames[`${user.id}-MineGame`].betAmount, 2)
 
       // Remove user curentGames data
       delete curentGames[`${user.id}-MineGame`]
