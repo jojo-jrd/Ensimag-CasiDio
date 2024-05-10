@@ -123,7 +123,6 @@ A compléter
 | /api/users  | (**TOKEN**,**ADMIN**)Lister tous les utilisateurs  | *  |  * |  * |
 | /api/user | (**TOKEN**)Récupération des informations de l'utilisateur | * | (**TOKEN**)Modification des informations de l'utilisateur/**password**,**firstName**,**lastName**,**address**,**birthDate** | (**TOKEN**)Suppression de l'utilisateur courant|
 | /api/users/{id}| * | * | (**TOKEN**, **ADMIN**)Mettre à jour les informations de l'utilisateur/**email**,**password**,**firstName**,**lastName**,**address**,**birthDate**,**isAdmin** | (**TOKEN**, **ADMIN**) Suppression de l'utilisateur/
-| /api/userBalance/{id}| * | * | (**TOKEN**, **ADMIN**)Incrémenter/Décrémenter le solde de l'utilisateur/**gains** | * |
 
 **Game :**
 |Endpoint | GET  | POST | PUT  | DELETE  |
