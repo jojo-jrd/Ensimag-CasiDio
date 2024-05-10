@@ -135,7 +135,12 @@ A compléter
 |Endpoint | GET  | POST | PUT  | DELETE  |
 |---|---|---|---|---|
 | /api/globalHistory  | (**TOKEN**, **ADMIN**)Récupérer l'historique global | * | *  | * |
-| /api/history  | (**TOKEN**)Récupérer l'historique de l'utilisateur connecté | (**TOKEN**)Ajoute l'historique à l'utilisateur/**idUser, idGame, profit, gameDate** | *  | * |
+| /api/history  | (**TOKEN**)Récupérer l'historique de l'utilisateur connecté | * | *  | * |
+
+**Game web socket :**
+|Endpoint | parameters | description | return values |
+|---|---|---|---|
+|/gameSocket | game: *String*, Payload: *Object*, userToken: *String* | Lance une itération du jeu `game` pour l'utilisateur `userToken` avec les paramètres `Payload` propres au jeu | *Object* |
 
 ## Architecture du code
 
