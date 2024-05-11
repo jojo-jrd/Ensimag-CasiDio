@@ -562,6 +562,32 @@
         ]
       }
     },
+    "/api/globalHistory": {
+      "get": {
+        "tags": [
+          "Histories"
+        ],
+        "summary": "Get all history of all the users",
+        "description": "",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
     "/gameSocket": {
       "get": {
         "description": "",
