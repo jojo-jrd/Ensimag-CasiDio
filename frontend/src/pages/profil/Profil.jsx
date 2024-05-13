@@ -120,7 +120,7 @@ function ProfilView(){
 						</div>
 						<div className="mb-4">
 							<label className="block text-white text-sm font-bold mb-2" htmlFor="birthdate">Date de naissance</label>
-							<input className={'shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ' + (isEdit ? 'text-black' : 'text-gray-400')} id="birthdate" defaultValue={userConnected.birthdate} disabled={!isEdit} ref={birthDateRef} type="date" />
+							<input className={'shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ' + (isEdit ? 'text-black' : 'text-gray-400')} id="birthdate" defaultValue={userConnected.birthDate?.slice(0, 10)} disabled={!isEdit} ref={birthDateRef} type="date" />
 						</div>
 						<div className="mb-4">
 							<label className="block text-white text-sm font-bold mb-2" htmlFor="email">Email</label>
