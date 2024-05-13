@@ -9,11 +9,31 @@ const   nbIcones = 9,
         iconSize = 80;
 let     gameSocket,
         indexesColumns;
+        
+const isTest = import.meta.env.VITE_TEST == '1';
+const valueTest = [
+    {
+        deltas : [5, 5, 5],
+        finalIndexes : [5, 5, 5],
+        state :  'bigWIN'
+    },
+    {
+        deltas : [6, 6, 5],
+        finalIndexes : [6, 6, 5],
+        state :  'win'
+    },
+    {
+        deltas : [6, 5, 4],
+        finalIndexes : [6, 5, 4],
+        state :  'loose'
+    }
+]
 
 function SlotMachineView() {
     const slotMachineEl = useRef();
     const [isClicked, setIsClicked] = useState(false);
     const { token } = useContext(AppContext);
+    let nbLaunchTest = 0
 
     useEffect(() => {
         // Define web socket and initial indexes
@@ -22,7 +42,15 @@ function SlotMachineView() {
         
         // Define web socket handler
         gameSocket.onmessage = (msg) => {
-            const data = JSON.parse(msg.data);
+            let data;
+            // Les web socket sont super impossible à tester avec cypress
+            // On change donc le résultat ici
+            if (isTest) {
+                data = valueTest[nbLaunchTest];
+                nbLaunchTest++;
+            } else {
+                data = JSON.parse(msg.data);
+            }
 
             // Check errors
             if (data.error) {
@@ -42,7 +70,7 @@ function SlotMachineView() {
                     $(slotMachineEl.current).addClass('twoOnLine');
                     setTimeout(() => $(slotMachineEl.current).removeClass('twoOnLine'), 2000);
                 } else if (data.state === 'bigWIN') {
-                    $(slotMachineEl.current).addClass('twoOnLine');
+                    $(slotMachineEl.current).addClass('threeOnLine');
                     setTimeout(() => $(slotMachineEl.current).removeClass('threeOnLine'), 2000);
                 }
                 

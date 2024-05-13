@@ -188,42 +188,44 @@ describe('Test E2E', () => {
         cy.wait('@login');
 
         // On est sur la page home
+        cy.wait('@home');
 
-        // TODO suite
-        // BIEN RETOURNER SUR LA PAGE HOME A LA FIN
+        cy.get('div.card-home:first-child button').click();
 
+        // On est sur la page slot-machine
 
-        // cy.wait('@home');
-        // cy.get('div.card-home:first-child button').click();
+        cy.get('button.bg-red-700').click();
 
-        // // On est sur la page slot-machine
+        cy.wait(2000);
+        // Doit avoir la class qui permet de gagner avec 3 sur la ligne
+        cy.get('div#SlotMachine').should('satisfy', ($el) => {
+            return $el.hasClass('threeOnLine');
+        });
 
-        // cy.get('button.bg-red-700').click();
-
-        // cy.wait(2000);
-
-        // // TODO: TEST route credit a faire
-
-        // cy.get('div#slot-machine').should('satisfy', ($el) => {
-        //     return $el.hasClass('threeOnLine');
-        // });
-
-        // cy.wait(1000);
+        cy.wait(1500);
     });
 
-    // it('[SlotMachine] : test SlotMachine win with 2 in row', () => {
-    //     cy.get('button.bg-red-700').click();
+    it('[SlotMachine] : test SlotMachine win with 2 in row', () => {
+        cy.get('button.bg-red-700').click();
 
-    //     cy.wait(2000);
+        cy.wait(2000);
+        // Doit avoir la class qui permet de gagner avec 2 sur la ligne
+        cy.get('div#SlotMachine').should('satisfy', ($el) => {
+            return $el.hasClass('twoOnLine');
+        });
 
-    //     // TODO: TEST route credit a faire
+        cy.wait(1500);
+    });
 
-    //     cy.get('div#SlotMachine').should('satisfy', ($el) => {
-    //         return $el.hasClass('twoOnLine');
-    //     });
+    it('[SlotMachine] : test SlotMachine loose', () => {
+        cy.get('button.bg-red-700').click();
 
-    //     cy.wait(1000);
-    // })
+        cy.wait(2000);
+        // Doit avoir aucune class
+        cy.get('div#SlotMachine').should('satisfy', ($el) => {
+            return !$el.hasClass('twoOnLine') && !$el.hasClass('threeOnLine');
+        });
+    })
 
 
 
