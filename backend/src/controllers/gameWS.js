@@ -1,4 +1,5 @@
 const historyModel = require('../models/histories.js')
+const fetch = require("node-fetch")
 
 // Global
 const curentGames = {}
@@ -39,6 +40,59 @@ function calculateMultiplier(bombCount, discoveredCells) {
 }
 
 module.exports = {
+  async initQuestion(msg, ws, user) {
+    const resultAPI = await (await fetch("https://opentdb.com/api.php?amount=1&type=multiple", { method : 'GET'})).json();
+    
+    delete curentGames[`${user.id}-question`]
+
+    // Problem : the api sometimes don't send the data
+    if (resultAPI.results) {
+      const result = resultAPI.results[0]
+
+      // TODO : pb d'encodagage
+      const answers = result.incorrect_answers
+      const correctAnswer = result.correct_answer
+      answers.splice(Math.floor(Math.random() * (answers.length + 1)), 0, correctAnswer)
+
+      curentGames[`${user.id}-question`] = {
+        correctAnswer: correctAnswer
+      }
+
+      ws.send(JSON.stringify({question: result.question, difficulty: result.difficulty, category: result.category, possibleAnswers: answers}))
+    } else {
+      console.log('EXTERN API : have to refetch data')
+      await setTimeout(async () => {
+        await initQuestion(msg, ws, user)
+      }, 500);
+    }
+  },
+  async playQuestion(msg, ws, user) {
+    // Check msg request
+    if (!msg.Payload.answer) {
+      ws.send(JSON.stringify({error: 'you must specify the user answer'}))
+      return
+    }
+
+    // Check game state
+    if (!curentGames[`${user.id}-question`]) {
+      ws.send(JSON.stringify({error: 'invalid game state'}))
+      return
+    }
+
+    const correctAnswer = curentGames[`${user.id}-question`].correctAnswer
+
+    // Check answer with correct answer
+    if (msg.Payload.answer === correctAnswer) {
+      // Update user balance
+      user.balance += 10
+      await user.save()
+
+      // Send back data
+      ws.send(JSON.stringify({state: 'win', gains: 10}))
+    } else {
+      ws.send(JSON.stringify({state: 'loose', gains: 0}))
+    }
+  },
   async playSlotMachine(msg, ws, user) {
     // Check msg resquest
     if (!msg.Payload.nbIcons || !msg.Payload.indexesColumns || !msg.Payload.betAmount) {
