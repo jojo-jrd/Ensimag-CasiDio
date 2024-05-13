@@ -1,7 +1,9 @@
 ---
-title: Projet React 
+title: CasiDio 
 author:  
-- A compléter avec vos noms
+- JOSSERAND Jordan
+- LOIOIDICE Lukas
+- NOGUEIRA Clement
 --- 
 
 ## Cahier des charges
@@ -121,7 +123,6 @@ A compléter
 | /api/users  | (**TOKEN**,**ADMIN**)Lister tous les utilisateurs  | *  |  * |  * |
 | /api/user | (**TOKEN**)Récupération des informations de l'utilisateur | * | (**TOKEN**)Modification des informations de l'utilisateur/**password**,**firstName**,**lastName**,**address**,**birthDate** | (**TOKEN**)Suppression de l'utilisateur courant|
 | /api/users/{id}| * | * | (**TOKEN**, **ADMIN**)Mettre à jour les informations de l'utilisateur/**email**,**password**,**firstName**,**lastName**,**address**,**birthDate**,**isAdmin** | (**TOKEN**, **ADMIN**) Suppression de l'utilisateur/
-| /api/userBalance/{id}| * | * | (**TOKEN**, **ADMIN**)Incrémenter/Décrémenter le solde de l'utilisateur/**gains** | * |
 
 **Game :**
 |Endpoint | GET  | POST | PUT  | DELETE  |
@@ -134,7 +135,12 @@ A compléter
 |Endpoint | GET  | POST | PUT  | DELETE  |
 |---|---|---|---|---|
 | /api/globalHistory  | (**TOKEN**, **ADMIN**)Récupérer l'historique global | * | *  | * |
-| /api/history  | (**TOKEN**)Récupérer l'historique de l'utilisateur connecté | (**TOKEN**)Ajoute l'historique à l'utilisateur/**idUser, idGame, profit, gameDate** | *  | * |
+| /api/history  | (**TOKEN**)Récupérer l'historique de l'utilisateur connecté | * | *  | * |
+
+**Game web socket :**
+|Endpoint | parameters | description | return values |
+|---|---|---|---|
+|/gameSocket | game: *String*, Payload: *Object*, userToken: *String* | Lance une itération du jeu `game` pour l'utilisateur `userToken` avec les paramètres `Payload` propres au jeu | *Object* |
 
 ## Architecture du code
 

@@ -1,59 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AppContext } from '../../AppContext';
 import "./MineGame.css";
 
 const gridSize = 5;
 const totalCells = gridSize * gridSize;
-let bombCount = 5;
-let discoveredCells = 0;
-let winProbability = 0.54;
-let multiplier = 1;
+let gameSocket;
 
-const calculateMultiplier = () => {
-  // Calculate the base for the exponential function
-  const base = 15 ** (1 / (totalCells - bombCount));
-
-  // Calculate the multiplier based on the number of discovered cells
-  const multiplier = base ** discoveredCells;
-
-  return Math.round(multiplier * 100) / 100;
-};
-
-const getRandomInt = (max) => {
-  return Math.floor(Math.random() * max);
-};
-
-const initializeGrid = () => {
-  const grid = Array(gridSize)
-    .fill(null)
-    .map(() => Array(gridSize).fill(null));
-
-  for (let row = 0; row < gridSize; row++) {
-    for (let col = 0; col < gridSize; col++) {
-      grid[row][col] = { value: "star", isRevealed: false };
-    }
-  }
-
-  let bombsPlaced = 0;
-  while (bombsPlaced < bombCount) {
-    const row = getRandomInt(gridSize);
-    const col = getRandomInt(gridSize);
-    if (grid[row][col].value !== "bomb") {
-      grid[row][col].value = "bomb";
-      bombsPlaced++;
-    }
-  }
-
-  return grid;
-};
 
 const Cell = ({ value, isRevealed, gameOver, onClick }) => {
   return (
     <div
       className={`cell ${isRevealed ? "revealed" : ""} w-14 h-14 bg-white flex justify-center items-center text-xl`}
       onClick={onClick}
-      style={{ cursor: gameOver ? "default" : "pointer" }} // Disable clicking when game is over
+      style={{ cursor: gameOver || isRevealed ? "default" : "pointer" }} // Disable clicking when game is over
     >
-      {value === "star" && (isRevealed || gameOver) ? "⭐️" : value === "bomb" && (isRevealed || gameOver) ? "💣" : ""}
+      {value === "star" && (isRevealed) ? "⭐️" : value === "bomb" && (isRevealed) ? "💣" : ""}
     </div>
   );
 };
@@ -61,46 +22,46 @@ const Cell = ({ value, isRevealed, gameOver, onClick }) => {
 const MineGameView = () => {
   const [grid, setGrid] = useState([]);
   const [gameOver, setGameOver] = useState(false);
-  const [multiplier, setMultiplier] = useState(false);
+  const [multiplier, setMultiplier] = useState(1);
   const [betAmount, setBetAmount] = useState(1); // Default bet amount
+  const [bombCount, setBombCount] = useState(5);
   const [gainAmount, setGainAmount] = useState(0); // State for the gain amount
+  const [discoveredCells, setDiscoveredCells] = useState(0);
+  const { token } = useContext(AppContext);
 
   useEffect(() => {
-    setGrid(initializeGrid());
+    // Define web socket
+    gameSocket = new WebSocket(`${import.meta.env.VITE_API_WS}/gameSocket`);
   }, []);
 
-  const handleCellClick = (row, col) => {
-    if (!gameOver && !grid[row][col].isRevealed) {
-      const newGrid = [...grid];
-      newGrid[row][col]["isRevealed"] = true;
-      setGrid(newGrid);
-      discoveredCells++;
+  const initGame = () => {
+    gameSocket.send(JSON.stringify({game: 'initMineGame', Payload: {bombCount: bombCount, betAmount: betAmount}, userToken: token}));
 
-      if (grid[row][col].value === "bomb") {
-        setGameOver(true);
-        setMultiplier(0);
-        setGainAmount(0); // Reset gain amount if bomb is clicked
-      } else {
-        const newMultiplier = calculateMultiplier();
-        setMultiplier(newMultiplier);
-        setGainAmount(betAmount * newMultiplier); // Calculate and set the gain amount using the new multiplier
+    gameSocket.onmessage = (msg) => {
+      const data = JSON.parse(msg.data)
+
+      if (data.error) {
+        console.error(data.error)
+        return
       }
-    }
-  };
 
-  const handleRestart = () => {
-    discoveredCells = 0;
-    setGrid(initializeGrid());
-    setGameOver(false);
-    setMultiplier(1);
-    setGainAmount(0); // Reset gain amount when restarting the game
+      setMultiplier(data.multiplier)
+      setGainAmount(data.gainAmount)
+      setGameOver(false)
+      setGrid(data.grid)
+      setDiscoveredCells(data.discoveredCells)
+      gameSocket.onmessage = (msg) => mineGameHandler(msg);
+    }
+  }
+
+  const handleCellClick = (row, col) => {
+    if (!gameOver && !grid[row][col].isRevealed)
+      gameSocket.send(JSON.stringify({game: 'playMineGame', Payload: {row: row, col: col}, userToken: token}));
   };
 
   const cashOut = () => {
-    // TODO
-    // Adjust balance based on the gain amount
-    // Restart the game
-    handleRestart();
+    gameSocket.send(JSON.stringify({game: 'playMineGame', Payload: {cashOut: true}, userToken: token}));
+    setDiscoveredCells(0); // to display the play button
   };
 
   // Function to handle changes in the bet amount
@@ -112,10 +73,29 @@ const MineGameView = () => {
   // Function to handle changes in the number of bombs
   const handleBombCountChange = (event) => {
     const newBombCount = parseInt(event.target.value);
-    bombCount = newBombCount;
-    setGrid(initializeGrid()); // Update grid with new bomb count
-    handleRestart(); // Restart game with the new bomb count
+    setBombCount(newBombCount);
   };
+
+  const mineGameHandler = (msg) => {
+    const data = JSON.parse(msg.data)
+
+    if (data.error) {
+      console.error(data.error)
+      return
+    }
+
+    if (!data.gains) { // data.gains => cashout
+      setGrid(data.grid)
+      setMultiplier(data.multiplier)
+      setGainAmount(data.gainAmount)
+      setDiscoveredCells(data.discoveredCells)
+  
+      if (data.state === 'loose') {
+        setGameOver(true);
+        setDiscoveredCells(0);
+      }
+    }
+  }
 
   return (
     <div>
@@ -133,7 +113,7 @@ const MineGameView = () => {
                 onChange={handleBombCountChange}
                 min={1}
                 max={totalCells - 1} // Maximum number of bombs cannot exceed total cells - 1
-                disabled={gameOver || discoveredCells > 0} // Disable changing bomb count when game is running
+                disabled={discoveredCells > 0} // Disable changing bomb count when game is running
               />
             </div>
             <div>
@@ -145,7 +125,7 @@ const MineGameView = () => {
                 onChange={handleBetAmountChange}
                 min={1}
                 // TODO : Max betamout : solde
-                disabled={gameOver || discoveredCells > 0} // Disable changing bet amount when game is running
+                disabled={discoveredCells > 0} // Disable changing bet amount when game is running
               />
             </div>
           </div>
@@ -162,21 +142,24 @@ const MineGameView = () => {
               ))
             )}
           </div>
-          {discoveredCells > 0 && (
-            <div className="text-white text-center mt-4">
-              <h2>Multiplier: x{multiplier}</h2>
-              <h2>Gain Amount: {gainAmount}</h2> {/* Display the gain amount */}
-            </div>
-          )}
+          <div className="text-white text-center mt-4">
+            <h2>Multiplier: x{multiplier}</h2>
+            <h2>Gain Amount: {gainAmount}</h2> {/* Display the gain amount */}
+          </div>
           {!gameOver && discoveredCells > 0 && (
             <div>
               <button onClick={cashOut} className="bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">Cash Out</button>
             </div>
           )}
+          {!gameOver && discoveredCells == 0 && (
+            <div>
+              <button onClick={initGame} className="bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">Play</button>
+            </div>
+          )}
           {gameOver && (
             <div>
               <h2 className="text-white text-center" >Game Over!</h2>
-              <button onClick={handleRestart} className="bg-red-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">Play Again</button>
+              <button onClick={initGame} className="bg-red-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">Play Again</button>
             </div>
           )}
         </div>

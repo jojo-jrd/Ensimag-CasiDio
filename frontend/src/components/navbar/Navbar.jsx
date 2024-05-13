@@ -16,19 +16,22 @@ function NavBar() {
             <nav className="bg-gray-800 p-4">
                 <div className="flex flex-wrap items-center justify-between">
                     <div className="flex-shrink-0">
-                        <span onClick={() => changePage('home')} className="text-white text-xl cursor-pointer font-bold">Mon Casino</span>
+                        <span onClick={() => changePage('home')} className="text-white text-xl cursor-pointer font-bold">CasiDio</span>
                     </div>
                     <div className="hidden md:flex justify-end md:flex-grow">
                         { userConnected?.email ? (
                             <span>
-                                <p className={(userConnected.balance > 100 ? 'text-lime-500' : 'text-red-500') +' inline'}>{userConnected.balance}</p>
+                                <p className={(userConnected.balance > 100 ? 'text-lime-500' : 'text-amber-500') +' inline'}>{userConnected.balance}</p>
                                 <img src={Viardot} alt="Viardot Money" className="w-10 ml-1 inline"/>
                             </span>
                         ) : <></>}
                         <span onClick={() => changePage('home')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Accueil</span>
                         { userConnected?.email ? (
                             <>
-                                <span onClick={() => changePage('TODO')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Profil</span>
+                                { userConnected?.isAdmin ? (
+                                    <span data-cy="admin-user" onClick={() => changePage('adminUsers')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Gestion Utilisateur</span>
+                                ) : ''}
+                                <span data-cy="profil" onClick={() => changePage('profil')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Profil</span>
                                 <span onClick={() => changePage('dashboard')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Tableau de bord</span>
                                 <span data-cy="deconnexion" onClick={() => changePage('logout')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Déconnexion</span>
                             </>
@@ -42,7 +45,7 @@ function NavBar() {
                     <div className="block md:hidden">
                         { userConnected?.email ? (
                             <span>
-                                <p className={(userConnected.balance > 100 ? 'text-lime-500' : 'text-red-500') +' inline'}>{userConnected.balance}</p>
+                                <p className={(userConnected.balance > 100 ? 'text-lime-500' : 'text-amber-500') +' inline'}>{userConnected.balance}</p>
                                 <img src={Viardot} alt="Viardot Money" className="w-10 ml-1 inline"/>
                             </span>
                         ) : <></>}
@@ -54,7 +57,10 @@ function NavBar() {
                                 <span onClick={() => changePage('home')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Accueil</span>
                                 { userConnected?.email ? (
                                     <>
-                                        <span onClick={() => changePage('TODO')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Profil</span>
+                                        { userConnected?.isAdmin ? (
+                                            <span data-cy="admin-user" onClick={() => changePage('adminUsers')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Gestion Utilisateur</span>
+                                        ) : ''}
+                                        <span data-cy="profil" onClick={() => changePage('profil')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Profil</span>
                                         <span onClick={() => changePage('dashboard')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Tableau de bord</span>
                                         <span data-cy="deconnexion" onClick={() => changePage('logout')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Déconnexion</span>
                                     </>

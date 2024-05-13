@@ -370,55 +370,6 @@
         ]
       }
     },
-    "/api/userBalance/{id}": {
-      "put": {
-        "tags": [
-          "Admin Users"
-        ],
-        "summary": "Increment/Decrement user balance",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "x-access-token",
-            "in": "header",
-            "type": "string"
-          },
-          {
-            "name": "obj",
-            "in": "body",
-            "description": "Gains of the user",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "gains": {
-                  "type": "number",
-                  "example": 14
-                }
-              },
-              "required": [
-                "gains"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        },
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ]
-      }
-    },
     "/games": {
       "get": {
         "tags": [
@@ -591,6 +542,32 @@
           "Histories"
         ],
         "summary": "Get all history of the user",
+        "description": "",
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/globalHistory": {
+      "get": {
+        "tags": [
+          "Histories"
+        ],
+        "summary": "Get all history of all the users",
         "description": "",
         "parameters": [
           {
