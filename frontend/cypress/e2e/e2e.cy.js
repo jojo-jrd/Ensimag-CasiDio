@@ -205,7 +205,7 @@ describe('Test E2E', () => {
         cy.wait(1500);
     });
 
-    it('[SlotMachine] : test SlotMachine win with 2 in row', () => {
+    it('[SLOT-MACHINE] : test SlotMachine win with 2 in row', () => {
         cy.get('button.bg-red-700').click();
 
         cy.wait(2000);
@@ -217,7 +217,7 @@ describe('Test E2E', () => {
         cy.wait(1500);
     });
 
-    it('[SlotMachine] : test SlotMachine loose', () => {
+    it('[SLOT-MACHINE] : test SlotMachine loose', () => {
         cy.get('button.bg-red-700').click();
 
         cy.wait(2000);
@@ -226,6 +226,100 @@ describe('Test E2E', () => {
             return !$el.hasClass('twoOnLine') && !$el.hasClass('threeOnLine');
         });
     })
+
+    it('[ADMIN-USERS] : test adminUsers sort column', () => {
+        cy.intercept('http://localhost:3000/api/users').as('users') // route matcher
+        // Va sur la page admin-user
+        cy.get('span[data-cy="admin-user"]').click();
+
+        // Chargement des utilisateurs
+        cy.wait('@users').then((interception) => {
+            expect(interception.response.statusCode).to.equal(200);
+            expect(interception.response.body.message).to.equal('Returnins users datas');
+            expect(interception.response.body.data.length).to.equal(4);
+        });
+
+        // TODO tester sort
+    })
+
+
+    it('[ADMIN-USERS] : test adminUsers modal update incorrect login', () => {
+        cy.get('tr:first-child svg.fa-pen-to-square').click();
+
+        // Clear les inputs
+        cy.get("input#email").clear();
+
+        // Remplit les inputs
+        cy.get("input#email").type('aa');
+
+        // Valide les données
+        cy.get('button.bg-blue-700').click();
+
+        cy.get('span.text-red-500').should('have.text', ' Le login est incorrect.');
+    });
+
+    it('[ADMIN-USERS] : test adminUsers modal update missing values', () => {
+
+        // Clear les inputs
+        cy.get("input#email").clear();
+        cy.get("input#firstname").clear();
+
+        // Remplit les inputs
+        cy.get("input#email").type('Lukas.Loiodice@grenoble-inp.fr');
+
+        // Valide les données
+        cy.get('button.bg-blue-700').click();
+
+        cy.get('span.text-red-500').should('have.text', " Vous devez remplir le nom, prénom, l'email et la date de naissance.");
+
+    });
+
+    it('[ADMIN-USERS] : test adminUsers modal update user', () => {
+        cy.intercept('http://localhost:3000/api/user/*').as('update') // route matcher
+        cy.intercept('http://localhost:3000/api/users').as('users') // route matcher
+
+        // Remplit les inputs
+        const newFirstName = 'Lukasasa';
+        cy.get("input#firstname").type(newFirstName);
+
+        // Valide les données
+        cy.get('button.bg-blue-700').click();
+
+        // Sauvegarde l'utilisateur
+        cy.wait('@update').then((interception) => {
+            expect(interception.response.statusCode).to.equal(200);
+            expect(interception.response.body.message).to.equal('User updated');
+        });
+
+        // Rechargement des utilisateurs
+        cy.wait('@users');
+
+        cy.get('tbody tr:first-child td:first-child').should('have.text', newFirstName);
+    });
+
+    it('[ADMIN-USERS] : test adminUsers modal delete user', () => {
+        cy.intercept('http://localhost:3000/api/user/*').as('delete') // route matcher
+        cy.intercept('http://localhost:3000/api/users').as('users') // route matcher
+
+        cy.get('tr:first-child svg.fa-trash-can').click();
+
+        // Attend l'affichage de la popup de confirmation
+        cy.wait(500); // TODO: voir si utile
+
+        // Click sur le bouton de confirmation
+        cy.get('button.swal-button--confirm').click();
+
+        cy.wait('@delete').then((interception) => {
+            expect(interception.response.statusCode).to.equal(200);
+            expect(interception.response.body.message).to.equal('User deleted');
+        });
+
+        cy.wait('@users').then((interception) => {
+            expect(interception.response.statusCode).to.equal(200);
+            expect(interception.response.body.message).to.equal('Returnins users datas');
+            expect(interception.response.body.data.length).to.equal(3);
+        });
+    });
 
 
 
@@ -237,11 +331,11 @@ describe('Test E2E', () => {
 
     // TODO faire le reste avant de faire la suppresion
 
-    it('[Profil] : test erreur modification', () => {
+    it('[PROFIL] : test erreur modification', () => {
         cy.intercept('http://localhost:3000/login').as('login') // route matcher
         cy.intercept('http://localhost:3000/games').as('home')
         // On est sur la page home et on va sur la page profil
-        cy.get('span[data-cy="profil"]').click();
+        cy.get('span[data-cy="profil"]').click({force : true});
 
         // Teste la récupération des données
         cy.get("input#firstname").should('have.value', 'Admin')
@@ -259,7 +353,7 @@ describe('Test E2E', () => {
         cy.get('span.text-red-500').should('have.text', ' Vous devez remplir tous les champs.');
     });
 
-    it('[Profil] : test modification du prénom', () => {
+    it('[PROFIL] : test modification du prénom', () => {
         // On est déjà en modification
         cy.intercept('http://localhost:3000/api/user').as('update') // route matcher
 
@@ -275,7 +369,7 @@ describe('Test E2E', () => {
         });
     });
 
-    it('[Profil] : Suppression du compte', () => {
+    it('[PROFIL] : Suppression du compte', () => {
         cy.intercept('http://localhost:3000/api/user').as('delete') // route matcher
 
         // Click sur le bouton supprimer le compte

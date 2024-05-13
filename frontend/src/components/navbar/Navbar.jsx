@@ -29,7 +29,7 @@ function NavBar() {
                         { userConnected?.email ? (
                             <>
                                 { userConnected?.isAdmin ? (
-                                    <span onClick={() => changePage('adminUsers')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Gestion Utilisateur</span>
+                                    <span data-cy="admin-user" onClick={() => changePage('adminUsers')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Gestion Utilisateur</span>
                                 ) : ''}
                                 <span data-cy="profil" onClick={() => changePage('profil')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Profil</span>
                                 <span onClick={() => changePage('dashboard')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Tableau de bord</span>
@@ -58,7 +58,7 @@ function NavBar() {
                                 { userConnected?.email ? (
                                     <>
                                         { userConnected?.isAdmin ? (
-                                            <span onClick={() => changePage('adminUsers')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Gestion Utilisateur</span>
+                                            <span data-cy="admin-user" onClick={() => changePage('adminUsers')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Gestion Utilisateur</span>
                                         ) : ''}
                                         <span data-cy="profil" onClick={() => changePage('profil')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Profil</span>
                                         <span onClick={() => changePage('dashboard')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Tableau de bord</span>
