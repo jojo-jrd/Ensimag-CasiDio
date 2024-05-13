@@ -4,6 +4,7 @@ import { AppContext } from '../../AppContext';
 import LoginView from '../login/Login';
 import SlotMachineView from '../slot_machine/SlotMachine';
 import MineGameView from '../mines/MineGame';
+import RouletteView from '../roulette/Roulette';
 
 import HomeView from '../home/Home';
 import RegisterView from '../register/Register';
