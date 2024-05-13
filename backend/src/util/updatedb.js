@@ -53,6 +53,12 @@ const bcrypt = require('bcrypt');
     picturePath: './images/mines.png',
     description: 'Plongez dans le Casino des Mines, où chaque tuile cache un secret : les étoiles mènent à la richesse, tandis que les bombes annoncent la catastrophe. Naviguez intelligemment à travers la grille pour révéler les étoiles, multipliant vos gains à chaque choix sûr. Mais attention ! Un seul faux pas pourrait faire exploser vos chances, mettant fin à la manche et réinitialisant vos gains. Testez votre chance et votre stratégie dans ce jeu palpitant de risque et de récompense !'
   })
+  const g3 = await gameModel.create({
+    name: 'Roulette',
+    page : 'RouletteGame',
+    picturePath: './images/roulette.png',
+    description: 'Découvrez l\'excitation de la roulette dans le confort de votre maison avec CasiDio ! Plongez dans l\'ambiance électrisante d\'un casino en ligne et misez sur vos numéros chanceux. Avec des graphismes saisissants et des fonctionnalités conviviales, notre jeu de roulette offre une expérience immersive inégalée. Testez votre chance dès aujourd\'hui et voyez si la roue tourne en votre faveur sur CasiDio !'
+  })
   const h1 = await historyModel.create({
     profit: -2,
     gameDate: '2023-04-25T10:27:55.000Z'
@@ -77,4 +83,16 @@ const bcrypt = require('bcrypt');
   })
   h4.setUser(u2)
   h4.setGame(g1)
+  const h5 = await historyModel.create({
+    profit: 18,
+    gameDate: '2023-04-27T10:27:55.000Z'
+  })
+  h5.setUser(u1)
+  h5.setGame(g3)
+  const h6 = await historyModel.create({
+    profit: -25,
+    gameDate: '2023-04-21T10:27:55.000Z'
+  })
+  h6.setUser(u1)
+  h6.setGame(g3)
 })()

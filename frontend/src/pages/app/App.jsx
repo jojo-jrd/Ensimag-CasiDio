@@ -14,6 +14,11 @@ import QuestionAPI from './../../components/questionAPI/QuestionAPI';
 import AdminUsers from '../admin_users/AdminUsers';
 import ProfilView from '../profil/Profil';
 
+// TODO:
+// - eslint a corriger
+// - hauteur (enlever la taille de la navbar en height)
+// - rendre la navBar réactive
+// - DashBoard admin
 
 function App() {
   const [token, setToken] = useState(null);
@@ -52,6 +57,7 @@ function App() {
       case 'register' : return <RegisterView/>;
       case 'SlotMachine' : return <SlotMachineView/>;
       case 'MineGame' : return <MineGameView/>;
+      case 'RouletteGame' : return <RouletteView/>;
       case 'home' : return <HomeView/>;
       case 'adminUsers' : return <AdminUsers/>
       case 'dashboard' : return <DashBoardView/>;
