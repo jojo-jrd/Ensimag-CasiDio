@@ -31,7 +31,7 @@ const MineGameView = () => {
 
   useEffect(() => {
     // Define web socket
-    gameSocket = new WebSocket(`wss://${import.meta.env.VITE_API_WS}/gameSocket`);
+    gameSocket = new WebSocket(`${import.meta.env.VITE_API_WS}/gameSocket`);
   }, []);
 
   const initGame = () => {
