@@ -17,7 +17,7 @@ function SlotMachineView() {
 
     useEffect(() => {
         // Define web socket and initial indexes
-        gameSocket = new WebSocket("ws://localhost:3000/gameSocket");
+        gameSocket = new WebSocket(`ws://${import.meta.env.VITE_API_URL}/gameSocket`);
         indexesColumns = [0, 0, 0];
         
         // Define web socket handler
