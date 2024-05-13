@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "buildProd": "VITE_API_URL=https://casidio.osc-fr1.scalingo.io/ vite build",
+    "buildProd": "VITE_API_URL=https://casidio.osc-fr1.scalingo.io vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
