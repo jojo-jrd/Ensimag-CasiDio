@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import swal from 'sweetalert';
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import ModalUpdateUser from './ModalUpdateUser';
 
 function DisplaySort({currentSort, column}) {
     return (
@@ -30,6 +31,9 @@ function AdminUsers() {
         column : '',
         order : 'ASC',
     });
+    const [openUpdateUser, setOpenUpdateUser] = useState(false);
+    const [updatedUser, setUpdatedUser] = useState({});
+
     const [users, setUsers] = useState([]);
 
     async function loadUsers() {
@@ -50,6 +54,9 @@ function AdminUsers() {
         loadUsers();
     }, []);
 
+
+    
+
     // TODO: faire update et tester la suppression quand le bug sera résolu
 
 
@@ -64,7 +71,7 @@ function AdminUsers() {
         const newUsers = [...users];
         const functionSort = (a, b) => {
             if (type == 'string') {
-                const value = a[key]?.localeCompare(b[key])
+                const value = a[key]?.toString()?.localeCompare(b[key]?.toString())
                 return order == 'ASC' ? value : 0 - value;
             } else { // date
                 let date1 = new Date(a[key]).getTime();
@@ -86,6 +93,25 @@ function AdminUsers() {
         setUsers(newUsers);
     }
 
+    // Open the modal for update a user
+    function updateUser(user) {
+        setUpdatedUser(user);
+        setOpenUpdateUser(true);
+    }
+
+    // Function callback when a user is updated
+    function saveUser(isClose, toastSucces = false) {
+        setOpenUpdateUser(isClose);
+        if (toastSucces) {
+            toast.success("Utilisateur modifié", {
+                position: "top-right",
+                theme: "colored",
+            });
+            loadUsers();
+        }
+    }
+
+    // Delete a specific user
     function deleteUser(user) {
         swal({
             title: "Attention",
@@ -140,6 +166,10 @@ function AdminUsers() {
                                 Adresse
                                 <DisplaySort column='address' currentSort={currentSort}/>
                             </th>
+                            <th className="px-6 py-3 cursor-pointer hidden md:table-cell" onClick={() => sortColumn('isAdmin', 'string')}>
+                                Est Admin
+                                <DisplaySort column='isAdmin' currentSort={currentSort}/>
+                            </th>
                             <th className="px-6 py-3 cursor-pointer hidden md:table-cell" onClick={() => sortColumn('birthDate', 'date')}>
                                 Date de naissance
                                 <DisplaySort column='birthDate' currentSort={currentSort}/>
@@ -156,9 +186,10 @@ function AdminUsers() {
                                     <td className="px-6 py-3">{user.lastName}</td>
                                     <td className="px-6 py-3">{user.email}</td>
                                     <td className="px-6 py-3 hidden md:table-cell">{user.address}</td>
+                                    <td className="px-6 py-3 hidden md:table-cell">{user.isAdmin ? 'Oui' : 'Non'}</td>
                                     <td className="px-6 py-3 hidden md:table-cell">{moment(user.birthDate).format('L')}</td>
-                                    <td className="px-6 py-3"><FontAwesomeIcon className="ml-3 text-blue-700 cursor-pointer" icon={faPenToSquare}/></td>
-                                    <td className="px-6 py-3"><FontAwesomeIcon className="ml-3 text-red-500 cursor-pointer" icon={faTrashCan} onClick={() => deleteUser(user)}/></td>
+                                    <td className="px-6 py-3 cursor-pointer" onClick={() => updateUser(user)}><FontAwesomeIcon className="ml-3 text-blue-700" icon={faPenToSquare} /></td>
+                                    <td className="px-6 py-3 cursor-pointer" onClick={() => deleteUser(user)}><FontAwesomeIcon className="ml-3 text-red-500" icon={faTrashCan}/></td>
                                 </tr>
                             )
                         })
@@ -168,6 +199,7 @@ function AdminUsers() {
                 </table>
             </div>
             <ToastContainer />
+            <ModalUpdateUser openModal={openUpdateUser} user={updatedUser} setOpenModal={saveUser}/> 
         </>
     )
 }
