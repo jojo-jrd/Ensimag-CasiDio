@@ -4,6 +4,7 @@ import { AppContext } from '../../AppContext';
 import LoginView from '../login/Login';
 import SlotMachineView from '../slot_machine/SlotMachine';
 import MineGameView from '../mines/MineGame';
+import RouletteView from '../roulette/Roulette';
 
 import HomeView from '../home/Home';
 import RegisterView from '../register/Register';
@@ -13,6 +14,11 @@ import QuestionAPI from './../../components/questionAPI/QuestionAPI';
 import AdminUsers from '../admin_users/AdminUsers';
 import ProfilView from '../profil/Profil';
 
+// TODO:
+// - eslint a corriger
+// - hauteur (enlever la taille de la navbar en height)
+// - rendre la navBar réactive
+// - DashBoard admin
 
 function App() {
   const [token, setToken] = useState(null);
@@ -51,6 +57,7 @@ function App() {
       case 'register' : return <RegisterView/>;
       case 'SlotMachine' : return <SlotMachineView/>;
       case 'MineGame' : return <MineGameView/>;
+      case 'RouletteGame' : return <RouletteView/>;
       case 'home' : return <HomeView/>;
       case 'adminUsers' : return <AdminUsers/>
       case 'dashboard' : return <DashBoardView/>;
