@@ -52,6 +52,7 @@ module.exports = {
       resultAPI = await (await fetch("https://opentdb.com/api.php?amount=1&type=multiple", { method : 'GET'})).json();
     } catch (error) {
       ws.send(JSON.stringify({error: error}))
+      return
     }
     
     // Delete old games if it was not done before
