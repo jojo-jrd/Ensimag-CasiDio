@@ -5,7 +5,7 @@ function LoginView() {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const [erreurMessage, setErreurMessage] = useState("");
-  const { setToken, changePage, setUserConnected } = useContext(AppContext)
+  const { setToken, changePage, updateUserConnected } = useContext(AppContext)
 
   async function verifie() {
     let message = ""
@@ -27,15 +27,9 @@ function LoginView() {
           })
         }).then(res => res.json()).then(async reponse => {
           if(reponse.token) {
-            setToken(reponse.token);
-            const user = await (await fetch(`${import.meta.env.VITE_API_URL}/api/user`,
-              {
-                method: 'GET',
-                headers: { 'Content-type': 'application/json', 'x-access-token' : reponse.token},
-              })).json()
-            setUserConnected(user.data);
+            await setToken(reponse.token);
             localStorage.setItem('token', reponse.token);
-            localStorage.setItem('user', JSON.stringify(user.data));
+            updateUserConnected(reponse.token);
             changePage('home');
           } else {
             setErreurMessage(reponse.message);

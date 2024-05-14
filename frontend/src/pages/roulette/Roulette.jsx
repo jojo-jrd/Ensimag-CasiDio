@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './Roulette.css';
 
 // TODO : Talbeau mise, tests unitaires

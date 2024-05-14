@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons/faArrowRight'
 import { AppContext } from '../../AppContext';
 import { useContext } from 'react';
+import PropTypes from 'prop-types';
 
 function Card({ title, description, image, pageClick }) {
     const {changePage } = useContext(AppContext);
@@ -19,4 +20,12 @@ function Card({ title, description, image, pageClick }) {
         </div>
     )
 }
+
+Card.propTypes = {
+    title: PropTypes.string,
+    description: PropTypes.string,
+    image : PropTypes.string,
+    pageClick : PropTypes.string
+};
+
 export default Card;

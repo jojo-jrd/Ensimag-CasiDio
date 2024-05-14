@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { AppContext } from '../../AppContext';
 import "./MineGame.css";
+import PropTypes from 'prop-types';
 
 const gridSize = 5;
 const totalCells = gridSize * gridSize;
@@ -19,6 +20,14 @@ const Cell = ({ value, isRevealed, gameOver, onClick }) => {
   );
 };
 
+Cell.propTypes = {
+  value : PropTypes.string,
+  isRevealed : PropTypes.bool,
+  gameOver : PropTypes.bool,
+  onClick : PropTypes.func,
+}
+
+
 const MineGameView = () => {
   const [grid, setGrid] = useState([]);
   const [gameOver, setGameOver] = useState(false);
@@ -27,7 +36,7 @@ const MineGameView = () => {
   const [bombCount, setBombCount] = useState(5);
   const [gainAmount, setGainAmount] = useState(0); // State for the gain amount
   const [discoveredCells, setDiscoveredCells] = useState(0);
-  const { token } = useContext(AppContext);
+  const { token, updateUserConnected } = useContext(AppContext);
 
   useEffect(() => {
     // Define web socket
@@ -36,6 +45,8 @@ const MineGameView = () => {
 
   const initGame = () => {
     gameSocket.send(JSON.stringify({game: 'initMineGame', Payload: {bombCount: bombCount, betAmount: betAmount}, userToken: token}));
+    // Update l'user pour savoir son nouveau solde
+    updateUserConnected();
 
     gameSocket.onmessage = (msg) => {
       const data = JSON.parse(msg.data)
@@ -61,6 +72,8 @@ const MineGameView = () => {
 
   const cashOut = () => {
     gameSocket.send(JSON.stringify({game: 'playMineGame', Payload: {cashOut: true}, userToken: token}));
+    // Update l'user pour savoir son nouveau solde
+    updateUserConnected();
     setDiscoveredCells(0); // to display the play button
   };
 

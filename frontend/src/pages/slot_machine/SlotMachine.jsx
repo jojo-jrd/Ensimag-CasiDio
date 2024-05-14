@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useContext } from 'react';
 import { AppContext } from '../../AppContext';
-import NavBar from './../../components/navbar/Navbar';
 import $ from 'jquery';
 import './SlotMachine.css'
 
@@ -32,8 +31,8 @@ const valueTest = [
 function SlotMachineView() {
     const slotMachineEl = useRef();
     const [isClicked, setIsClicked] = useState(false);
-    const { token } = useContext(AppContext);
-    let nbLaunchTest = 0
+    const { token, updateUserConnected } = useContext(AppContext);
+    let nbLaunchTest = 0;
 
     useEffect(() => {
         // Define web socket and initial indexes
@@ -43,7 +42,7 @@ function SlotMachineView() {
         // Define web socket handler
         gameSocket.onmessage = (msg) => {
             let data;
-            // Les web socket sont super impossible à tester avec cypress
+            // Les web socket sont impossible à tester avec cypress
             // On change donc le résultat ici
             if (isTest) {
                 data = valueTest[nbLaunchTest];
@@ -73,6 +72,8 @@ function SlotMachineView() {
                     $(slotMachineEl.current).addClass('threeOnLine');
                     setTimeout(() => $(slotMachineEl.current).removeClass('threeOnLine'), 2000);
                 }
+                // Update l'user pour savoir son nouveau solde
+                updateUserConnected();
                 
                 setIsClicked(false);
             }

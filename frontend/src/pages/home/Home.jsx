@@ -1,9 +1,7 @@
-import { useState, useEffect, useContext } from 'react';
-import { AppContext } from '../../AppContext';
+import { useState, useEffect } from 'react';
 import Card from './../../components/card/Card';
 
 function HomeView(){
-  const {changePage, userConnected } = useContext(AppContext);
   const [games, setGames] = useState([]);
 
   useEffect(() => {
@@ -21,7 +19,7 @@ function HomeView(){
   return (
     <div>
       <div className="flex justify-arround flex-col sm:flex-row">
-        { games.map((game, i) =>  {
+        { games.map((game) =>  {
             return <Card key={game.id} title={game.name} pageClick={game.page}
             description={game.description} image={game.picturePath}/>
           })}

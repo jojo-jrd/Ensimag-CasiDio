@@ -11,7 +11,7 @@ function ProfilView(){
 	const birthDateRef = useRef(null);
 	const [erreurMessage, setErreurMessage] = useState("");
 	const [isEdit, setIsEdit] = useState(false);
-	const {changePage, userConnected, token} = useContext(AppContext)
+	const {changePage, userConnected, token, updateUserConnected} = useContext(AppContext)
 
 	function deleteUser() {
 		swal({
@@ -40,7 +40,7 @@ function ProfilView(){
           });
 	}
 
-  	async function updateUser(){
+	async function updateUser(){
 		let message = '';
 		if (!firstNameRef?.current?.value  || 
 			!lastNameRef?.current?.value ||
@@ -69,17 +69,17 @@ function ProfilView(){
 						position: "top-right",
 						theme: "colored",
 					});
-					// TODO
-					// Doit renvoyer l'utilisateur mis à jour avec le setUserConnected
+					setIsEdit(false);
+					updateUserConnected();
 				} else {
 					setErreurMessage(reponse?.message);
 				}
 				}).catch(error => {
 				console.error(error)
-				})
-    	}
- 	}
-  	return (
+			})
+		}
+	}
+	return (
 		<>
 			<div className="mt-4 px-4">
 				<div className="flex justify-between">
@@ -132,7 +132,7 @@ function ProfilView(){
 			</div>
 			<ToastContainer/>
 		</>
-  	)
+	)
 }
 
 export default ProfilView

@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { useRef } from "react";
 import { useState } from "react";
 import { AppContext } from "../../AppContext";
+import PropTypes from 'prop-types';
 
 function ModalUpdateUser({openModal, setOpenModal, user}) {
     const firstNameRef = useRef(null);
@@ -64,7 +65,7 @@ function ModalUpdateUser({openModal, setOpenModal, user}) {
   
     return (
         <Modal show={openModal} onClose={() => setOpenModal(false)}>
-            <Modal.Header>Modifier l'utilisateur</Modal.Header>
+            <Modal.Header>Modifier l&apos;utilisateur</Modal.Header>
             <Modal.Body>
             <div className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
                 <div className="mb-4">
@@ -108,4 +109,11 @@ function ModalUpdateUser({openModal, setOpenModal, user}) {
         </Modal>
     );
 }
+
+ModalUpdateUser.propTypes = {
+    openModal: PropTypes.func,
+    setOpenModal: PropTypes.func,
+    user: PropTypes.any
+};
+
 export default ModalUpdateUser;

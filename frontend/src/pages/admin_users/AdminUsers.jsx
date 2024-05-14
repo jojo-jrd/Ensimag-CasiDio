@@ -10,6 +10,7 @@ import swal from 'sweetalert';
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import ModalUpdateUser from './ModalUpdateUser';
+import PropTypes from 'prop-types';
 
 function DisplaySort({currentSort, column}) {
     return (
@@ -23,6 +24,14 @@ function DisplaySort({currentSort, column}) {
         </>
     )
 }
+
+DisplaySort.propTypes = {
+    currentSort: PropTypes.any,
+    column: PropTypes.shape({
+        column: PropTypes.string,
+        order: PropTypes.string
+    }),
+};
 
 
 function AdminUsers() {

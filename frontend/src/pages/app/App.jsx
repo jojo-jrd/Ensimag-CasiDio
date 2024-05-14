@@ -17,7 +17,6 @@ import ProfilView from '../profil/Profil';
 // TODO:
 // - eslint a corriger
 // - hauteur (enlever la taille de la navbar en height)
-// - rendre la navBar réactive
 // - DashBoard admin
 
 function App() {
@@ -26,10 +25,25 @@ function App() {
   const [userConnected, setUserConnected] = useState({});
 
   useEffect(() => {
-    setPage(localStorage.getItem("page")); // TODO remettre
+    setPage(localStorage.getItem("page"));
     setToken(localStorage.getItem("token"));
     setUserConnected(JSON.parse(localStorage.getItem("user") || '{}'));
-  }, [])
+  }, []);
+
+  async function updateUserConnected(newToken = false){
+    const user = await (await fetch(`${import.meta.env.VITE_API_URL}/api/user`,{
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+          'x-access-token' : newToken || token
+        },
+      })).json();
+    if (!user.data) {
+      return;
+    }
+    localStorage.setItem('user', JSON.stringify(user.data));
+    setUserConnected(user.data);
+  }
 
   function changePage(to) {
     // Redirection si déconnection ou page non autorisé
@@ -67,7 +81,7 @@ function App() {
   }
 
   return (
-    <AppContext.Provider value = {{token, setToken, changePage, setUserConnected, userConnected}}>
+    <AppContext.Provider value = {{token, setToken, changePage, userConnected, updateUserConnected}}>
       <NavBar />
       {getCurrentPage()}
       {/* <QuestionAPI openModal={true} setOpenModal={() => {}}/>  */}

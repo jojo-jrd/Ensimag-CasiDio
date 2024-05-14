@@ -1,5 +1,6 @@
 import { Modal } from "flowbite-react";
 import { useEffect, useState } from "react";
+import PropTypes from 'prop-types';
 
 function QuestionAPI({openModal, setOpenModal}) {
     const [question, setQuestion] = useState("");
@@ -34,7 +35,7 @@ function QuestionAPI({openModal, setOpenModal}) {
             }, 500);
         }
         
-    };
+    }
 
     useEffect(() => {
         loadQuestions();
@@ -90,4 +91,9 @@ function QuestionAPI({openModal, setOpenModal}) {
         </Modal>
     );
 }
+
+QuestionAPI.propTypes = {
+    openModal : PropTypes.func,
+    setOpenModal : PropTypes.func,
+  }
 export default QuestionAPI;

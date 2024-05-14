@@ -1,11 +1,11 @@
 import { useState, useContext, useEffect, useRef } from 'react';
 import { AppContext } from '../../AppContext';
 import Chart from 'chart.js/auto';
-import moment from 'moment';
 import Viardot from './../../assets/viardot-coin.png';
+import PropTypes from 'prop-types';
 
 function DashBoardView({ isAdmin = false}){
-  const {changePage, userConnected, token } = useContext(AppContext);
+  const {userConnected, token } = useContext(AppContext);
   const filterRef = useRef(null);
   const [dataDashboard, setDataDashboard] = useState({
     'evolutionSolde' : [],
@@ -13,7 +13,6 @@ function DashBoardView({ isAdmin = false}){
   });
 
   useEffect(() => {
-    var myChart;
     async function loadData() {
       let data = [];
       const reponse = await (await fetch(`${import.meta.env.VITE_API_URL}/api/history`, { method : 'GET',
@@ -31,7 +30,7 @@ function DashBoardView({ isAdmin = false}){
       if(Chart.getChart("chart")) {
         Chart.getChart("chart")?.destroy()
       }
-      myChart = new Chart(
+      new Chart(
         'chart',
         {
           type: 'line',
@@ -91,6 +90,10 @@ function DashBoardView({ isAdmin = false}){
       </div>
     </div>
   )
+}
+
+DashBoardView.propTypes = {
+  isAdmin: PropTypes.bool
 }
 
 export default DashBoardView
