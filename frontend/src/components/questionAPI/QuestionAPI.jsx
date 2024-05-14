@@ -14,7 +14,7 @@ function QuestionAPI({setOpenModal}) {
     const [difficulty, setDifficulty] = useState("");
     const [category, setCategory] = useState("");
     const [gameState, setGameState] = useState("");
-    const { token } = useContext(AppContext);
+    const { token, updateUserConnected } = useContext(AppContext);
 
     const gameSocketHandler = (msg) => {
         const data = JSON.parse(msg.data);
@@ -42,6 +42,8 @@ function QuestionAPI({setOpenModal}) {
         setGameState('end')
         // Handle validation win
         if (data.state === 'win') {
+            // Update l'user pour savoir son nouveau solde
+            updateUserConnected();
             return;
         }
 

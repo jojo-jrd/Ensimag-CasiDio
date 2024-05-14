@@ -47,7 +47,12 @@ function calculateMultiplier(bombCount, discoveredCells) {
 module.exports = {
   async initQuestion(msg, ws, user) {
     // Fetch data to the extern api
-    const resultAPI = await (await fetch("https://opentdb.com/api.php?amount=1&type=multiple", { method : 'GET'})).json();
+    let resultAPI
+    try {
+      resultAPI = await (await fetch("https://opentdb.com/api.php?amount=1&type=multiple", { method : 'GET'})).json();
+    } catch (error) {
+      ws.send(JSON.stringify({error: error}))
+    }
     
     // Delete old games if it was not done before
     delete curentGames[`${user.id}-question`]
