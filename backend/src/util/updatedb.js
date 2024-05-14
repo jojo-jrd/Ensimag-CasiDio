@@ -41,6 +41,16 @@ const bcrypt = require('bcrypt');
     balance: 999999,
     isAdmin: false
   })
+  await userModel.create({
+    firstName: 'delete',
+    lastName: 'delete',
+    email: 'delete@delete.com',
+    password: passhash,
+    address: '12 rue hassoul',
+    birthDate: '2024-04-25T10:27:55.000Z',
+    balance: 999999,
+    isAdmin: false
+  })
   const g1 = await gameModel.create({
     name: 'Machine à sous',
     page : 'SlotMachine',

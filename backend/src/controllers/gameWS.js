@@ -5,7 +5,7 @@ const fetch = require("node-fetch")
 const curentGames = {}
 async function applyUserBet(user, msg) {
   // handle user bet
-  if (msg.Payload.betAmount < 0 || msg.Payload.betAmount > user.balance) {
+  if (typeof(msg.Payload.betAmount) !== 'number' || msg.Payload.betAmount < 0 || msg.Payload.betAmount > user.balance) {
     return false
   }
 
@@ -115,10 +115,22 @@ module.exports = {
       ws.send(JSON.stringify({error: 'nbIcons, indexesColumns nor betAmout not specified'}))
       return
     }
+
+    // Check nbIcon type
+    if (typeof(msg.Payload.nbIcons) !== 'number') {
+      ws.send(JSON.stringify({error: 'nbIcons should be a number'}))
+      return
+    }
+
+    // Check indexesColumns type
+    if (!Array.isArray(msg.Payload.indexesColumns) || msg.Payload.indexesColumns.length !== 3) {
+      ws.send(JSON.stringify({error: 'indexesColumns should be an array of size 3'}))
+      return
+    }
     
     // Apply user bet
-    if (! await applyUserBet(user, msg)) {
-      ws.send(JSON.stringify({error: 'bet is not defined, below 0 or over the user balance'}))
+    if (!await applyUserBet(user, msg)) {
+      ws.send(JSON.stringify({error: 'bet is not a number, below 0 or over the user balance'}))
       return
     }
 

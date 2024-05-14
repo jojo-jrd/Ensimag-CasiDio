@@ -23,7 +23,14 @@ test('Game get : simple valid', async () => {
       "picturePath": "./images/mines.png",
       "page": "MineGame",
       "description": "Plongez dans le Casino des Mines, où chaque tuile cache un secret : les étoiles mènent à la richesse, tandis que les bombes annoncent la catastrophe. Naviguez intelligemment à travers la grille pour révéler les étoiles, multipliant vos gains à chaque choix sûr. Mais attention ! Un seul faux pas pourrait faire exploser vos chances, mettant fin à la manche et réinitialisant vos gains. Testez votre chance et votre stratégie dans ce jeu palpitant de risque et de récompense !"
-    }
+    },
+    {
+      "id": 3,
+      "name": "Roulette",
+      "picturePath": "./images/roulette.png",
+      "page": "RouletteGame",
+      "description": "Découvrez l'excitation de la roulette dans le confort de votre maison avec CasiDio ! Plongez dans l'ambiance électrisante d'un casino en ligne et misez sur vos numéros chanceux. Avec des graphismes saisissants et des fonctionnalités conviviales, notre jeu de roulette offre une expérience immersive inégalée. Testez votre chance dès aujourd'hui et voyez si la roue tourne en votre faveur sur CasiDio !",
+    },
   ])
 })
 
@@ -49,8 +56,8 @@ test('Game creation : simple creation', async () => {
     response = await request(app)
       .get('/games')
     expect(response.statusCode).toBe(200)
-    expect(response.body.data.find((game) => game.id === 3)).toStrictEqual({
-      "id": 3,
+    expect(response.body.data.find((game) => game.id === 4)).toStrictEqual({
+      "id": 4,
       "name": "Poker",
       "picturePath": "./images/slot-machine.png",
       "page": "Poker",
@@ -85,9 +92,9 @@ test('Game edition : simple edit', async () => {
   expect(response.statusCode).toBe(200)
   const userToken = response.body.token
 
-  // Edit third game
+  // Edit fourth game
   response = await request(app)
-    .put('/api/game/3')
+    .put('/api/game/4')
     .set('x-access-token', userToken)
     .send({ name: 'PokerEdit', picturePath: './images/slot-machine.pngEdited', page: 'PokerEdit', description: 'Bon jeu edit'})
   expect(response.statusCode).toBe(200)
@@ -96,8 +103,8 @@ test('Game edition : simple edit', async () => {
   response = await request(app)
     .get('/games')
   expect(response.statusCode).toBe(200)
-  expect(response.body.data.find((game) => game.id === 3)).toStrictEqual({
-    "id": 3,
+  expect(response.body.data.find((game) => game.id === 4)).toStrictEqual({
+    "id": 4,
     "name": "PokerEdit",
     "picturePath": "./images/slot-machine.pngEdited",
     "page": "PokerEdit",
@@ -113,9 +120,9 @@ test('Game edition : edit one field', async () => {
   expect(response.statusCode).toBe(200)
   const userToken = response.body.token
 
-  // Edit third game
+  // Edit fourth game
   response = await request(app)
-    .put('/api/game/3')
+    .put('/api/game/4')
     .set('x-access-token', userToken)
     .send({ name: 'PokerEditEdit' })
   expect(response.statusCode).toBe(200)
@@ -124,8 +131,8 @@ test('Game edition : edit one field', async () => {
   response = await request(app)
     .get('/games')
   expect(response.statusCode).toBe(200)
-  expect(response.body.data.find((game) => game.id === 3)).toStrictEqual({
-    "id": 3,
+  expect(response.body.data.find((game) => game.id === 4)).toStrictEqual({
+    "id": 4,
     "name": "PokerEditEdit",
     "picturePath": "./images/slot-machine.pngEdited",
     "page": "PokerEdit",
@@ -159,9 +166,9 @@ test('Game delete : simple deletion', async () => {
   expect(response.statusCode).toBe(200)
   const userToken = response.body.token
 
-  // Remove third game
+  // Remove fourth game
   response = await request(app)
-    .delete('/api/game/3')
+    .delete('/api/game/4')
     .set('x-access-token', userToken)
   expect(response.statusCode).toBe(200)
 
@@ -169,7 +176,7 @@ test('Game delete : simple deletion', async () => {
   response = await request(app)
     .get('/games')
   expect(response.statusCode).toBe(200)
-  expect(response.body.data.map((game) => game.id)).not.toContain(3)
+  expect(response.body.data.map((game) => game.id)).not.toContain(4)
 })
 
 test('Game delete : no game found', async () => {
@@ -180,7 +187,6 @@ test('Game delete : no game found', async () => {
   expect(response.statusCode).toBe(200)
   const userToken = response.body.token
 
-  // Remove third game
   response = await request(app)
     .delete('/api/game/10')
     .set('x-access-token', userToken)

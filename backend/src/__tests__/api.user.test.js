@@ -244,7 +244,7 @@ test('User admin get users : simple fetch', async () => {
     .get('/api/users')
     .set('x-access-token', response.body.token)
   expect(response.statusCode).toBe(200)
-  expect(response.body.data.length == 2)
+  expect(response.body.data.length).toBe(4)
 })
 
 test('User admin get users : not admin', async () => {
@@ -280,7 +280,7 @@ test('User admin update user : update all fields', async () => {
 
   // Update the user
   response = await request(app)
-    .put('/api/user/3')
+    .put('/api/user/4')
     .set('x-access-token', userToken)
     .send({ email: 'edit.edit@grenoble-inp.fr', password: '1m02P@SsF0rt!', firstName: 'edit', lastName: 'edit', address: 'edit', birthDate: '2002-04-25T10:27:55.000Z' })
 
@@ -291,8 +291,8 @@ test('User admin update user : update all fields', async () => {
     .get('/api/users')
     .set('x-access-token', userToken)
   expect(response.statusCode).toBe(200)
-  expect(response.body.data.find((user => user.id === 3))).toStrictEqual({
-    "id": 3,
+  expect(response.body.data.find((user => user.id === 4))).toStrictEqual({
+    "id": 4,
     "firstName": "edit",
     "lastName": "edit",
     "email": "edit.edit@grenoble-inp.fr",
@@ -314,7 +314,7 @@ test('User admin update user : update one field', async () => {
 
   // Update the user
   response = await request(app)
-    .put('/api/user/3')
+    .put('/api/user/4')
     .set('x-access-token', userToken)
     .send({ firstName: 'newEdit' })
 
@@ -325,8 +325,8 @@ test('User admin update user : update one field', async () => {
     .get('/api/users')
     .set('x-access-token', userToken)
   expect(response.statusCode).toBe(200)
-  expect(response.body.data.find((user => user.id === 3))).toStrictEqual({
-    "id": 3,
+  expect(response.body.data.find((user => user.id === 4))).toStrictEqual({
+    "id": 4,
     "firstName": "newEdit",
     "lastName": "edit",
     "email": "edit.edit@grenoble-inp.fr",
@@ -352,7 +352,7 @@ test('User admin delete user : simple delete', async () => {
 
   // Delete the user
   response = await request(app)
-    .delete('/api/user/3')
+    .delete('/api/user/4')
     .set('x-access-token', userToken)
   expect(response.statusCode).toBe(200)
 
@@ -361,5 +361,5 @@ test('User admin delete user : simple delete', async () => {
     .get('/api/users')
     .set('x-access-token', userToken)
   expect(response.statusCode).toBe(200)
-  expect(response.body.data.map(user => user.id)).not.toContain(3)
+  expect(response.body.data.map(user => user.id)).not.toContain(4)
 })

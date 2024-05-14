@@ -24,7 +24,7 @@ test('History get : simple valid with null sold week', async () => {
     "evolutionSolde": [
       {
         "date": "04-2023",
-        "total_amount": 2
+        "total_amount": -5
       },
       {
         "date": "05-2023",
@@ -68,7 +68,7 @@ test('History get : some histories were added', async () => {
     "evolutionSolde": [
       {
         "date": "04-2023",
-        "total_amount": 2
+        "total_amount": -5
       },
       {
         "date": "05-2023",
