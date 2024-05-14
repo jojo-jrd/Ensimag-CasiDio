@@ -1,8 +1,11 @@
 import { Modal } from "flowbite-react";
-import { useEffect, useState } from "react";
+import { AppContext } from '../../AppContext';
+import { useEffect, useState, useContext } from "react";
 import PropTypes from 'prop-types';
 
-function QuestionAPI({openModal, setOpenModal}) {
+let gameSocket;
+
+function QuestionAPI({setOpenModal}) {
     const [question, setQuestion] = useState("");
     const [responses, setResponses] = useState([]);
     const [rightAnswer, setRightAnswer] = useState("");
@@ -10,62 +13,67 @@ function QuestionAPI({openModal, setOpenModal}) {
     const [erreurMessage, setErreurMessage] = useState("");
     const [difficulty, setDifficulty] = useState("");
     const [category, setCategory] = useState("");
+    const [gameState, setGameState] = useState("");
+    const { token } = useContext(AppContext);
 
-    async function loadQuestions() {
-        const resultAPI = await (await fetch("https://opentdb.com/api.php?amount=1&type=multiple", { method : 'GET'})).json();
-        console.log(resultAPI);
-        const results = resultAPI['results'];
-        if(results?.length) {
-            const result = results[0];
-            // TODO gérer les plusieurs questions
-            // TODO problème encodage
-            setQuestion(result['question']);
-            setDifficulty(result['difficulty']);
-            setCategory(result['category']);
-            var answers = result['incorrect_answers'];
-            const correctAnswer = result['correct_answer'];
-            setRightAnswer(correctAnswer);
-            answers.splice(Math.floor(Math.random() * (answers.length + 1)), 0, correctAnswer);
-            setResponses(answers);
-        }else {
-            // Problème : Relance la récupération d'une question
-            // l'API ne fonctionne pas tous le temps
-            setTimeout(() => {
-                loadQuestions();
-            }, 500);
+    const gameSocketHandler = (msg) => {
+        const data = JSON.parse(msg.data);
+
+        // Handle errors
+        if (data.error) {
+            console.error(data.error);
+            setErreurMessage(data.error);
+            return;
         }
-        
+
+        // Handle initialization
+        if (data.state === 'playing') {
+            setQuestion(data.question);
+            setDifficulty(data.difficulty);
+            setCategory(data.category);
+            setResponses(data.possibleAnswers);
+            return;
+        }
+
+        setQuestion('');
+        setDifficulty('');
+        setCategory('');
+        setResponses([])
+        setGameState('end')
+        // Handle validation win
+        if (data.state === 'win') {
+            return;
+        }
+
+        if (data.state === 'loose') {
+            setErreurMessage('Dommage ! Mauvaise réponse');
+            return;
+        }
+    }
+
+    const initQuestion = () => {
+        gameSocket.send(JSON.stringify({game: 'initQuestion', Payload: {}, userToken: token}));
+        setErreurMessage('');
+        setGameState('playing');
     }
 
     useEffect(() => {
-        loadQuestions();
+        gameSocket = new WebSocket(`${import.meta.env.VITE_API_WS}/gameSocket`);
+        gameSocket.onmessage = gameSocketHandler;
+        
+        gameSocket.onopen = initQuestion;
     }, [])
 
     function validate() {
-        if(answerSelected) {
-            if (answerSelected == rightAnswer) {
-                // TODO correct
-                setOpenModal(false);
-            } else {
-                setErreurMessage("Dommage ! Mauvaise réponse");
-                loadQuestions();
-                setTimeout(() => {
-                    setErreurMessage("");
-                }, 1000)
-            }
-        } else {
-            setErreurMessage("Vous devez saisir une réponse");
-        }
+        gameSocket.send(JSON.stringify({game: 'playQuestion', Payload: {answer: answerSelected}, userToken: token}))
     }
-    
-    
-  
+
     return (
-        <Modal show={openModal} onClose={() => setOpenModal(false)}>
+        <Modal show={true} onClose={() => setOpenModal(false)}>
             <Modal.Header>Récupérer des Viardot</Modal.Header>
             <Modal.Body>
             <div className="space-y-6">
-                <p className="text-center leading-relaxed">
+                <p className="text-center leading-relaxed text-black">
                     {question}
                 </p>
                 <div className="text-center">
@@ -76,7 +84,7 @@ function QuestionAPI({openModal, setOpenModal}) {
                 { responses.map((reponse, i) =>  {
                     return (<div key={i}>
                         <input type="radio" id={reponse} name="question" value={reponse} onChange={() => setAnswerSelected(reponse)}/>
-                        <label className="ml-4" htmlFor={reponse}>{reponse}</label>
+                        <label className="ml-4 text-black" htmlFor={reponse}>{reponse}</label>
                     </div>
                     )   
                 })}
@@ -85,7 +93,11 @@ function QuestionAPI({openModal, setOpenModal}) {
             <span className="text-red-500 text-xs italic"> {erreurMessage}</span>
             </Modal.Body>
             <Modal.Footer>
-                <button className="bg-blue-700 hover:bg-blue-800 rounded-lg text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => validate()}>Valider</button>
+                { gameState === 'playing' ? (
+                    <button className="bg-blue-700 hover:bg-blue-800 rounded-lg text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => validate()}>Valider</button>
+                ) : (
+                    <button className="bg-blue-700 hover:bg-blue-800 rounded-lg text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => initQuestion()}>Rejouer</button>
+                )}
                 <button className="text-blue-700 hover:text-blue-800 rounded-lg font-bold py-2 px-4 rounded" onClick={() => setOpenModal(false)}>Quitter</button>
             </Modal.Footer>
         </Modal>
@@ -93,7 +105,7 @@ function QuestionAPI({openModal, setOpenModal}) {
 }
 
 QuestionAPI.propTypes = {
-    openModal : PropTypes.func,
     setOpenModal : PropTypes.func,
-  }
+}
+
 export default QuestionAPI;

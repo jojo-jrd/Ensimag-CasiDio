@@ -2,10 +2,13 @@ import { useState, useContext } from 'react';
 import { AppContext } from '../../AppContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons/faBars';
+import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus';
 import Viardot from './../../assets/viardot-coin.png';
+import QuestionAPI from './../../components/questionAPI/QuestionAPI';
 
 function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
+    const [isQuestionsOpen, setQuestionsOpen] = useState(false);
     const {changePage, userConnected} = useContext(AppContext);
 
     const toggleMenu = () => {
@@ -23,6 +26,7 @@ function NavBar() {
                             <span>
                                 <p className={(userConnected.balance > 100 ? 'text-lime-500' : 'text-amber-500') +' inline'}>{userConnected.balance}</p>
                                 <img src={Viardot} alt="Viardot Money" className="w-10 ml-1 inline"/>
+                                <FontAwesomeIcon className='text-xl text-lime-500 hover:text-lime-300 hover:cursor-pointer' icon={faCirclePlus} onClick={() => setQuestionsOpen(true)}/>
                             </span>
                         ) : <></>}
                         <span onClick={() => changePage('home')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Accueil</span>
@@ -47,6 +51,7 @@ function NavBar() {
                             <span>
                                 <p className={(userConnected.balance > 100 ? 'text-lime-500' : 'text-amber-500') +' inline'}>{userConnected.balance}</p>
                                 <img src={Viardot} alt="Viardot Money" className="w-10 ml-1 inline"/>
+                                <FontAwesomeIcon className='text-xl text-lime-500' icon={faCirclePlus} onClick={() => setQuestionsOpen(true)}/>
                             </span>
                         ) : <></>}
                         <button onClick={toggleMenu} className="text-gray-300 bg-gray-800 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">
@@ -75,6 +80,10 @@ function NavBar() {
                     </div>
                 </div>
             </nav>
+           { isQuestionsOpen && (
+                <QuestionAPI setOpenModal={(value) => setQuestionsOpen(value)}/>
+           )}
+
         </header>
     )
 }

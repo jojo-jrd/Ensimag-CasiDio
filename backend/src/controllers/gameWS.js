@@ -21,6 +21,11 @@ async function saveUserHistory(user, purProfit, gameID) {
   history.setGame(gameID)
 }
 
+// Question
+function formatStringFromAPI(input) {
+  return input.replaceAll('&quot;', "\"").replaceAll('&#039;', "'").replaceAll('&ndash;', "-").replaceAll('&Amp;', '&')
+}
+
 // Mines game
 const gridSize = 5;
 const totalCells = gridSize * gridSize;
@@ -41,28 +46,36 @@ function calculateMultiplier(bombCount, discoveredCells) {
 
 module.exports = {
   async initQuestion(msg, ws, user) {
+    // Fetch data to the extern api
     const resultAPI = await (await fetch("https://opentdb.com/api.php?amount=1&type=multiple", { method : 'GET'})).json();
     
+    // Delete old games if it was not done before
     delete curentGames[`${user.id}-question`]
 
     // Problem : the api sometimes don't send the data
     if (resultAPI.results) {
+      // Only one question
       const result = resultAPI.results[0]
 
-      // TODO : pb d'encodagage
+      // Mix correct answers and incorrect answers
       const answers = result.incorrect_answers
       const correctAnswer = result.correct_answer
       answers.splice(Math.floor(Math.random() * (answers.length + 1)), 0, correctAnswer)
 
+      // Add the correct answer to the global data to get it later
       curentGames[`${user.id}-question`] = {
         correctAnswer: correctAnswer
       }
 
-      ws.send(JSON.stringify({question: result.question, difficulty: result.difficulty, category: result.category, possibleAnswers: answers}))
+      // Format answers
+      answers.map((answer) => formatStringFromAPI(answer))
+
+      // Send back data
+      ws.send(JSON.stringify({question: formatStringFromAPI(result.question), difficulty: result.difficulty, category: formatStringFromAPI(result.category), possibleAnswers: answers, state: 'playing'}))
     } else {
       console.log('EXTERN API : have to refetch data')
       await setTimeout(async () => {
-        await initQuestion(msg, ws, user)
+        await this.initQuestion(msg, ws, user)
       }, 500);
     }
   },
@@ -92,6 +105,9 @@ module.exports = {
     } else {
       ws.send(JSON.stringify({state: 'loose', gains: 0}))
     }
+
+    // Delete global data for this game for this user
+    delete curentGames[`${user.id}-question`]
   },
   async playSlotMachine(msg, ws, user) {
     // Check msg resquest

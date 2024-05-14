@@ -10,7 +10,6 @@ import HomeView from '../home/Home';
 import RegisterView from '../register/Register';
 import DashBoardView from '../dashboard/Dashboard';
 import NavBar from './../../components/navbar/Navbar';
-import QuestionAPI from './../../components/questionAPI/QuestionAPI';
 import AdminUsers from '../admin_users/AdminUsers';
 import ProfilView from '../profil/Profil';
 
@@ -84,7 +83,6 @@ function App() {
     <AppContext.Provider value = {{token, setToken, changePage, userConnected, updateUserConnected}}>
       <NavBar />
       {getCurrentPage()}
-      {/* <QuestionAPI openModal={true} setOpenModal={() => {}}/>  */}
       {/* TODO: */}
     </AppContext.Provider>
   )
