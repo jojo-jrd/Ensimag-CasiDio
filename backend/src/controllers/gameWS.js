@@ -54,7 +54,7 @@ module.exports = {
       ws.send(JSON.stringify({error: error}))
       return
     }
-    
+
     // Delete old games if it was not done before
     delete curentGames[`${user.id}-question`]
 
@@ -79,17 +79,26 @@ module.exports = {
       // Send back data
       ws.send(JSON.stringify({question: formatStringFromAPI(result.question), difficulty: result.difficulty, category: formatStringFromAPI(result.category), possibleAnswers: answers, state: 'playing'}))
     } else {
-      console.log('EXTERN API : have to refetch data')
-      await setTimeout(async () => {
+      // Wait for :
+      //    - the timeout to proc
+      //    - then the function to end
+      await new Promise(resolve => setTimeout(async () => {
         await this.initQuestion(msg, ws, user)
-      }, 500);
+        resolve()
+      }, 500))
     }
   },
   async playQuestion(msg, ws, user) {
     // Check msg request
-    if (!msg.Payload.answer) {
+    if (msg.Payload.answer === undefined) {
       ws.send(JSON.stringify({error: 'you must specify the user answer'}))
       return
+    }
+
+    // Check answer type
+    if (typeof(msg.Payload.answer) !== 'string') {
+      ws.send(JSON.stringify({error: 'answer field must be a string'}))
+      return 
     }
 
     // Check game state
@@ -117,7 +126,7 @@ module.exports = {
   },
   async playSlotMachine(msg, ws, user) {
     // Check msg resquest
-    if (!msg.Payload.nbIcons || !msg.Payload.indexesColumns || !msg.Payload.betAmount) {
+    if (msg.Payload.nbIcons === undefined || msg.Payload.indexesColumns === undefined || msg.Payload.betAmount === undefined) {
       ws.send(JSON.stringify({error: 'nbIcons, indexesColumns nor betAmout not specified'}))
       return
     }
@@ -177,8 +186,14 @@ module.exports = {
   }, 
   async initMineGame(msg, ws, user) {
     // Check msg request
-    if (!msg.Payload.bombCount || !msg.Payload.betAmount) {
+    if (msg.Payload.bombCount === undefined || msg.Payload.betAmount === undefined) {
       ws.send(JSON.stringify({error: 'bombCount nor betAmout not specified'}))
+      return
+    }
+
+    // Check bombCount field
+    if (!Number.isInteger(msg.Payload.bombCount) || msg.Payload.bombCount < 1 || msg.Payload.bombCount >= totalCells) {
+      ws.send(JSON.stringify({error: `bombCount should be an integer and in the range [1, ${totalCells - 1}]`}))
       return
     }
 
@@ -251,8 +266,9 @@ module.exports = {
     }
 
     // Check msg request
-    if ((msg.Payload.row !== undefined ? (msg.Payload.row > gridSize) : true) || (msg.Payload.col !== undefined ? (msg.Payload.col > gridSize) : true)) {
-      ws.send(JSON.stringify({error: `row nor col are not specified or greater than ${gridSize}`}))
+    if ((msg.Payload.row !== undefined ? (!Number.isInteger(msg.Payload.row) || msg.Payload.row < 0 || msg.Payload.row >= gridSize) : true) 
+      || (msg.Payload.col !== undefined ? (!Number.isInteger(msg.Payload.col) || msg.Payload.col < 0 || msg.Payload.col >= gridSize) : true)) {
+      ws.send(JSON.stringify({error: `row nor col are not specified, haves invalids types or not in the range [0, ${gridSize - 1}]`}))
       return
     }
 
