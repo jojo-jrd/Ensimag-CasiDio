@@ -78,7 +78,7 @@ function SlotMachineView() {
                 setIsClicked(false);
             }
         }
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 
     function rollColumn(offset, column, delta, callback) {
