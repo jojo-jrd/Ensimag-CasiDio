@@ -88,3 +88,51 @@ test('History get : some histories were added', async () => {
     }
   })
 })
+
+// --------------------------------------- //
+//           GLOBAL HISTORY GET            //
+// --------------------------------------- //
+
+test('History get : simple valid ', async () => {
+  // Login on a user and save his token
+  let response = await request(app)
+    .post('/login')
+    .send({ email: 'a@a.com', password: 'Ab*123-!' })
+  expect(response.statusCode).toBe(200)
+  const userToken = response.body.token
+
+  // Get history of all the users
+  response = await request(app)
+    .get('/api/globalHistory')
+    .set('x-access-token', userToken)
+  expect(response.statusCode).toBe(200)
+
+  // check data
+  expect(response.body.data).toStrictEqual({
+    "evolutionSolde": [
+      {
+        "date": "04-2023",
+        "total_amount": -5
+      },
+      {
+        "date": "05-2023",
+        "total_amount": 15
+      },
+      {
+        "date": "06-2023",
+        "total_amount": -1
+      },
+      {
+        "date": "04-2024",
+        "total_amount": 200
+      },
+      {
+        "date": "05-2024",
+        "total_amount": -100
+      }
+    ],
+    "evolutionSoldeWeek": {
+      "total_amount": -100
+    }
+  })
+})
