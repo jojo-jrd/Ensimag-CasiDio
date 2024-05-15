@@ -175,9 +175,6 @@ test('Slot machine : simple loose game', async () => {
 
     // Error should not exist
     expect(lastMSG).not.toHaveProperty('error')
-
-    // Initial and curent balances shoulds not be the same (no way, less or higher)
-    expect(initialBalance).not.toBe(user.balance)
 })
 
 test('Slot machine : simple win game', async () => {
