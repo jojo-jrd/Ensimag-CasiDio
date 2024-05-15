@@ -61,12 +61,8 @@ function AdminUsers() {
 
     useEffect(() => {
         loadUsers();
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-
-    
-
-    // TODO: faire update et tester la suppression quand le bug sera résolu
 
 
     function sortColumn(key, type) {

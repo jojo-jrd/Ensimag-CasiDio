@@ -10,4 +10,4 @@ then
     color="orange"
   fi
 fi
-anybadge -o -l "JS Lint" -v "errors : $NBERR warnings : $NBWARN" -c "$color" -f "frontend_lint.svg"
+anybadge -o -l "Frontend Lint" -v "errors : $NBERR warnings : $NBWARN" -c "$color" -f "frontend_lint.svg"

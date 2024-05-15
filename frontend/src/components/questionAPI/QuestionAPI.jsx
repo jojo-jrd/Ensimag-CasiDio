@@ -8,7 +8,6 @@ let gameSocket;
 function QuestionAPI({setOpenModal}) {
     const [question, setQuestion] = useState("");
     const [responses, setResponses] = useState([]);
-    const [rightAnswer, setRightAnswer] = useState("");
     const [answerSelected, setAnswerSelected] = useState("");
     const [erreurMessage, setErreurMessage] = useState("");
     const [difficulty, setDifficulty] = useState("");
@@ -64,7 +63,7 @@ function QuestionAPI({setOpenModal}) {
         gameSocket.onmessage = gameSocketHandler;
         
         gameSocket.onopen = initQuestion;
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function validate() {
         gameSocket.send(JSON.stringify({game: 'playQuestion', Payload: {answer: answerSelected}, userToken: token}))

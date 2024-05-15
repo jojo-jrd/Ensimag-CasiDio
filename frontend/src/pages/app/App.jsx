@@ -14,9 +14,7 @@ import AdminUsers from '../admin_users/AdminUsers';
 import ProfilView from '../profil/Profil';
 
 // TODO:
-// - eslint a corriger
 // - hauteur (enlever la taille de la navbar en height)
-// - DashBoard admin
 
 function App() {
   const [token, setToken] = useState(null);

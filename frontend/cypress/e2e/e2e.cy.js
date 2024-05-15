@@ -236,7 +236,7 @@ describe('Test E2E', () => {
         cy.wait('@users').then((interception) => {
             expect(interception.response.statusCode).to.equal(200);
             expect(interception.response.body.message).to.equal('Returnins users datas');
-            expect(interception.response.body.data.length).to.equal(4);
+            expect(interception.response.body.data.length).to.equal(5);
         });
 
         // TODO tester sort
@@ -317,7 +317,7 @@ describe('Test E2E', () => {
         cy.wait('@users').then((interception) => {
             expect(interception.response.statusCode).to.equal(200);
             expect(interception.response.body.message).to.equal('Returnins users datas');
-            expect(interception.response.body.data.length).to.equal(3);
+            expect(interception.response.body.data.length).to.equal(4);
         });
     });
 
