@@ -27,15 +27,12 @@ function DisplaySort({currentSort, column}) {
 
 DisplaySort.propTypes = {
     currentSort: PropTypes.any,
-    column: PropTypes.shape({
-        column: PropTypes.string,
-        order: PropTypes.string
-    }),
+    column: PropTypes.any
 };
 
 
 function AdminUsers() {
-    const { token } = useContext(AppContext);
+    const { token, userConnected } = useContext(AppContext);
     const [currentSort, setCurrentSort] = useState({
         column : '',
         order : 'ASC',
@@ -193,8 +190,12 @@ function AdminUsers() {
                                     <td className="px-6 py-3 hidden md:table-cell">{user.address}</td>
                                     <td className="px-6 py-3 hidden md:table-cell">{user.isAdmin ? 'Oui' : 'Non'}</td>
                                     <td className="px-6 py-3 hidden md:table-cell">{moment(user.birthDate).format('L')}</td>
-                                    <td className="px-6 py-3 cursor-pointer" onClick={() => updateUser(user)}><FontAwesomeIcon className="ml-3 text-blue-700" icon={faPenToSquare} /></td>
-                                    <td className="px-6 py-3 cursor-pointer" onClick={() => deleteUser(user)}><FontAwesomeIcon className="ml-3 text-red-500" icon={faTrashCan}/></td>
+                                    <td className="px-6 py-3 cursor-pointer" >
+                                        {userConnected.email != user.email ? <FontAwesomeIcon className="ml-3 text-blue-700" icon={faPenToSquare} onClick={() => updateUser(user)}/> : ''}
+                                    </td>
+                                    <td className="px-6 py-3 cursor-pointer" >
+                                        {userConnected.email != user.email ? <FontAwesomeIcon className="ml-3 text-red-500" icon={faTrashCan} onClick={() => deleteUser(user)}/> : ''}
+                                    </td>
                                 </tr>
                             )
                         })

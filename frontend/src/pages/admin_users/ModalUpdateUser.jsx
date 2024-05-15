@@ -111,7 +111,7 @@ function ModalUpdateUser({openModal, setOpenModal, user}) {
 }
 
 ModalUpdateUser.propTypes = {
-    openModal: PropTypes.func,
+    openModal: PropTypes.bool,
     setOpenModal: PropTypes.func,
     user: PropTypes.any
 };
