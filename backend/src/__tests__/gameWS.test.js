@@ -13,7 +13,7 @@ const WebSocketMock = {
 // --------------------------------------- //
 //                QUESTIONS                //
 // --------------------------------------- //
-test('Questions : simple game', async () => {
+test('Questions : simple loose game', async () => {
     // Get the third user
     const user = await userModel.findOne({where: {id: 3}})
 
@@ -29,11 +29,45 @@ test('Questions : simple game', async () => {
     expect(lastMSG).not.toHaveProperty('error')
 
     // Second phase with the first possible answer
-    await gameWS.playQuestion({Payload: {answer: lastMSG.question[0]}}, WebSocketMock, user)
+    await gameWS.playQuestion({Payload: {answer: 'impossible answzer dzdzdz5z4dzd4z87d87zd846z878486876'}}, WebSocketMock, user)
+
 
     // Props should exist and no errors
-    expect(lastMSG).toHaveProperty('state')
-    expect(lastMSG).toHaveProperty('gains')
+    expect(lastMSG).toHaveProperty('state', 'loose')
+    expect(lastMSG).toHaveProperty('gains', 0)
+    expect(lastMSG).not.toHaveProperty('error')
+})
+
+test('Questions : simple win game', async () => {
+    let win = false
+
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    // Play and always answer the first possible answer
+    // Could run forever BUT if it run 10 times it's already (3)^10 chance over (4)^10 which is 59049 chance over 1048576 which is 5% (there is always the timeout)
+    while (!win) {
+        // Init phase
+        await gameWS.initQuestion({Payload: {}}, WebSocketMock, user)
+
+        // Props should exist and no errors
+        expect(lastMSG).toHaveProperty('question')
+        expect(lastMSG).toHaveProperty('difficulty')
+        expect(lastMSG).toHaveProperty('category')
+        expect(lastMSG).toHaveProperty('possibleAnswers')
+        expect(lastMSG).toHaveProperty('state')
+        expect(lastMSG).not.toHaveProperty('error')
+
+        // Second phase with the first possible answer
+        await gameWS.playQuestion({Payload: {answer: lastMSG.possibleAnswers[0]}}, WebSocketMock, user)
+
+        if (lastMSG.state === 'win')
+            win = true
+    }
+
+    // Props should exist and no errors
+    expect(lastMSG).toHaveProperty('state', 'win')
+    expect(lastMSG).toHaveProperty('gains', 10)
     expect(lastMSG).not.toHaveProperty('error')
 })
 
@@ -113,22 +147,31 @@ test('Questions : invalid answer type', async () => {
 // --------------------------------------- //
 //              SLOT MACHINE               //
 // --------------------------------------- //
-test('Slot machine : simple game', async () => {
+test('Slot machine : simple loose game', async () => {
+    let loose = false
+
     // Get the third user
     const user = await userModel.findOne({where: {id: 3}})
 
     // Get the initial balance of the user
     const initialBalance = user.balance
 
-    // Run a game of slot machine
-    await gameWS.playSlotMachine({Payload: {nbIcons: 9, indexesColumns: [0, 0, 0], betAmount: 10}}, WebSocketMock, user)
+    // Play unitil we loose
+    // Could run forever BUT if it run 10 times it's already (2)^10 chance over (9)^10 which is 1024 chance over 3486784401 which is very low (there is always the timeout)
+    while (!loose) {
+        // Run a game of slot machine
+        await gameWS.playSlotMachine({Payload: {nbIcons: 9, indexesColumns: [0, 0, 0], betAmount: 10}}, WebSocketMock, user)
+
+        if (lastMSG.state === 'loose')
+            loose = true
+    }
 
     // Props should exist
     expect(lastMSG).toHaveProperty('finalIndexes')
     expect(lastMSG).toHaveProperty('deltas')
-    expect(lastMSG).toHaveProperty('gains')
+    expect(lastMSG).toHaveProperty('gains', 0)
     expect(lastMSG).toHaveProperty('currentBalance')
-    expect(lastMSG).toHaveProperty('state')
+    expect(lastMSG).toHaveProperty('state', 'loose')
 
     // Error should not exist
     expect(lastMSG).not.toHaveProperty('error')
@@ -136,6 +179,40 @@ test('Slot machine : simple game', async () => {
     // Initial and curent balances shoulds not be the same (no way, less or higher)
     expect(initialBalance).not.toBe(user.balance)
 })
+
+test('Slot machine : simple win game', async () => {
+    let win = false
+
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    // Get the initial balance of the user
+    const initialBalance = user.balance
+
+    // Play unitil we win
+    // Could run forever BUT if it run 10 times it's already (64)^10 chance over (81)^10 which is 9% (there is always the timeout)
+    while (!win) {
+        // Run a game of slot machine
+        await gameWS.playSlotMachine({Payload: {nbIcons: 9, indexesColumns: [0, 0, 0], betAmount: 10}}, WebSocketMock, user)
+
+        if (lastMSG.state === 'win')
+            win = true
+    }
+
+    // Props should exist
+    expect(lastMSG).toHaveProperty('finalIndexes')
+    expect(lastMSG).toHaveProperty('deltas')
+    expect(lastMSG).toHaveProperty('gains', 20)
+    expect(lastMSG).toHaveProperty('currentBalance')
+    expect(lastMSG).toHaveProperty('state', 'win')
+
+    // Error should not exist
+    expect(lastMSG).not.toHaveProperty('error')
+
+    // Initial and curent balances shoulds not be the same (no way, less or higher)
+    expect(initialBalance).not.toBe(user.balance)
+})
+
 
 test('Slot machine : missing one field', async () => {
     // Get the third user

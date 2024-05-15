@@ -51,6 +51,7 @@ module.exports = {
     try {
       resultAPI = await (await fetch("https://opentdb.com/api.php?amount=1&type=multiple", { method : 'GET'})).json();
     } catch (error) {
+      console.error(error)
       ws.send(JSON.stringify({error: error}))
       return
     }
