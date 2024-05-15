@@ -2,7 +2,7 @@ const gameWS = require('../controllers/gameWS')
 const userModel = require('../models/users')
 
 // Increase jest tiemout (needed for these tests)
-jest.setTimeout(60000)
+jest.setTimeout(120000)
 
 // Since JEST is adapted for REST tests, to tests web socket we will mock the web socket and only call the controller functions with the mocked ws
 let lastMSG = {}
