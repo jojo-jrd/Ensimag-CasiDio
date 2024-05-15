@@ -2,7 +2,6 @@ describe('Test E2E', () => {
     before(() => {
         // Va sur la page login
         cy.visit('http://localhost:3001');
-        // TODO: suppression des élement créées.
     })
 
     it('[LOGIN] : Test password weak' , () => {
@@ -321,6 +320,41 @@ describe('Test E2E', () => {
         });
     });
 
+    it('[DASHBOARD] : chargement dashboard', () => {
+        cy.intercept('http://localhost:3000/api/history').as('history') // route matcher
+        // On est sur la page home et on va sur la page dahsboard
+        cy.get('span[data-cy="dashboard"]').click({force : true});
+
+        cy.wait('@history').then((interception) => {
+            expect(interception.response.statusCode).to.equal(200);
+            expect(interception.response.body.message).to.equal('Returning user history');
+            // Si différent de null => signifie qu'il y a bien un historique
+            expect(interception.response.body.data.evolutionSoldeWeek.total_amount).to.not.equal(null);
+            expect(interception.response.body.data.evolutionSolde.length).to.be.greaterThan(1);
+        });
+
+        // Teste la récupération des données
+        cy.get('p[data-cy="balance"]').should('not.be.empty');
+    });
+
+    it('[DASHBOARD ADMIN] : chargement dashboard', () => {
+        cy.intercept('http://localhost:3000/api/globalHistory').as('globalHistory') // route matcher
+
+        // Passage en mode admin
+        cy.get('input[type="checkbox"]').click();
+
+        cy.wait('@globalHistory').then((interception) => {
+            expect(interception.response.statusCode).to.equal(200);
+            expect(interception.response.body.message).to.equal('Returning global history');
+            // Si différent de null => signifie qu'il y a bien un historique
+            expect(interception.response.body.data.evolutionSoldeWeek.total_amount).to.not.equal(null);
+            expect(interception.response.body.data.evolutionSolde.length).to.be.greaterThan(1);
+        });
+
+        // Teste la récupération des données
+        cy.get('p[data-cy="balance"]').should('not.be.empty');
+    });
+
 
 
 
@@ -332,10 +366,8 @@ describe('Test E2E', () => {
     // TODO faire le reste avant de faire la suppresion
 
     it('[PROFIL] : test erreur modification', () => {
-        cy.intercept('http://localhost:3000/login').as('login') // route matcher
-        cy.intercept('http://localhost:3000/games').as('home')
         // On est sur la page home et on va sur la page profil
-        cy.get('span[data-cy="profil"]').click({force : true});
+        cy.get('span[data-cy="profil"]').click();
 
         // Teste la récupération des données
         cy.get("input#firstname").should('have.value', 'Admin')

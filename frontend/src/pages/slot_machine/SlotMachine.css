@@ -51,8 +51,6 @@
     border: 1px solid rgba(black, 0.3);
     border-radius: 3px;
     overflow: hidden;
-    /* TODO: */
     background-image: url(./../../assets/slot-machine-icons.png);
-    /* background-position: 0 0; */
     background-repeat: repeat-y;
 }

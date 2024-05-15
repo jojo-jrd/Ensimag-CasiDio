@@ -81,7 +81,6 @@ function App() {
     <AppContext.Provider value = {{token, setToken, changePage, userConnected, updateUserConnected}}>
       <NavBar />
       {getCurrentPage()}
-      {/* TODO: */}
     </AppContext.Provider>
   )
 }
