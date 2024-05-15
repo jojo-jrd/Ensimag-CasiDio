@@ -9,7 +9,7 @@ require('mandatoryenv').load(['TOKENSECRET'])
 const { TOKENSECRET } = process.env
 
 function validPassword (password) {
-  return /^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*])[\w!@#$%^&*]{8,}$/.test(password)
+  return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-])[A-Za-z\d!@#$%^&*()\-]{8,}$/.test(password)
 }
 
 module.exports = {
