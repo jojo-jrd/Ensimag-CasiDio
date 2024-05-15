@@ -13,6 +13,7 @@
         "startWIN": "npm run doc && npm run updatedbWIN  && node src/server.js",
         "startdev": "npm run doc && nodemon src/server.js",
         "testWIN": "npm run updatedbWIN && jest --coverage --runInBand -i index.spec.js",
+        "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
         "doc": "node src/util/swagger.js"
     },
     "keywords": [

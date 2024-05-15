@@ -10,6 +10,6 @@ const histories = db.define('histories', {
     type: Sequelize.DATE
   }
 }, { timestamps: false })
-histories.belongsTo(userModel, {through: 'userID'})
-histories.belongsTo(gameModel, {through: 'gameID'})
+histories.belongsTo(userModel, { through: 'userID' })
+histories.belongsTo(gameModel, { through: 'gameID' })
 module.exports = histories

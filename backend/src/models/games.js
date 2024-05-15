@@ -11,10 +11,10 @@ const games = db.define('games', {
   picturePath: {
     type: Sequelize.STRING(128),
     validate: {
-      is: /^(\/?(\.\/)?(\.\.\/)*[a-zA-Z0-9_\-]+)+(\.[a-zA-Z0-9]+)?$/i
+      is: /^(\/?(\.\/)?(\.\.\/)*[a-zA-Z0-9_-]+)+(\.[a-zA-Z0-9]+)?$/i
     }
   },
-  page : {
+  page: {
     type: Sequelize.STRING(128)
   },
   description: {

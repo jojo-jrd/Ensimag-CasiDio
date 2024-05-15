@@ -3,6 +3,7 @@ image: node:latest
 stages:
   - backendTest
   - frontendTest
+  - backendLint
   - frontendLint
   - badges
   - pages
@@ -47,6 +48,20 @@ frontendTest:
     allow_failure: true
 
 # Vérification de code
+backendLint:
+    stage: backendLint
+    allow_failure: true
+    script:
+      - cd backend/
+      - npm i
+      # Run eslint
+      - npm run lint > $CI_PROJECT_DIR/backend_lint_report.txt
+    artifacts:
+        when: always
+        paths:
+            - backend_lint_report.txt # mise a disposition du compte rendu
+
+# Vérification de code
 frontendLint:
     stage: frontendLint
     allow_failure: true
@@ -67,6 +82,7 @@ badges:
     - pip install anybadge
     - ./backend_badge.sh
     - ./frontend_badge.sh
+    - ./backend_lint.sh
     - ./frontend_lint.sh # lancement du script générant le badge lint
   artifacts:
     paths:
@@ -74,6 +90,7 @@ badges:
       - backend_coverage_test.svg
       - frontend_test.svg
       - frontend_coverage_test.svg
+      - backend_lint.svg
       - frontend_lint.svg
     
 pages:

@@ -1,8 +1,8 @@
 const historyModel = require('../models/histories.js')
-const sequelize  = require('sequelize')
+const sequelize = require('sequelize')
 
 module.exports = {
-  async getHistory(req, res) {
+  async getHistory (req, res) {
     // #swagger.tags = ['Histories']
     // #swagger.summary = 'Get all history of the user'
 
@@ -19,9 +19,8 @@ module.exports = {
       ],
       where: { userID: req.userID },
       group: [sequelize.fn('strftime', '%m-%Y', sequelize.col('gameDate'))],
-      order :[['gameDate', 'ASC']]
+      order: [['gameDate', 'ASC']]
     })
-
 
     // Get the last week profit
     // Get the date range of the week
@@ -38,21 +37,24 @@ module.exports = {
       attributes: [
         [sequelize.fn('sum', sequelize.col('profit')), 'total_amount']
       ],
-      where: { 
-        userID: req.userID, 
+      where: {
+        userID: req.userID,
         gameDate: {
           [sequelize.Op.between]: [firstDay, lastDay]
         }
-      },
+      }
     })
 
-
-    res.json({status: true, message: 'Returning user history', data : {
-      'evolutionSolde' : evolutionSolde,
-      'evolutionSoldeWeek' : evolutionSoldeWeek[0]
-    }})
+    res.json({
+      status: true,
+      message: 'Returning user history',
+      data: {
+        evolutionSolde: evolutionSolde,
+        evolutionSoldeWeek: evolutionSoldeWeek[0]
+      }
+    })
   },
-  async getGlobalHistory(req, res) {
+  async getGlobalHistory (req, res) {
     // #swagger.tags = ['Histories']
     // #swagger.summary = 'Get all history of all the users'
 
@@ -68,9 +70,8 @@ module.exports = {
         [sequelize.fn('sum', sequelize.col('profit')), 'total_amount']
       ],
       group: [sequelize.fn('strftime', '%m-%Y', sequelize.col('gameDate'))],
-      order :[['gameDate', 'ASC']]
+      order: [['gameDate', 'ASC']]
     })
-
 
     // Get the last week profit
     // Get the date range of the week
@@ -87,17 +88,20 @@ module.exports = {
       attributes: [
         [sequelize.fn('sum', sequelize.col('profit')), 'total_amount']
       ],
-      where: { 
+      where: {
         gameDate: {
           [sequelize.Op.between]: [firstDay, lastDay]
         }
-      },
+      }
     })
 
-
-    res.json({status: true, message: 'Returning global history', data : {
-      'evolutionSolde' : evolutionSolde,
-      'evolutionSoldeWeek' : evolutionSoldeWeek[0]
-    }})
+    res.json({
+      status: true,
+      message: 'Returning global history',
+      data: {
+        evolutionSolde: evolutionSolde,
+        evolutionSoldeWeek: evolutionSoldeWeek[0]
+      }
+    })
   }
 }

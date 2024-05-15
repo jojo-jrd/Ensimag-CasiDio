@@ -30,14 +30,14 @@ const users = db.define('users', {
     type: Sequelize.STRING(128)
   },
   birthDate: {
-    type: Sequelize.DATE,
+    type: Sequelize.DATE
   },
   balance: {
-    type : Sequelize.FLOAT
+    type: Sequelize.FLOAT
   },
   isAdmin: {
-    type : Sequelize.BOOLEAN,
-    defaultValue : false
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
 }, { timestamps: false })
 module.exports = users

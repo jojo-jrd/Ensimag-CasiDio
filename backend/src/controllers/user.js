@@ -9,45 +9,45 @@ require('mandatoryenv').load(['TOKENSECRET'])
 const { TOKENSECRET } = process.env
 
 function validPassword (password) {
-  return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-])[A-Za-z\d!@#$%^&*()\-]{8,}$/.test(password)
+  return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()-])[A-Za-z\d!@#$%^&*()-]{8,}$/.test(password)
 }
 
 module.exports = {
-  async validToken(req, res, next) {
-    // #swagger.security = [{"apiKeyAuth": []}] 
+  async validToken (req, res, next) {
+    // #swagger.security = [{"apiKeyAuth": []}]
     // If not x-access-token in headers => error
-    if (!req.headers || !req.headers.hasOwnProperty('x-access-token')) {
+    if (!req.headers || !Object.prototype.hasOwnProperty.call(req.headers, 'x-access-token')) {
       res.status(status.FORBIDDEN).json({ status: false, message: 'You must be logged !' })
-      throw new CodeError('Token missing', status.BAD_REQUEST);
+      throw new CodeError('Token missing', status.BAD_REQUEST)
     }
 
     // If the token is not valid
     if (!jws.verify(req.headers['x-access-token'], 'HS256', TOKENSECRET)) {
       res.status(status.FORBIDDEN).json({ status: false, message: 'You must be logged !' })
-      throw new CodeError('Token missing', status.FORBIDDEN);
+      throw new CodeError('Token missing', status.FORBIDDEN)
     }
 
-    const login = jws.decode(req.headers['x-access-token']).payload;
+    const login = jws.decode(req.headers['x-access-token']).payload
 
-    const user = await userModel.findOne({ where: {email: login}});
+    const user = await userModel.findOne({ where: { email: login } })
 
     if (!user) {
       res.status(status.INTERNAL_SERVER_ERROR).json({ status: false, message: 'Server error' })
-      throw new CodeError('Server error', status.INTERNAL_SERVER_ERROR);
+      throw new CodeError('Server error', status.INTERNAL_SERVER_ERROR)
     }
 
     req.userID = user.id
 
-    next();
+    next()
   },
-  async verifyAdmin(req, res, next) {
-		// Si l'utilisateur n'est pas admin on renvoie une erreur
-		const user = await userModel.findOne({ where: {id: req.userID}});
-		if (!user?.isAdmin)
-			throw new CodeError('You must be admin', status.FORBIDDEN);
+  async verifyAdmin (req, res, next) {
+    // Si l'utilisateur n'est pas admin on renvoie une erreur
+    const user = await userModel.findOne({ where: { id: req.userID } })
+    if (!user?.isAdmin)
+      throw new CodeError('You must be admin', status.FORBIDDEN)
 
-		next();
-	},
+    next()
+  },
   async login (req, res) {
     // #swagger.tags = ['Users']
     // #swagger.summary = 'Verify credentials of user using email and password and return token'
@@ -73,21 +73,21 @@ module.exports = {
     const { firstName, lastName, email, password, address, birthDate } = req.body
 
     if (!validPassword(password)) throw new CodeError('Weak password!', status.BAD_REQUEST)
-    await userModel.create({firstName, lastName, email, password: await bcrypt.hash(password, 2), address, birthDate: new Date(birthDate), balance: 0})
+    await userModel.create({ firstName, lastName, email, password: await bcrypt.hash(password, 2), address, birthDate: new Date(birthDate), balance: 0 })
     res.json({ status: true, message: 'User Added' })
   },
   async getUser (req, res) {
     // #swagger.tags = ['Users']
     // #swagger.summary = 'Get User Informations'
     const data = await userModel.findOne({
-      where: {id: req.userID},
+      where: { id: req.userID },
       attributes: ['firstName', 'lastName', 'email', 'address', 'birthDate', 'balance', 'isAdmin']
     })
 
     if (data) {
-      res.json({status: true, message: 'Returning user data', data})
+      res.json({ status: true, message: 'Returning user data', data })
     } else {
-      res.status(status.NOT_FOUND).json({status: false, message: 'User not found'})
+      res.status(status.NOT_FOUND).json({ status: false, message: 'User not found' })
     }
   },
   async updateUser (req, res) {
@@ -95,7 +95,7 @@ module.exports = {
     // #swagger.summary = 'Update user'
     // #swagger.parameters['obj'] = { in: 'body', description:'Update Connected User', schema: { $email: 'John.Doe@acme.com', $password: '1m02P@SsF0rt!', $firstName: 'John', $lastName: 'Doe', $address: '8 avenue de la rue', $birthDate: '11/30/2000'}}
     const user = await userModel.findOne({
-      where: {id: req.userID},
+      where: { id: req.userID },
       attributes: ['id', 'email', 'password', 'firstName', 'lastName', 'address', 'birthDate']
     })
 
@@ -109,27 +109,27 @@ module.exports = {
       user.lastName = utils.getFieldsIfExist(req.body.lastName, user.lastName)
       user.address = utils.getFieldsIfExist(req.body.address, user.address)
       user.birthDate = utils.getFieldsIfExist(req.body.birthDate, user.birthDate)
-  
+
       await user.save()
-  
-      res.json({status: true, message: 'User updated'})
+
+      res.json({ status: true, message: 'User updated' })
     } else {
-      res.status(status.NOT_FOUND).json({status: false, message: 'User not found'})
+      res.status(status.NOT_FOUND).json({ status: false, message: 'User not found' })
     }
   },
   async deleteUser (req, res) {
     // #swagger.tags = ['Users']
     // #swagger.summary = 'Delete Current User'
     const user = await userModel.findOne({
-      where: {id: req.userID}
+      where: { id: req.userID }
     })
 
     if (user) {
       await user.destroy()
 
-      res.json({status: true, message: 'User deleted'})
+      res.json({ status: true, message: 'User deleted' })
     } else {
-      res.status(status.NOT_FOUND).json({status: false, message: 'User not found'})
+      res.status(status.NOT_FOUND).json({ status: false, message: 'User not found' })
     }
   },
   async getUsers (req, res) {
@@ -140,9 +140,9 @@ module.exports = {
     })
 
     if (data) {
-      res.json({status: true, message: 'Returnins users datas', data })
+      res.json({ status: true, message: 'Returnins users datas', data })
     } else {
-      res.status(status.INTERNAL_SERVER_ERROR).json({status: false, message: 'Users not founds'})
+      res.status(status.INTERNAL_SERVER_ERROR).json({ status: false, message: 'Users not founds' })
     }
   },
   async adminUpdateUser (req, res) {
@@ -153,7 +153,7 @@ module.exports = {
     const { id } = req.params
 
     const user = await userModel.findOne({
-      where: {id: id},
+      where: { id: id },
       attributes: ['id', 'email', 'password', 'firstName', 'lastName', 'address', 'birthDate', 'balance', 'isAdmin']
     })
     if (user) {
@@ -167,12 +167,12 @@ module.exports = {
       user.birthDate = utils.getFieldsIfExist(req.body.birthDate, user.birthDate)
       user.balance = utils.getFieldsIfExist(req.body.balance, user.balance)
       user.isAdmin = utils.getFieldsIfExist(req.body.isAdmin, user.isAdmin)
-  
+
       await user.save()
-  
-      res.json({status: true, message: 'User updated'})
+
+      res.json({ status: true, message: 'User updated' })
     } else {
-      res.status(status.NOT_FOUND).json({status: false, message: 'User not found'})
+      res.status(status.NOT_FOUND).json({ status: false, message: 'User not found' })
     }
   },
   async adminDeleteUser (req, res) {
@@ -182,15 +182,15 @@ module.exports = {
     const { id } = req.params
 
     const user = await userModel.findOne({
-      where: {id: id}
+      where: { id: id }
     })
 
     if (user) {
       user.destroy()
 
-      res.json({status: true, message: 'User deleted'})
+      res.json({ status: true, message: 'User deleted' })
     } else {
-      res.status(status.NOT_FOUND).json({status: false, message: 'User not found'})
+      res.status(status.NOT_FOUND).json({ status: false, message: 'User not found' })
     }
   }
 }

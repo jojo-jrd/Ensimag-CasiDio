@@ -1,11 +1,11 @@
 const historyModel = require('../models/histories.js')
-const fetch = require("node-fetch")
+const fetch = require('node-fetch')
 
 // Global
 const curentGames = {}
-async function applyUserBet(user, msg) {
+async function applyUserBet (user, msg) {
   // handle user bet
-  if (typeof(msg.Payload.betAmount) !== 'number' || msg.Payload.betAmount < 0 || msg.Payload.betAmount > user.balance) {
+  if (typeof (msg.Payload.betAmount) !== 'number' || msg.Payload.betAmount < 0 || msg.Payload.betAmount > user.balance) {
     return false
   }
 
@@ -15,44 +15,44 @@ async function applyUserBet(user, msg) {
   return true
 }
 
-async function saveUserHistory(user, purProfit, gameID) {
-  const history = await historyModel.create({profit: purProfit, gameDate: Date.now()})
+async function saveUserHistory (user, purProfit, gameID) {
+  const history = await historyModel.create({ profit: purProfit, gameDate: Date.now() })
   history.setUser(user)
   history.setGame(gameID)
 }
 
 // Question
-function formatStringFromAPI(input) {
-  return input.replaceAll('&quot;', "\"").replaceAll('&#039;', "'").replaceAll('&ndash;', "-").replaceAll('&Amp;', '&')
+function formatStringFromAPI (input) {
+  return input.replaceAll('&quot;', '"').replaceAll('&#039;', "'").replaceAll('&ndash;', '-').replaceAll('&Amp;', '&')
 }
 
 // Mines game
-const gridSize = 5;
-const totalCells = gridSize * gridSize;
+const gridSize = 5
+const totalCells = gridSize * gridSize
 
 function getRandomInt (max) {
   return Math.floor(Math.random() * max)
 }
 
-function calculateMultiplier(bombCount, discoveredCells) {
+function calculateMultiplier (bombCount, discoveredCells) {
   // Calculate the base for the exponential function
-  const base = 15 ** (1 / (totalCells - bombCount));
+  const base = 15 ** (1 / (totalCells - bombCount))
 
   // Calculate the multiplier based on the number of discovered cells
-  const multiplier = base ** discoveredCells;
+  const multiplier = base ** discoveredCells
 
-  return Math.round(multiplier * 100) / 100;
+  return Math.round(multiplier * 100) / 100
 }
 
 module.exports = {
-  async initQuestion(msg, ws, user) {
+  async initQuestion (msg, ws, user) {
     // Fetch data to the extern api
     let resultAPI
     try {
-      resultAPI = await (await fetch("https://opentdb.com/api.php?amount=1&type=multiple", { method : 'GET'})).json();
+      resultAPI = await (await fetch('https://opentdb.com/api.php?amount=1&type=multiple', { method: 'GET' })).json()
     } catch (error) {
       console.error(error)
-      ws.send(JSON.stringify({error: error}))
+      ws.send(JSON.stringify({ error: error }))
       return
     }
 
@@ -78,7 +78,7 @@ module.exports = {
       answers.map((answer) => formatStringFromAPI(answer))
 
       // Send back data
-      ws.send(JSON.stringify({question: formatStringFromAPI(result.question), difficulty: result.difficulty, category: formatStringFromAPI(result.category), possibleAnswers: answers, state: 'playing'}))
+      ws.send(JSON.stringify({ question: formatStringFromAPI(result.question), difficulty: result.difficulty, category: formatStringFromAPI(result.category), possibleAnswers: answers, state: 'playing' }))
     } else {
       // Wait for :
       //    - the timeout to proc
@@ -89,22 +89,22 @@ module.exports = {
       }, 500))
     }
   },
-  async playQuestion(msg, ws, user) {
+  async playQuestion (msg, ws, user) {
     // Check msg request
     if (msg.Payload.answer === undefined) {
-      ws.send(JSON.stringify({error: 'you must specify the user answer'}))
+      ws.send(JSON.stringify({ error: 'you must specify the user answer' }))
       return
     }
 
     // Check answer type
-    if (typeof(msg.Payload.answer) !== 'string') {
-      ws.send(JSON.stringify({error: 'answer field must be a string'}))
-      return 
+    if (typeof (msg.Payload.answer) !== 'string') {
+      ws.send(JSON.stringify({ error: 'answer field must be a string' }))
+      return
     }
 
     // Check game state
     if (!curentGames[`${user.id}-question`]) {
-      ws.send(JSON.stringify({error: 'invalid game state'}))
+      ws.send(JSON.stringify({ error: 'invalid game state' }))
       return
     }
 
@@ -117,36 +117,36 @@ module.exports = {
       await user.save()
 
       // Send back data
-      ws.send(JSON.stringify({state: 'win', gains: 10}))
+      ws.send(JSON.stringify({ state: 'win', gains: 10 }))
     } else {
-      ws.send(JSON.stringify({state: 'loose', gains: 0}))
+      ws.send(JSON.stringify({ state: 'loose', gains: 0 }))
     }
 
     // Delete global data for this game for this user
     delete curentGames[`${user.id}-question`]
   },
-  async playSlotMachine(msg, ws, user) {
+  async playSlotMachine (msg, ws, user) {
     // Check msg resquest
     if (msg.Payload.nbIcons === undefined || msg.Payload.indexesColumns === undefined || msg.Payload.betAmount === undefined) {
-      ws.send(JSON.stringify({error: 'nbIcons, indexesColumns nor betAmout not specified'}))
+      ws.send(JSON.stringify({ error: 'nbIcons, indexesColumns nor betAmout not specified' }))
       return
     }
 
     // Check nbIcon type
-    if (typeof(msg.Payload.nbIcons) !== 'number') {
-      ws.send(JSON.stringify({error: 'nbIcons should be a number'}))
+    if (typeof (msg.Payload.nbIcons) !== 'number') {
+      ws.send(JSON.stringify({ error: 'nbIcons should be a number' }))
       return
     }
 
     // Check indexesColumns type
     if (!Array.isArray(msg.Payload.indexesColumns) || msg.Payload.indexesColumns.length !== 3) {
-      ws.send(JSON.stringify({error: 'indexesColumns should be an array of size 3'}))
+      ws.send(JSON.stringify({ error: 'indexesColumns should be an array of size 3' }))
       return
     }
-    
+
     // Apply user bet
     if (!await applyUserBet(user, msg)) {
-      ws.send(JSON.stringify({error: 'bet is not a number, below 0 or over the user balance'}))
+      ws.send(JSON.stringify({ error: 'bet is not a number, below 0 or over the user balance' }))
       return
     }
 
@@ -171,7 +171,7 @@ module.exports = {
         multipler = 10
         state = 'bigWIN'
       }
-      
+
       gains = msg.Payload.betAmount * multipler
 
       // Update user balance
@@ -181,20 +181,20 @@ module.exports = {
     } else {
       await saveUserHistory(user, -msg.Payload.betAmount, 1)
     }
-    
+
     // Send back data
-    ws.send(JSON.stringify({finalIndexes: finalIndexes, deltas: deltas, gains: gains, currentBalance: user.balance, state: state}))
-  }, 
-  async initMineGame(msg, ws, user) {
+    ws.send(JSON.stringify({ finalIndexes: finalIndexes, deltas: deltas, gains: gains, currentBalance: user.balance, state: state }))
+  },
+  async initMineGame (msg, ws, user) {
     // Check msg request
     if (msg.Payload.bombCount === undefined || msg.Payload.betAmount === undefined) {
-      ws.send(JSON.stringify({error: 'bombCount nor betAmout not specified'}))
+      ws.send(JSON.stringify({ error: 'bombCount nor betAmout not specified' }))
       return
     }
 
     // Check bombCount field
     if (!Number.isInteger(msg.Payload.bombCount) || msg.Payload.bombCount < 1 || msg.Payload.bombCount >= totalCells) {
-      ws.send(JSON.stringify({error: `bombCount should be an integer and in the range [1, ${totalCells - 1}]`}))
+      ws.send(JSON.stringify({ error: `bombCount should be an integer and in the range [1, ${totalCells - 1}]` }))
       return
     }
 
@@ -208,18 +208,18 @@ module.exports = {
 
     for (let row = 0; row < gridSize; row++) {
       for (let col = 0; col < gridSize; col++) {
-        grid[row][col] = { value: "star", isRevealed: false }
+        grid[row][col] = { value: 'star', isRevealed: false }
       }
     }
 
     // Initialize bombs
-    let bombsPlaced = 0;
+    let bombsPlaced = 0
     while (bombsPlaced < msg.Payload.bombCount) {
       const row = getRandomInt(gridSize)
       const col = getRandomInt(gridSize)
-      if (grid[row][col].value !== "bomb") {
-        grid[row][col].value = "bomb";
-        bombsPlaced++;
+      if (grid[row][col].value !== 'bomb') {
+        grid[row][col].value = 'bomb'
+        bombsPlaced++
       }
     }
 
@@ -235,18 +235,18 @@ module.exports = {
     const userGrid = JSON.parse(JSON.stringify(grid))
     userGrid.forEach(row => row.forEach(cell => !cell.isRevealed ? cell.value = '' : null))
 
-    if (! await applyUserBet(user, msg)) {
-      ws.send(JSON.stringify({error: 'bet is not defined, below 0 or over the user balance'}))
+    if (!await applyUserBet(user, msg)) {
+      ws.send(JSON.stringify({ error: 'bet is not defined, below 0 or over the user balance' }))
       return
     }
 
     // send back data
-    ws.send(JSON.stringify({grid: userGrid, multiplier: calculateMultiplier(msg.Payload.bombCount, 0), gainAmount: msg.Payload.betAmount, state: 'playing', discoveredCells: 0}))
+    ws.send(JSON.stringify({ grid: userGrid, multiplier: calculateMultiplier(msg.Payload.bombCount, 0), gainAmount: msg.Payload.betAmount, state: 'playing', discoveredCells: 0 }))
   },
-  async playMineGame(msg, ws, user) {
+  async playMineGame (msg, ws, user) {
     // Check workflow status
     if (!curentGames[`${user.id}-MineGame`]?.betAmount) {
-      ws.send(JSON.stringify({error: 'invalid game state'}))
+      ws.send(JSON.stringify({ error: 'invalid game state' }))
       return
     }
 
@@ -259,17 +259,17 @@ module.exports = {
       await saveUserHistory(user, win - curentGames[`${user.id}-MineGame`].betAmount, 2)
 
       // Send informaitons
-      ws.send(JSON.stringify({currentBalance: user.balance, gains: win}))
-      
+      ws.send(JSON.stringify({ currentBalance: user.balance, gains: win }))
+
       // Remove user curentGames data
       delete curentGames[`${user.id}-MineGame`]
       return
     }
 
     // Check msg request
-    if ((msg.Payload.row !== undefined ? (!Number.isInteger(msg.Payload.row) || msg.Payload.row < 0 || msg.Payload.row >= gridSize) : true) 
-      || (msg.Payload.col !== undefined ? (!Number.isInteger(msg.Payload.col) || msg.Payload.col < 0 || msg.Payload.col >= gridSize) : true)) {
-      ws.send(JSON.stringify({error: `row nor col are not specified, haves invalids types or not in the range [0, ${gridSize - 1}]`}))
+    if ((msg.Payload.row !== undefined ? (!Number.isInteger(msg.Payload.row) || msg.Payload.row < 0 || msg.Payload.row >= gridSize) : true) ||
+        (msg.Payload.col !== undefined ? (!Number.isInteger(msg.Payload.col) || msg.Payload.col < 0 || msg.Payload.col >= gridSize) : true)) {
+      ws.send(JSON.stringify({ error: `row nor col are not specified, haves invalids types or not in the range [0, ${gridSize - 1}]` }))
       return
     }
 
@@ -282,14 +282,14 @@ module.exports = {
     let discoveredCells = 0
 
     // Copy the grid and reveal user inputs
-    curentGames[`${user.id}-MineGame`].grid[row][col]["isRevealed"] = true
-    curentGames[`${user.id}-MineGame`].discoveredCells++;
+    curentGames[`${user.id}-MineGame`].grid[row][col].isRevealed = true
+    curentGames[`${user.id}-MineGame`].discoveredCells++
     discoveredCells = curentGames[`${user.id}-MineGame`].discoveredCells
 
     let newGrid = JSON.parse(JSON.stringify(curentGames[`${user.id}-MineGame`].grid))
 
     // Update game variable according to the cell clicked
-    if (curentGames[`${user.id}-MineGame`].grid[row][col].value === "bomb") {
+    if (curentGames[`${user.id}-MineGame`].grid[row][col].value === 'bomb') {
       // Update states variable according to the loose
       state = 'loose'
       newGrid = curentGames[`${user.id}-MineGame`].grid
@@ -305,10 +305,9 @@ module.exports = {
       // Update multiplier and game amount
       multipler = calculateMultiplier(curentGames[`${user.id}-MineGame`].bombCount, curentGames[`${user.id}-MineGame`].discoveredCells)
       gainAmount = curentGames[`${user.id}-MineGame`].betAmount * multipler
-
     }
 
     // Send back data
-    ws.send(JSON.stringify({grid: newGrid, multiplier: multipler, gainAmount: gainAmount, state: state, discoveredCells: discoveredCells}))
+    ws.send(JSON.stringify({ grid: newGrid, multiplier: multipler, gainAmount: gainAmount, state: state, discoveredCells: discoveredCells }))
   }
 }

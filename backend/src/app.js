@@ -12,7 +12,7 @@ const logger = require('./util/logger')
 const app = express()
 
 // Instantiate an websocket on the application
-require('express-ws')(app);
+require('express-ws')(app)
 
 // Configure Express App Instance
 app.use(express.json({ limit: '50mb' }))
