@@ -6,6 +6,10 @@ author:
 - NOGUEIRA Clement
 --- 
 
+**Lien du site :** [CasiDio](https://casidio.osc-fr1.scalingo.io/frontend/)
+
+**Lien de la doc technique :** [Swagger CasiDio](https://casidio.osc-fr1.scalingo.io/doc/)
+
 ## Cahier des charges
 
 Ici vous décrivez les fonctionnalités souhaitées et celles effectivement mises en oeuvre. Avec un diagramme UML des cas d'usage et des maquettes des vues souhaitées et des captures d'écran de ce qui a été réalisé.
@@ -150,7 +154,7 @@ Indiquer ici l'organisation de votre code. Et les choix faits pour le frontend.
 
 ### Backend
 
-#### Schéma de votre base de donnée
+#### Schéma de la base de donnée
 
 ```plantuml
 class User{
@@ -165,18 +169,11 @@ class User{
   -isAdmin: Boolean
 }
 
-abstract Games{
+class Games{
   -id: Number
   -name: String
   -page: String
   -description: String
-}
-
-class Rocket implements Games{
-}
-class Mines implements Games{
-}
-class SlotMachine implements Games{
 }
 
 class History{
@@ -192,16 +189,32 @@ History *--> Games
 
 #### Architecture de votre code
 
-Indiquer ici l'organisation de votre code. Et les choix faits pour le backend.
+Le backend s'appuie sur une architecture **Modèle Vue Contrôleur** (MVC) sans implémenter la vue, en effet le frontend s'occupant de ce point. Cette architecture est recommandée par [Express](https://expressjs.com/fr/) le **framework** utilisé pour le backend.
+
+Le **modèle** accessible dans `src/models` sert d'interface entre le reste du code et [Sequelize](https://sequelize.org/) l'ORM utilisé qui fait l'interface entre notre modèle et une base de donnée physique.
+
+Le **contrôleur** va définir dans `src/routes` les différents **endpoints REST** accessibles et leurs méthodes d'accès. Il va aussi définir les **handlers** de chaque route contenant toute la logique de l'application dans `src/controllers`.
+
+Le **contrôleur** gère aussi des **web socket** accessibles dans `src/routes/gameWS` en plus des endpoints REST via la librairie [express-ws](https://github.com/HenningM/express-ws). En effet, la **logique des jeux** définis dans' src/controllers/gameWS`utilisant la web socket est important pour garder des jeux **stateless** et éviter que des utilisateurs malveillants contournent la sécurité définie.
 
 ### Gestion des rôles et droits
 
-Expliquer ici les différents rôles mis en place, et comment ils sont gérés dans votre code.
+#### Backend
 
-- Coté backend
+L'application ne demande pas de droits/rôles très complexes, la gestion de ces derniers est très simple.
 
-- Coté frontend
+Pour ce qui est des droits, il y a 3 types d'endpoints :
+- **Endpoints simples** : tout le monde peut y accéder
+- **Endpoints connecté** : il suffit d'être connecté pour y accéder
+- **Endpoints admin** : il faut être connecté et administrateur de la plateforme pour y accéder
 
+La vérification des droits pour les endpoints se fait via des middlewares.
+
+La web socket est utilisable uniquement en étant **connectée**, cette dernière nécessite le token de l'utilisateur.
+
+Un seul rôle est défini dans l'application : `isAdmin`, ce dernier permet d'accéder aux **endpoints admin**.
+
+#### Frontend
 
 ## Test
 
