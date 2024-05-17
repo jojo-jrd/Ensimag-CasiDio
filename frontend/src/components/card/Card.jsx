@@ -13,7 +13,7 @@ function Card({ title, description, image, pageClick }) {
                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-white">{title}</h5>
                 <p className="mb-3 font-normal text-gray-400">{description}</p>
                 <button onClick={() => changePage(pageClick)} className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800">
-                    Play
+                    Jouer
                     <FontAwesomeIcon className="ml-3" icon={faArrowRight} />
                 </button>
             </div>
