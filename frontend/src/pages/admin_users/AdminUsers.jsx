@@ -147,9 +147,9 @@ function AdminUsers() {
     }
 
     return (
-        <>
-            <div>
-                <table className="w-full mt-4 text-sm text-left rtl:text-right text-gray-500">
+        <div>
+            <div className="pt-4">
+                <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                     <thead className="text-xs text-gray-800 uppercase bg-gray-200">
                         <tr>
                             <th className="px-6 py-3 cursor-pointer" onClick={() => sortColumn('firstName', 'string')}>
@@ -206,7 +206,7 @@ function AdminUsers() {
             </div>
             <ToastContainer />
             <ModalUpdateUser openModal={openUpdateUser} user={updatedUser} setOpenModal={saveUser}/> 
-        </>
+        </div>
     )
 }
 

@@ -66,7 +66,7 @@ function DashBoardView(){
 
   return (
     <div>
-      <div className="grid grid-cols-4 gap-4 m-4">
+      <div className="grid grid-cols-4 gap-4 p-4">
         {
           userConnected.isAdmin ?
               <>

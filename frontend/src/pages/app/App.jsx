@@ -13,9 +13,6 @@ import NavBar from './../../components/navbar/Navbar';
 import AdminUsers from '../admin_users/AdminUsers';
 import ProfilView from '../profil/Profil';
 
-// TODO:
-// - hauteur (enlever la taille de la navbar en height)
-
 function App() {
   const [token, setToken] = useState(null);
   const [page, setPage] = useState("");
@@ -73,7 +70,7 @@ function App() {
       case 'adminUsers' : return <AdminUsers/>
       case 'dashboard' : return <DashBoardView/>;
       case 'profil' : return <ProfilView/>;
-      default: return <LoginView/>; // TODO: mettre Login
+      default: return <LoginView/>;
     }
   }
 

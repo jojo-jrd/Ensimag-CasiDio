@@ -5,6 +5,7 @@ import { faBars } from '@fortawesome/free-solid-svg-icons/faBars';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons/faCirclePlus';
 import Viardot from './../../assets/viardot-coin.png';
 import QuestionAPI from './../../components/questionAPI/QuestionAPI';
+import LogoCasiDio from './../../assets/logo_casidio.png';
 
 function NavBar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -14,12 +15,19 @@ function NavBar() {
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
+
+    function changeMobilePage(page) {
+        setIsOpen(false);
+        changePage(page);
+    }
     return (
         <header>
             <nav className="bg-gray-800 p-4">
                 <div className="flex flex-wrap items-center justify-between">
                     <div className="flex-shrink-0">
-                        <span onClick={() => changePage('home')} className="text-white text-xl cursor-pointer font-bold">CasiDio</span>
+                        <span onClick={() => changePage('home')} className="text-white text-xl cursor-pointer font-bold">
+                            <img className="w-12" src={LogoCasiDio} alt="Logo CasiDio"/>
+                        </span>
                     </div>
                     <div className="hidden md:flex justify-end md:flex-grow">
                         { userConnected?.email ? (
@@ -59,20 +67,20 @@ function NavBar() {
                         </button>
                         {isOpen && (
                             <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
-                                <span onClick={() => changePage('home')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Accueil</span>
+                                <span onClick={() => changeMobilePage('home')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Accueil</span>
                                 { userConnected?.email ? (
                                     <>
                                         { userConnected?.isAdmin ? (
-                                            <span data-cy="admin-user" onClick={() => changePage('adminUsers')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Gestion Utilisateur</span>
+                                            <span data-cy="admin-user" onClick={() => changeMobilePage('adminUsers')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Gestion Utilisateur</span>
                                         ) : ''}
-                                        <span data-cy="profil" onClick={() => changePage('profil')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Profil</span>
-                                        <span data-cy="dashboard" onClick={() => changePage('dashboard')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Tableau de bord</span>
-                                        <span data-cy="deconnexion" onClick={() => changePage('logout')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Déconnexion</span>
+                                        <span data-cy="profil" onClick={() => changeMobilePage('profil')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Profil</span>
+                                        <span data-cy="dashboard" onClick={() => changeMobilePage('dashboard')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Tableau de bord</span>
+                                        <span data-cy="deconnexion" onClick={() => changeMobilePage('logout')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Déconnexion</span>
                                     </>
                                 ) : (
                                     <>
-                                        <span onClick={() => changePage('login')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Connexion</span>
-                                        <span onClick={() => changePage('register')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Inscription</span>
+                                        <span onClick={() => changeMobilePage('login')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Connexion</span>
+                                        <span onClick={() => changeMobilePage('register')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Inscription</span>
                                     </>
                                 )}
                             </div>

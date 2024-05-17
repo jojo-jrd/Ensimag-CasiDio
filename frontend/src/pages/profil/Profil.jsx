@@ -80,8 +80,8 @@ function ProfilView(){
 		}
 	}
 	return (
-		<>
-			<div className="mt-4 px-4">
+		<div>
+			<div className="p-4">
 				<div className="flex justify-between">
 					<div>
 
@@ -105,7 +105,7 @@ function ProfilView(){
 					</div>
 
 				</div>
-				<div className="flex items-center justify-center w-full">
+				<div className="flex items-center justify-center w-full mt-4">
 					<div className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full max-w-md">
 						<div className="mb-4">
 							<h2 className="text-2xl font-bold tracking-tight text-white">Informations personnelles</h2>
@@ -131,7 +131,7 @@ function ProfilView(){
 				</div>
 			</div>
 			<ToastContainer/>
-		</>
+		</div>
 	)
 }
 
