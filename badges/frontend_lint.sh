@@ -1,6 +1,8 @@
 #!/bin/bash
-NBERR=$(grep -e "error" frontend_lint_report.txt | wc -l) - 1
-NBWARN=$(grep -e "warning" frontend_lint_report.txt | wc -l) - 1
+NBERR=$(grep -e "error" frontend_lint_report.txt | wc -l)
+NBWARN=$(grep -e "warning" frontend_lint_report.txt | wc -l)
+NBERR=$(($NBERR - 1))
+NBWARN=$(($NBWARN - 1))
 color="green"
 if [[ $NBERR > 0 ]]
 then 
