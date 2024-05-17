@@ -220,7 +220,11 @@ Un seul rôle est défini dans l'application : `isAdmin`, ce dernier permet d'ac
 
 ### Backend
 
-Décrivez les tests faits au niveau du backend, leur couverture.
+Pour les tests backend, chaque **endpoints REST** est testé via la librairie [jestjs](https://jestjs.io/fr/).
+
+Pour chaque **endpoints** on définit des tests valides/non valides pour obtenir la **couverture de code** la plus large possible. La couverture est disponible dans `coverage/lcov-report/index.html`.
+
+Cependant on fonctionne différemment pour tester la **web socket**, en effet, express/express-ws ne prenant pas en charge nativement l'accès aux web socket depuis une instance du serveur. On va donc **mock** une web socket permettant de simuler une exécution et récupérer les valeurs de sortie. On ne teste cependant pas ici le code présent dans le routeur.
 
 ### Frontend
 
