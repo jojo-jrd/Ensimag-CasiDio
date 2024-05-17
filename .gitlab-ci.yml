@@ -1,16 +1,14 @@
 image: node:latest
 
 stages:
-  - backendTest
-  - frontendTest
-  - backendLint
-  - frontendLint
+  - test
+  - lint
   - badges
   - pages
   - deploy
 
 backendTest:
-  stage: backendTest
+  stage: test
   script:
     - cd backend/
     - npm i
@@ -25,7 +23,7 @@ backendTest:
   allow_failure: true
 
 frontendTest:
-    stage: frontendTest
+    stage: test
     tags:
         - docker  # Comme on utilise une image pour isoler on doit utiliser un runner docker 
     image: cypress/base:16.18.1 # Image fournie par cypress avec ce qu'il faut
@@ -49,7 +47,7 @@ frontendTest:
 
 # Vérification de code
 backendLint:
-    stage: backendLint
+    stage: lint
     allow_failure: true
     script:
       - cd backend/
@@ -63,7 +61,7 @@ backendLint:
 
 # Vérification de code
 frontendLint:
-    stage: frontendLint
+    stage: lint
     allow_failure: true
     script:
       - cd frontend/
@@ -80,10 +78,10 @@ badges:
   image: python
   script:
     - pip install anybadge
-    - ./backend_badge.sh
-    - ./frontend_badge.sh
-    - ./backend_lint.sh
-    - ./frontend_lint.sh # lancement du script générant le badge lint
+    - ./badges/backend_badge.sh
+    - ./badges/frontend_badge.sh
+    - ./badges/backend_lint.sh
+    - ./badges/frontend_lint.sh # lancement du script générant le badge lint
   artifacts:
     paths:
       - backend_test.svg
