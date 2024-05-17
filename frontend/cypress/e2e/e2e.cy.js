@@ -80,7 +80,7 @@ describe('Test E2E', () => {
         cy.get('span[data-cy="deconnexion"]').click();
     })
 
-    it('[REGISTER] : Test password weak', () => {
+    it('[REGISTER] : Test password too short', () => {
         // On est sur la page register
         cy.get('a.text-blue-700').click();
 
@@ -121,7 +121,7 @@ describe('Test E2E', () => {
         cy.get("input#firstname").clear();
 
         // Remplit les inputs
-        cy.get("input#password").type('Ab*123-!123&');
+        cy.get("input#password").type('test123');
         cy.get("input#email").type('aabbb@a.com');
 
         // Valide les données
@@ -238,7 +238,13 @@ describe('Test E2E', () => {
             expect(interception.response.body.data.length).to.equal(5);
         });
 
-        // TODO tester sort
+        // Tri en croissant
+        cy.get('thead>tr:first-child>th:first-child').click();
+        cy.get('tbody>tr:first-child>td:first-child').should('have.text', 'Admin');
+        
+        // Tri en décroissant
+        cy.get('thead>tr:first-child>th:first-child').click();
+        cy.get('tbody>tr:first-child>td:first-child').should('have.text', 'Lukas');
     })
 
 
