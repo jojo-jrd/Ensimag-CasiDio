@@ -204,7 +204,7 @@ Le **modèle** accessible dans `src/models` sert d'interface entre le reste du c
 
 Le **contrôleur** va définir dans `src/routes` les différents **endpoints REST** accessibles et leurs méthodes d'accès. Il va aussi définir les **handlers** de chaque route contenant toute la logique de l'application dans `src/controllers`.
 
-Le **contrôleur** gère aussi des **web socket** accessibles dans `src/routes/gameWS` en plus des endpoints REST via la librairie [express-ws](https://github.com/HenningM/express-ws). En effet, la **logique des jeux** définis dans' src/controllers/gameWS`utilisant la web socket est important pour garder des jeux **stateless** et éviter que des utilisateurs malveillants contournent la sécurité définie.
+Le **contrôleur** gère aussi des **web socket** accessibles dans `src/routes/gameWS` en plus des endpoints REST via la librairie [express-ws](https://github.com/HenningM/express-ws). En effet, la **logique des jeux** définis dans `src/controllers/gameWS` utilise la web socket car cela est important pour garder des jeux **stateless** et éviter que des utilisateurs malveillants contournent la sécurité définie.
 
 ### Gestion des rôles et droits
 
@@ -229,11 +229,11 @@ Un seul rôle est défini dans l'application : `isAdmin`, ce dernier permet d'ac
 
 ### Backend
 
-Pour les tests backend, chaque **endpoints REST** est testé via la librairie [jestjs](https://jestjs.io/fr/).
+Pour les tests backend, chaque **endpoints REST** est testé via la librairie [jestjs](https://jestjs.io/fr/). Ces tests sont définis dans `src/__tests__/`.
 
 Pour chaque **endpoints** on définit des tests valides/non valides pour obtenir la **couverture de code** la plus large possible. La couverture est disponible dans `coverage/lcov-report/index.html`.
 
-Cependant on fonctionne différemment pour tester la **web socket**, en effet, express/express-ws ne prenant pas en charge nativement l'accès aux web socket depuis une instance du serveur. On va donc **mock** une web socket permettant de simuler une exécution et récupérer les valeurs de sortie. On ne teste cependant pas ici le code présent dans le routeur.
+Cependant on fonctionne différemment pour tester la **web socket**, en effet, express/express-ws ne prenant pas en charge nativement l'accès aux web socket depuis une instance du serveur. On va donc **mock une web socket** permettant de simuler une exécution et récupérer les valeurs de sortie. On ne teste cependant pas ici le code présent dans le routeur.
 
 ### Frontend
 
@@ -241,8 +241,56 @@ Décrivez les tests faits au niveau du backend, leur couverture.
 
 ## Intégration + déploiement (/3)
 
-Décrivez ici les éléments mis en place au niveau de l'intégration continue 
+Pour l'intégration et le déploiement continu, nous utilisons la [pipeline gitlab](https://docs.gitlab.com/ee/ci/pipelines/).
+
+Cette dernière contient cinq étapes :
+- **test** : Lancement des tests backend et frontend.
+- **lint** : Lancement de la vérification de code backend et frontend.
+- **badges** : Création des badges pour les **tests frontend/backend**, la **couverture de code frontend/backend** et la **vérification de code frontend/backend**.
+- **pages** : Mise en place du détail de la couverture de code [frontend](https://casidio-clement-nogueira-jordan-josserand-lukas--5cab9acc7267a7.pages.ensimag.fr/frontend/) et [backend](https://casidio-clement-nogueira-jordan-josserand-lukas--5cab9acc7267a7.pages.ensimag.fr/backend/) sur les pages statiques du dépôt git.
+- **deploy** : Exposition de l'API et du frontend via [Scalingo](https://scalingo.com/fr) permettant le déploiement et l'hébergement de l'application disponible [ici](https://casidio.osc-fr1.scalingo.io/frontend/).
 
 ## Installation
 
-Donner les éléments pour installer l'application sur une machine nue à partir de votre dépôt
+### Pré-requis
+
+Pour pouvoir développer l'application, il suffira d'installer [Node.js](https://nodejs.org/en/download/package-manager), ce dernier est censé contenir [NPM](https://www.npmjs.com/) permettant la gestion des modules.
+
+Pour vérifier l'installation :
+
+```powershell
+node -v #v20.11.1
+```
+```powershell
+npm -v #10.2.4
+```
+
+### Dépendances
+
+Il faut dans un premier temps bien comprendre que nous avons deux modules nodes : `frontend/` et `backend/`. Chacuns d'eux contenant leurs propres dépendances et frameworks.
+
+Pour obtenir le strict minimum avant de tester l'application il faut vous rendre dans le module voulus et installer les dépendances :
+```shell
+npm install
+```
+### Comandes
+
+Une fois les dépendances installées, il sera possible d'exécuter les différents scripts pour développer l'application.
+
+#### Frontend
+
+-    **dev** : Lancement du serveur frontend en mode developpement.
+-    **build** : Génération du code statique.
+-    **buildProd** : Génération du code statique avec la définition des endpoints back pour le déploiement sur Scalingo.
+-    **lint** : Lancement de la vérification de code.
+
+#### Backend
+
+Pour le backend, les commandes contenant le suffix `WIN` sont à simplement lancer sur Windows.
+
+- **updatedb** : Supression de la base de données locales et génération d'une nouvelle avec les données présentes dans `src/util/updatedb.js`.
+- **doc** : Génération de la documentation technique via l'outil [Swagger](https://swagger.io/).
+- **start** : Lancement des scripts `doc` et `updatedb` puis lancement du serveur.
+- **test** : Lancement du script `updatedb` puis lancement des tests sans parallélisme, ordonné dans `index.spec.js` et couverture de code.
+- **startdev** : Lancement du script `doc` puis lancement du serveur.
+- **lint** : Lancement de la vérification de code.
