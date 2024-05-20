@@ -192,8 +192,8 @@ class History{
 }
 
 
-History *--> User
-History *--> Games
+History --> "1..1" User
+History --> "1..1" Games
 ```
 
 #### Architecture de votre code
