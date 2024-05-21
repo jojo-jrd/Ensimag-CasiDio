@@ -59,11 +59,7 @@ function QuestionAPI({setOpenModal}) {
             return;
         }
 
-        // setQuestion('');
-        // setDifficulty('');
-        // setCategory('');
-        // setResponses([])
-        setGameState('end')
+        setGameState('end');
         // Handle validation win
         if (data.state === 'win') {
             // Update l'user pour savoir son nouveau solde
@@ -111,7 +107,7 @@ function QuestionAPI({setOpenModal}) {
                 <div>
                 { responses.map((reponse, i) =>  {
                     return (<div key={i}>
-                        <input type="radio" id={reponse} name="question" value={reponse} onChange={() => setAnswerSelected(reponse)}/>
+                        <input type="radio" id={reponse} name="question" value={reponse} onChange={() => setAnswerSelected(reponse)} disabled={gameState == 'end'}/>
                         <label className="ml-4 text-black" htmlFor={reponse}>{reponse}</label>
                     </div>
                     )   

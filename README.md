@@ -121,6 +121,38 @@ header {- Alice@aol.fr | [Se déconnecter] }
 
 ### Captures d'écran
 
+#### Connexion
+
+![Alt text](./images/login.png "Page connexion")
+
+#### Inscription
+
+![Alt text](./images/register.png "Page inscription")
+
+#### Accueil
+
+![Alt text](./images/home.png "Page accueil")
+
+#### Profil
+
+![Alt text](./images/profil.png "Page profil")
+
+#### Tableau de bord
+
+![Alt text](./images/dashboard.png "Page tableau de bord")
+
+#### Question API
+
+![Alt text](./images/questionAPI.png "Page questionAPI")
+
+#### ADMIN : Gestion utilisateur
+
+![Alt text](./images/manage-user.png "Page gestion utilisateur")
+
+#### ADMIN : Modification utilisateur
+
+![Alt text](./images/update-user.png "Page modification utilisateur")
+
 A compléter
 TODO
 

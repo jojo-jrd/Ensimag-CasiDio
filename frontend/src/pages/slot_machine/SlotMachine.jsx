@@ -30,9 +30,17 @@ const valueTest = [
 
 function SlotMachineView() {
     const slotMachineEl = useRef();
+    const [betAmount, setBetAmount] = useState(10); // Default bet amount
     const [isClicked, setIsClicked] = useState(false);
+    const [erreurMessage, setErreurMessage] = useState("");
     const { token, updateUserConnected } = useContext(AppContext);
     let nbLaunchTest = 0;
+
+    // Function to handle changes in the bet amount
+    const handleBetAmountChange = (event) => {
+        const newBetAmount = parseInt(event.target.value);
+        setBetAmount(newBetAmount);
+    };
 
     useEffect(() => {
         // Define web socket and initial indexes
@@ -53,9 +61,12 @@ function SlotMachineView() {
 
             // Check errors
             if (data.error) {
+                setErreurMessage(data.error);
                 console.error(msg.error);
                 return;
             }
+
+            setErreurMessage("");
             
             // Rolls each column
             $(slotMachineEl.current).find('.column').map((columnIndex, htmlElement) => {
@@ -102,7 +113,7 @@ function SlotMachineView() {
     function launchRoll() {
         setIsClicked(true);
 
-        gameSocket.send(JSON.stringify({game: 'playSlotMachine', Payload: {nbIcons: nbIcones, indexesColumns: indexesColumns, betAmount: 10}, userToken: token}));
+        gameSocket.send(JSON.stringify({game: 'playSlotMachine', Payload: {nbIcons: nbIcones, indexesColumns: indexesColumns, betAmount}, userToken: token}));
     }
 
     return (
@@ -110,13 +121,23 @@ function SlotMachineView() {
             <div className="flex h-full justify-center items-center">
                 <div className="max-w-lg w-full">
                     <div className="border border-solid border-red-700 bg-gray-800 rounded-lg p-8">
-                        <h1 className="text-white text-4xl font-bold text-center mb-8">Machine à sous</h1>
+                        <h1 className="text-white text-4xl font-bold text-center mb-4">Machine à sous</h1>
+                    
+                        <div className="mb-6">
+                            <label className="block text-white text-sm font-bold mb-2" htmlFor="betAmount">Montant du pari : </label>
+                            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                                id="betAmount"
+                                type="number"
+                                value={betAmount}
+                                onChange={handleBetAmountChange}/>
+                        </div>
                     <div ref={slotMachineEl} id="SlotMachine">
                         <div className="column"></div>
                         <div className="column"></div>
                         <div className="column"></div>
                     </div>
-                    <button disabled={isClicked} onClick={() => launchRoll()} className="bg-red-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">Roll</button>
+                    <span className="text-red-500 text-xs italic"> {erreurMessage}</span>
+                    <button disabled={isClicked} onClick={() => launchRoll()} className="bg-red-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">Lancer</button>
                     </div>
                 </div>
             </div>
