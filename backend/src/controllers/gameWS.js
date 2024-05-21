@@ -329,18 +329,21 @@ module.exports = {
       if (typeof (bet.amount) !== 'number' || bet.amount <= 0) {
         ws.send(JSON.stringify({ error: 'Invalid bet amount' }))
         invalid = true
+        return
       }
 
       // Check bet value
       if (typeof (bet.value) !== 'string') {
         ws.send(JSON.stringify({ error: 'Invalid bet value' }))
         invalid = true
+        return
       }
 
       // Check bet type
       if (typeof (bet.type) !== 'string') {
         ws.send(JSON.stringify({ error: 'Invalid bet type' }))
         invalid = true
+        return
       }
 
       // add amount to totalBet
@@ -368,6 +371,7 @@ module.exports = {
           if (!((parseInt(start) === 1 && parseInt(end) === 18) || (parseInt(start) === 19 && parseInt(end) === 36))) {
             ws.send(JSON.stringify({ error: 'invalid group range' }))
             invalid = true
+            return
           }
 
           if (parseInt(start) <= randomNumber && randomNumber <= parseInt(end)) {
@@ -382,6 +386,7 @@ module.exports = {
           if (![1, 2, 3].includes(column)) {
             ws.send(JSON.stringify({ error: 'invalid column range' }))
             invalid = true
+            return
           }
 
           if (randomNumber !== 0 && randomNumber % 3 === column) {
@@ -395,6 +400,7 @@ module.exports = {
           if (![1, 2, 3].includes(dozen)) {
             ws.send(JSON.stringify({ error: 'invalid dozen range' }))
             invalid = true
+            return
           }
 
           if (randomNumber !== 0 && Math.ceil(randomNumber / 12) === dozen) {
@@ -403,7 +409,9 @@ module.exports = {
           break
         }
         default:
-          break
+          ws.send(JSON.stringify({ error: 'type not found' }))
+          invalid = true
+          return
       }
     })
 
