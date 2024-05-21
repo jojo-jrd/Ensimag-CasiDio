@@ -59,11 +59,7 @@ function QuestionAPI({setOpenModal}) {
             return;
         }
 
-        // setQuestion('');
-        // setDifficulty('');
-        // setCategory('');
-        // setResponses([])
-        setGameState('end')
+        setGameState('end');
         // Handle validation win
         if (data.state === 'win') {
             // Update l'user pour savoir son nouveau solde
@@ -96,23 +92,29 @@ function QuestionAPI({setOpenModal}) {
         gameSocket.send(JSON.stringify({game: 'playQuestion', Payload: {answer: answerSelected}, userToken: token}))
     }
 
+    function decodeHtml(html) {
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
     return (
         <Modal show={true} onClose={() => setOpenModal(false)}>
             <Modal.Header>Récupérer des Viardot</Modal.Header>
             <Modal.Body>
             <div className="space-y-6">
                 <p className="text-center leading-relaxed text-black">
-                    {question}
+                    {decodeHtml(question)}
                 </p>
                 <div className="text-center">
-                    <span className="bg-purple-100 text-purple-800 font-medium me-2 px-2.5 py-0.5 rounded capitalize">{category}</span>
-                    <span className="bg-red-100 text-red-800 font-medium me-2 px-2.5 py-0.5 rounded capitalize">{difficulty}</span>
+                    <span className="bg-purple-100 text-purple-800 font-medium me-2 px-2.5 py-0.5 rounded capitalize">{decodeHtml(category)}</span>
+                    <span className="bg-red-100 text-red-800 font-medium me-2 px-2.5 py-0.5 rounded capitalize">{decodeHtml(difficulty)}</span>
                 </div>
                 <div>
                 { responses.map((reponse, i) =>  {
                     return (<div key={i}>
                         <input type="radio" id={reponse} name="question" value={reponse} onChange={() => setAnswerSelected(reponse)}/>
-                        <label className="ml-4 text-black" htmlFor={reponse}>{reponse}</label>
+                        <label className="ml-4 text-black" htmlFor={reponse}>{decodeHtml(reponse)}</label>
                     </div>
                     )   
                 })}

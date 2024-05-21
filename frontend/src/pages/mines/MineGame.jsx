@@ -36,6 +36,7 @@ const MineGameView = () => {
   const [bombCount, setBombCount] = useState(5);
   const [gainAmount, setGainAmount] = useState(0); // State for the gain amount
   const [discoveredCells, setDiscoveredCells] = useState(0);
+  const [erreurMessage, setErreurMessage] = useState("");
   const { token, updateUserConnected } = useContext(AppContext);
 
   useEffect(() => {
@@ -52,9 +53,12 @@ const MineGameView = () => {
       const data = JSON.parse(msg.data)
 
       if (data.error) {
+        setErreurMessage(data.error);
         console.error(data.error)
         return
       }
+
+      setErreurMessage("");
 
       setMultiplier(data.multiplier)
       setGainAmount(data.gainAmount)
@@ -159,6 +163,7 @@ const MineGameView = () => {
             <h2>Multiplier: x{multiplier}</h2>
             <h2>Gain Amount: {gainAmount}</h2> {/* Display the gain amount */}
           </div>
+          <span className="text-red-500 text-xs italic"> {erreurMessage}</span>
           {!gameOver && discoveredCells > 0 && (
             <div>
               <button onClick={cashOut} className="bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">Cash Out</button>
