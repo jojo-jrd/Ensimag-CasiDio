@@ -52,6 +52,7 @@
   }
   
   .selected {
-    border: 2px solid red;
+    width: 70px; /* Fixed width for each cell */
+    height: 70px; /* Fixed height for each cell */
   }
   
