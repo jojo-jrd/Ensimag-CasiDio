@@ -309,5 +309,90 @@ module.exports = {
 
     // Send back data
     ws.send(JSON.stringify({ grid: newGrid, multiplier: multipler, gainAmount: gainAmount, state: state, discoveredCells: discoveredCells }))
+  },
+  async playRouletteGame (msg, ws, user) {
+    // Check bets type
+    if (!Array.isArray(msg.Payload.bets)) {
+      ws.send(JSON.stringify({error: 'Invalid bets type'}))
+      return
+    }
+
+    // Generate result
+    const randomNumber = Math.floor(Math.random() * 37)
+
+    // Calcul total bet and check wins
+    let totalBet = 0
+    let winnings = 0;
+    msg.Payload.bets.forEach((bet) => {
+      // Check bet amount
+      if (typeof(bet.amount) !== 'number' || bet.amount <= 0) {
+        ws.send(JSON.stringify({error: 'Invalid bet amount'}))
+        return
+      }
+
+      // Check bet value
+      if (typeof(bet.value) !== 'string') {
+        ws.send(JSON.stringify({error: 'Invalid bet value'}))
+        return
+      }
+
+      // Check bet type
+      if (typeof(bet.type) !== 'string') {
+        ws.send(JSON.stringify({error: 'Invalid bet type'}))
+        return
+      }
+
+      // add amount to totalBet
+      totalBet += bet.amount
+
+      // Check win for the current bet
+      switch (bet.type) {
+        case 'number':
+          if (parseInt(bet.value) === result) {
+            winnings += 36 * bet.amount; // Payout for betting on a specific number
+          }
+          break;
+        case 'color':
+          if (
+            (bet.value === 'red' && (result !== 0 && result % 2 === 0)) ||
+            (bet.value === 'black' && (result !== 0 && result % 2 !== 0))
+          ) {
+            winnings += 2 * bet.amount; // Payout for betting on red or black
+          }
+          break;
+        case 'group':
+          const [start, end] = bet.value.split('-');
+          if (parseInt(start) <= result && result <= parseInt(end)) {
+            winnings += 2 * bet.amount; // Payout for betting on a group of numbers
+          }
+          break;
+        case 'column':
+          const column = parseInt(bet.value.replace('column', ''));
+          if (result !== 0 && result % 3 === column) {
+            winnings += 3 * bet.amount; // Payout for betting on a column
+          }
+          break;
+        case 'dozen':
+          const dozen = parseInt(bet.value.replace('dozen', ''));
+          if (result !== 0 && Math.ceil(result / 12) === dozen) {
+            winnings += 3 * bet.amount; // Payout for betting on a dozen
+          }
+          break;
+        default:
+          break;
+      }
+    })
+
+    // Apply user bet
+    if (!await applyUserBet(user, msg)) {
+      ws.send(JSON.stringify({ error: 'bet is not a number, below 0 or over the user balance' }))
+      return
+    }
+
+    // Add winings
+    user.balance += winnings
+    await user.save()
+
+    ws.send(JSON.stringify({randomNumber, winnings}))
   }
 }
