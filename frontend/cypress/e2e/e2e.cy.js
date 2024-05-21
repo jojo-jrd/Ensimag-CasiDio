@@ -88,6 +88,7 @@ describe('Test E2E', () => {
         cy.get("input#password").type('test1');
         cy.get("input#email").type('jordan.josserand@grenoble-inp.com');
         cy.get("input#birthdate").type('2021-10-10');
+        cy.get("input#address").type('Une rue');
         cy.get("input#lastname").type('Dupond');
         cy.get("input#firstname").type('Arthur');
 
