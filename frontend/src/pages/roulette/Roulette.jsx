@@ -1,17 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { AppContext } from '../../AppContext';
 import './Roulette.css';
+
+let gameSocket;
 
 const RouletteView = () => {
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [betType, setBetType] = useState(null);
-  const [betValue, setBetValue] = useState(null);
   const [betAmount, setBetAmount] = useState(1); // Default bet amount
   const [globalBetAmount, setGlobalBetAmount] = useState(0);
-  const [balance, setBalance] = useState(1000); // Initial balance
   const [bets, setBets] = useState([]); // Array to store placed bets
+  const { token, updateUserConnected } = useContext(AppContext);
 
+  useEffect(() => {
+    // Define web socket
+    gameSocket = new WebSocket(`${import.meta.env.VITE_API_WS}/gameSocket`);
+
+    // Define handler
+    gameSocket.onmessage = (msg) => socketHandler(msg);
+  });
+
+  // Handle spinning
   useEffect(() => {
     if (spinning) {
       const interval = setInterval(() => {
@@ -21,13 +31,26 @@ const RouletteView = () => {
     }
   }, [spinning]);
 
+  // Handle end of spinning
   useEffect(() => {
     if (!spinning && result !== null) {
       setCurrentIndex(result); // Set currentIndex to result when spinning stops
-      calculateWinnings(result);
       clearBets(); // Clear bets after each spin
     }
   }, [result, spinning]);
+
+  // Function to handle sockets message
+  const socketHandler = (msg) => {
+    const data = JSON.parse(msg.data)
+
+    // Résultat
+    setResult(data.randomNumber); // Set the result after animation ends
+    setTimeout(() => {
+      setSpinning(false);
+      setGlobalBetAmount(0);
+      updateUserConnected();
+    }, 600); // Simulating spinning time
+  }
 
   // Function to handle changes in the bet amount
   const handleBetAmountChange = (event) => {
@@ -43,69 +66,16 @@ const RouletteView = () => {
     setResult(null); // Clear previous result
     setCurrentIndex(0); // Reset currentIndex
     setSpinning(true);
-    setBalance(prevBalance => prevBalance - globalBetAmount); // Deduct bet amount from balance
-    setTimeout(() => {
-      // Résultat
-      const randomNumber = Math.floor(Math.random() * 37); // Random number between 0 and 36
-      setResult(randomNumber); // Set the result after animation ends
-      setTimeout(() => {
-        setSpinning(false);
-        setGlobalBetAmount(0);
-      }, 600); // Simulating spinning time
-    });
+
+    // Send data to backend
+    gameSocket.send(JSON.stringify({game: 'playRouletteGame', Payload: {bets}, userToken: token}));
   };
 
   const placeBet = (type, value) => {
     if (!spinning) {
-      setBetType(type);
-      setBetValue(value);
       setBets([...bets, { type, value, amount: betAmount }]);
       setGlobalBetAmount(globalBetAmount + betAmount);
     }
-  };
-
-  const calculateWinnings = (result) => {
-    bets.forEach((bet) => {
-      if (bet.type && bet.value) {
-        let winnings = 0;
-        switch (bet.type) {
-          case 'number':
-            if (parseInt(bet.value) === result) {
-              winnings = 36 * bet.amount; // Payout for betting on a specific number
-            }
-            break;
-          case 'color':
-            if (
-              (bet.value === 'red' && (result !== 0 && result % 2 === 0)) ||
-              (bet.value === 'black' && (result !== 0 && result % 2 !== 0))
-            ) {
-              winnings = 2 * bet.amount; // Payout for betting on red or black
-            }
-            break;
-          case 'group':
-            const [start, end] = bet.value.split('-');
-            if (parseInt(start) <= result && result <= parseInt(end)) {
-              winnings = 2 * bet.amount; // Payout for betting on a group of numbers
-            }
-            break;
-          case 'column':
-            const column = parseInt(bet.value.replace('column', ''));
-            if (result !== 0 && result % 3 === column) {
-              winnings = 3 * bet.amount; // Payout for betting on a column
-            }
-            break;
-          case 'dozen':
-            const dozen = parseInt(bet.value.replace('dozen', ''));
-            if (result !== 0 && Math.ceil(result / 12) === dozen) {
-              winnings = 3 * bet.amount; // Payout for betting on a dozen
-            }
-            break;
-          default:
-            break;
-        }
-        setBalance(prevBalance => prevBalance + winnings); // Add winnings to balance
-      }
-    })
   };
 
   const clearBets = () => {
@@ -125,7 +95,6 @@ const RouletteView = () => {
   return (
     <div className="roulette-container">
       <h1>Roulette Game</h1>
-      <p>Balance: {balance}</p>
       <button onClick={startSpinning} disabled={spinning} className="spin-button">
         {spinning ? 'Spinning...' : 'Spin the Roulette'}
       </button>
@@ -141,14 +110,14 @@ const RouletteView = () => {
       <div className="bet-buttons">
         <div className="bet-buttons-row">
           {[...Array(10)].map((_, index) => (
-            <button key={index + 1} onClick={() => placeBet('number', index + 1)} disabled={spinning}>
+            <button key={index + 1} onClick={() => placeBet('number', `${index + 1}`)} disabled={spinning}>
               {index + 1}
             </button>
           ))}
         </div>
         <div className="bet-buttons-row">
           {[...Array(10)].map((_, index) => (
-            <button key={index + 11} onClick={() => placeBet('number', index + 11)} disabled={spinning}>
+            <button key={index + 11} onClick={() => placeBet('number', `${index + 11}`)} disabled={spinning}>
               {index + 11}
             </button>
           ))}
