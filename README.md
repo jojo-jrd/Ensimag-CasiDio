@@ -21,8 +21,6 @@ author:
 
 ## Cahier des charges
 
-Ici vous décrivez les fonctionnalités souhaitées et celles effectivement mises en oeuvre. Avec un diagramme UML des cas d'usage et des maquettes des vues souhaitées et des captures d'écran de ce qui a été réalisé.
-
 ### Cas d'usage
 
 ```plantuml
@@ -81,7 +79,7 @@ package Application {
 
 ### Maquettes
 
-A modifier/compléter...
+A modifier/compléter... TODO
 
 ```plantuml
 @startsalt
@@ -123,7 +121,40 @@ header {- Alice@aol.fr | [Se déconnecter] }
 
 ### Captures d'écran
 
+#### Connexion
+
+![Alt text](./images/login.png "Page connexion")
+
+#### Inscription
+
+![Alt text](./images/register.png "Page inscription")
+
+#### Accueil
+
+![Alt text](./images/home.png "Page accueil")
+
+#### Profil
+
+![Alt text](./images/profil.png "Page profil")
+
+#### Tableau de bord
+
+![Alt text](./images/dashboard.png "Page tableau de bord")
+
+#### Question API
+
+![Alt text](./images/questionAPI.png "Page questionAPI")
+
+#### ADMIN : Gestion utilisateur
+
+![Alt text](./images/manage-user.png "Page gestion utilisateur")
+
+#### ADMIN : Modification utilisateur
+
+![Alt text](./images/update-user.png "Page modification utilisateur")
+
 A compléter
+TODO
 
 ### API mise en place
 
@@ -157,9 +188,28 @@ A compléter
 
 ## Architecture du code
 
-### FrontEnd
+### Frontend
 
-Indiquer ici l'organisation de votre code. Et les choix faits pour le frontend.
+Pour le Frontend, nous utilisons le framework JavaScript de base [React](https://fr.react.dev/). Grâce à ça, on peut déclarer des composants réactifs avec des hooks ce qui nous permet de simplifier beaucoup la programmation. Pour notre code, il repose sur une structure assez classique avec une gestion de page. En effet, nous avons un élément React qui change dynamiquement pour appeler la page sur lequel l'utilisateur courant est. Il s'agit de `App.jsx`. Ensuite, chaque page est indépendante ce qui permet une gestion simplifier des pages. Des fonctions et des propriétés sont quand même partagés globalements pour se partager des informations. On peut parler ici de l'utilisateur, du token ou d'une fonction de changement de pages.
+
+Certaines pages implémentent des composants qui permettent de factoriser et enlever de la duplication de code. On peut voir l'utilisation d'un composant `Card` dans la page Home qui affiche les différents jeux.
+
+Voici l'arborescence de l'application React :
+```
+frontend/
+|   
+└───public/
+|   └───images/
+|
+└───src/
+|   ├───assets/
+|   ├───components/
+|   ├───pages/
+|   └───AppContext.js
+|
+└───index.html
+
+```
 
 ### Backend
 
@@ -225,19 +275,60 @@ Un seul rôle est défini dans l'application : `isAdmin`, ce dernier permet d'ac
 
 #### Frontend
 
+Nous avons gérés les droits de différentes manières en fonction des pages. En effet, selon nos cas d'usage, on différencie 3 droits possibles :
+- Les **utilisateurs non connectés**
+- Les **utilisateurs**
+- Les **administrateurs**
+
+Pour les **utilisateurs non connectés**, ils peuvent accéder uniquement à trois pages :
+- La page de connexion
+- La page d'inscription
+- La page d'accueil
+
+Quand on est sur la page d'accueil et non connecté, nous pouvons voir les jeux (vu qu'ils sont publiques) mais si on clique sur un jeu, nous sommes automatiquement redirigés sur la page de connexion.
+
+Quand on est un utilisateur connecté, on peut se connecter et accéder aux pages :
+- La page d'accueil
+- Son tableau de bord
+- La page de modification de profil
+- La page du jeu de roulette
+- La page du jeu de mine
+- La page du jeu de machine à sous
+
+Pour l'administrateur, il a accès à toutes les pages d'un utilisateur connecté mais avec des pages en plus :
+- La page de gestion d'utilisateurs (modification et suppression)
+- Le tableau de bord admin
+
 ## Test
 
 ### Backend
 
 Pour les tests backend, chaque **endpoints REST** est testé via la librairie [jestjs](https://jestjs.io/fr/). Ces tests sont définis dans `src/__tests__/`.
 
-Pour chaque **endpoints** on définit des tests valides/non valides pour obtenir la **couverture de code** la plus large possible. La couverture est disponible dans `coverage/lcov-report/index.html`.
+Pour chaque **endpoints** on définit des tests valides/non valides pour obtenir la **couverture de code** la plus large possible. La couverture est disponible dans `coverage/lcov-report/index.html` ou [ici](https://casidio-clement-nogueira-jordan-josserand-lukas--5cab9acc7267a7.pages.ensimag.fr/backend/) sur les pages
 
 Cependant on fonctionne différemment pour tester la **web socket**, en effet, express/express-ws ne prenant pas en charge nativement l'accès aux web socket depuis une instance du serveur. On va donc **mock une web socket** permettant de simuler une exécution et récupérer les valeurs de sortie. On ne teste cependant pas ici le code présent dans le routeur.
 
 ### Frontend
 
-Décrivez les tests faits au niveau du backend, leur couverture.
+Pour les tests frontend, on utilise la librairie [Cypress](https://www.cypress.io/) dans une méthode end2end. En effet, il n'y avait pas de sens d'utiliser des tests unitaires sur une application qui requiert un token de connexion et/ou un droit d'admin.
+
+L'idée était donc de tester le frontend selon un **chemin** :
+- Connexion
+- Inscription
+- Questions API
+- Machine à sous
+- Mines
+- Roulette
+- Page gestion admin
+- Tableau de bord
+- Profil
+
+Toutes les étapes sont testés en mode admin pour éviter de se déconnecter et se reconnecter à chaque fonctionnalité.
+
+Une des difficulté que nous avons eu est le test des **web sockets**. En effet, il est très difficile voire presque impossible de tester les web sockets dans cypress pour le moment. Une solution que nous avons utilisés est le fait d'utiliser une variable d'environnement qui asse à 1 si nous sommes en mode test. De ce fait, nous pouvons directement modifier les résultats des requêtes pour mettre nos données à la place et tester les différents cas de figures.
+
+Nous avons aussi rajouté des **plugins** sur Cypress pour nous permettre d'avoir une couverture de code. Vous pouvez la retrouver dans les badges de gitlab ou bien [ici](https://casidio-clement-nogueira-jordan-josserand-lukas--5cab9acc7267a7.pages.ensimag.fr/frontend/) sur les pages.
 
 ## Intégration + déploiement (/3)
 

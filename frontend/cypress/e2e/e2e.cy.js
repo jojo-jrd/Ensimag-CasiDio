@@ -267,7 +267,12 @@ describe('Test E2E', () => {
         cy.get('div#SlotMachine').should('satisfy', ($el) => {
             return !$el.hasClass('twoOnLine') && !$el.hasClass('threeOnLine');
         });
-    })
+    });
+
+    // TODO MINES
+
+
+    // TODO Roulette
 
     it('[ADMIN-USERS] : test adminUsers sort column', () => {
         cy.intercept('http://localhost:3000/api/users').as('users') // route matcher
@@ -403,16 +408,6 @@ describe('Test E2E', () => {
         // Teste la récupération des données
         cy.get('p[data-cy="balance"]').should('not.be.empty');
     });
-
-
-
-
-
-
-
-
-
-    // TODO faire le reste avant de faire la suppresion
 
     it('[PROFIL] : test erreur modification', () => {
         // On est sur la page home et on va sur la page profil

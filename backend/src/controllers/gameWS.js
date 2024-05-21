@@ -307,7 +307,7 @@ module.exports = {
   async playRouletteGame (msg, ws, user) {
     // Check bets type
     if (!Array.isArray(msg.Payload.bets)) {
-      ws.send(JSON.stringify({error: 'Invalid bets type'}))
+      ws.send(JSON.stringify({ error: 'Invalid bets type' }))
       return
     }
 
@@ -316,23 +316,27 @@ module.exports = {
 
     // Calcul total bet and check wins
     let totalBet = 0
-    let winnings = 0;
+    let winnings = 0
+    let invalid = false
     msg.Payload.bets.forEach((bet) => {
       // Check bet amount
-      if (typeof(bet.amount) !== 'number' || bet.amount <= 0) {
-        ws.send(JSON.stringify({error: 'Invalid bet amount'}))
+      if (typeof (bet.amount) !== 'number' || bet.amount <= 0) {
+        ws.send(JSON.stringify({ error: 'Invalid bet amount' }))
+        invalid = true
         return
       }
 
       // Check bet value
-      if (typeof(bet.value) !== 'string') {
-        ws.send(JSON.stringify({error: 'Invalid bet value'}))
+      if (typeof (bet.value) !== 'string') {
+        ws.send(JSON.stringify({ error: 'Invalid bet value' }))
+        invalid = true
         return
       }
 
       // Check bet type
-      if (typeof(bet.type) !== 'string') {
-        ws.send(JSON.stringify({error: 'Invalid bet type'}))
+      if (typeof (bet.type) !== 'string') {
+        ws.send(JSON.stringify({ error: 'Invalid bet type' }))
+        invalid = true
         return
       }
 
@@ -342,43 +346,74 @@ module.exports = {
       // Check win for the current bet
       switch (bet.type) {
         case 'number':
-          if (parseInt(bet.value) === result) {
-            winnings += 36 * bet.amount; // Payout for betting on a specific number
+          if (parseInt(bet.value) === randomNumber) {
+            winnings += 36 * bet.amount // Payout for betting on a specific number
           }
-          break;
+          break
         case 'color':
           if (
-            (bet.value === 'red' && (result !== 0 && result % 2 === 0)) ||
-            (bet.value === 'black' && (result !== 0 && result % 2 !== 0))
+            (bet.value === 'red' && (randomNumber !== 0 && randomNumber % 2 === 0)) ||
+            (bet.value === 'black' && (randomNumber !== 0 && randomNumber % 2 !== 0))
           ) {
-            winnings += 2 * bet.amount; // Payout for betting on red or black
+            winnings += 2 * bet.amount // Payout for betting on red or black
           }
-          break;
-        case 'group':
-          const [start, end] = bet.value.split('-');
-          if (parseInt(start) <= result && result <= parseInt(end)) {
-            winnings += 2 * bet.amount; // Payout for betting on a group of numbers
+          break
+        case 'group': {
+          const [start, end] = bet.value.split('-')
+
+          // Check ranges
+          if (!((parseInt(start) === 1 && parseInt(end) === 18) || (parseInt(start) === 19 && parseInt(end) === 36))) {
+            ws.send(JSON.stringify({ error: 'invalid group range' }))
+            invalid = true
+            return
           }
-          break;
-        case 'column':
-          const column = parseInt(bet.value.replace('column', ''));
-          if (result !== 0 && result % 3 === column) {
-            winnings += 3 * bet.amount; // Payout for betting on a column
+
+          if (parseInt(start) <= randomNumber && randomNumber <= parseInt(end)) {
+            winnings += 2 * bet.amount // Payout for betting on a group of numbers
           }
-          break;
-        case 'dozen':
-          const dozen = parseInt(bet.value.replace('dozen', ''));
-          if (result !== 0 && Math.ceil(result / 12) === dozen) {
-            winnings += 3 * bet.amount; // Payout for betting on a dozen
+          break
+        }
+        case 'column': {
+          const column = parseInt(bet.value.replace('column', ''))
+
+          // Check column
+          if (![1, 2, 3].includes(column)) {
+            ws.send(JSON.stringify({ error: 'invalid column range' }))
+            invalid = true
+            return
           }
-          break;
+
+          if (randomNumber !== 0 && randomNumber % 3 === column) {
+            winnings += 3 * bet.amount // Payout for betting on a column
+          }
+          break
+        }
+        case 'dozen': {
+          const dozen = parseInt(bet.value.replace('dozen', ''))
+
+          if (![1, 2, 3].includes(dozen)) {
+            ws.send(JSON.stringify({ error: 'invalid dozen range' }))
+            invalid = true
+            return
+          }
+
+          if (randomNumber !== 0 && Math.ceil(randomNumber / 12) === dozen) {
+            winnings += 3 * bet.amount // Payout for betting on a dozen
+          }
+          break
+        }
         default:
-          break;
+          ws.send(JSON.stringify({ error: 'type not found' }))
+          invalid = true
+          return
       }
     })
 
+    if (invalid)
+      return
+
     // Apply user bet
-    if (!await applyUserBet(user, msg)) {
+    if (!await applyUserBet(user, { Payload: { betAmount: totalBet } })) {
       ws.send(JSON.stringify({ error: 'bet is not a number, below 0 or over the user balance' }))
       return
     }
@@ -387,6 +422,6 @@ module.exports = {
     user.balance += winnings
     await user.save()
 
-    ws.send(JSON.stringify({randomNumber, winnings}))
+    ws.send(JSON.stringify({ randomNumber, winnings }))
   }
 }

@@ -59,11 +59,7 @@ function QuestionAPI({setOpenModal}) {
             return;
         }
 
-        // setQuestion('');
-        // setDifficulty('');
-        // setCategory('');
-        // setResponses([])
-        setGameState('end')
+        setGameState('end');
         // Handle validation win
         if (data.state === 'win') {
             // Update l'user pour savoir son nouveau solde

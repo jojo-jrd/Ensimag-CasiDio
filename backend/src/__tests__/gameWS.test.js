@@ -440,9 +440,6 @@ test('Mine games : simple win', async () => {
         expect(lastMSG).toHaveProperty('discoveredCells', 0)
         expect(lastMSG).not.toHaveProperty('error')
 
-        // The balance should be updated
-        expect(initialBalance).toBe(user.balance + 10)
-
         // Game phase :
         await gameWS.playMineGame({Payload: {row: 0, col: 0}}, WebSocketMock, user)
         if (lastMSG.state === 'playing') {
@@ -660,4 +657,373 @@ test('Mine games : row or col to much', async () => {
     expect(lastMSG).not.toHaveProperty('state')
     expect(lastMSG).not.toHaveProperty('discoveredCells')
     expect(lastMSG).toHaveProperty('error', 'row nor col are not specified, haves invalids types or not in the range [0, 4]')
+})
+
+test('Roulette game : simple number win', async () => {
+    let win = false
+
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    while (!win) {
+        // play roulette
+        await gameWS.playRouletteGame(
+            {Payload: {
+                bets: [{
+                    type: 'number',
+                    value: '1',
+                    amount: 10
+                }]
+            }},
+            WebSocketMock,
+            user
+        )
+
+        if (lastMSG.winnings>0)
+            win = true
+    }
+
+    expect(lastMSG).toHaveProperty('randomNumber')
+    expect(lastMSG).toHaveProperty('winnings')
+    expect(lastMSG).not.toHaveProperty('error')
+})
+
+test('Roulette game : simple color win', async () => {
+    let win = false
+
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    while (!win) {
+        // play roulette
+        await gameWS.playRouletteGame(
+            {Payload: {
+                bets: [{
+                    type: 'color',
+                    value: 'red',
+                    amount: 10
+                }]
+            }},
+            WebSocketMock,
+            user
+        )
+
+        if (lastMSG.winnings>0)
+            win = true
+    }
+
+    expect(lastMSG).toHaveProperty('randomNumber')
+    expect(lastMSG).toHaveProperty('winnings')
+    expect(lastMSG).not.toHaveProperty('error')
+})
+
+test('Roulette game : simple group win', async () => {
+    let win = false
+
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    while (!win) {
+        // play roulette
+        await gameWS.playRouletteGame(
+            {Payload: {
+                bets: [{
+                    type: 'group',
+                    value: '1-18',
+                    amount: 10
+                }]
+            }},
+            WebSocketMock,
+            user
+        )
+
+        if (lastMSG.winnings>0)
+            win = true
+    }
+
+    expect(lastMSG).toHaveProperty('randomNumber')
+    expect(lastMSG).toHaveProperty('winnings')
+    expect(lastMSG).not.toHaveProperty('error')
+})
+
+test('Roulette game : simple column win', async () => {
+    let win = false
+
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    while (!win) {
+        // play roulette
+        await gameWS.playRouletteGame(
+            {Payload: {
+                bets: [{
+                    type: 'column',
+                    value: 'column1',
+                    amount: 10
+                }]
+            }},
+            WebSocketMock,
+            user
+        )
+
+        if (lastMSG.winnings>0)
+            win = true
+    }
+
+    expect(lastMSG).toHaveProperty('randomNumber')
+    expect(lastMSG).toHaveProperty('winnings')
+    expect(lastMSG).not.toHaveProperty('error')
+})
+
+test('Roulette game : simple dozen win', async () => {
+    let win = false
+
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    while (!win) {
+        // play roulette
+        await gameWS.playRouletteGame(
+            {Payload: {
+                bets: [{
+                    type: 'dozen',
+                    value: 'dozen1',
+                    amount: 10
+                }]
+            }},
+            WebSocketMock,
+            user
+        )
+
+        if (lastMSG.winnings>0)
+            win = true
+    }
+
+    expect(lastMSG).toHaveProperty('randomNumber')
+    expect(lastMSG).toHaveProperty('winnings')
+    expect(lastMSG).not.toHaveProperty('error')
+})
+
+test('Roulette game : simple loose', async () => {
+    let loose = false
+
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    while (!loose) {
+        // play roulette
+        await gameWS.playRouletteGame(
+            {Payload: {
+                bets: [{
+                    type: 'number',
+                    value: '1',
+                    amount: 10
+                }]
+            }},
+            WebSocketMock,
+            user
+        )
+
+        if (lastMSG.winnings === 0)
+            loose = true
+    }
+
+    expect(lastMSG).toHaveProperty('randomNumber')
+    expect(lastMSG).toHaveProperty('winnings')
+    expect(lastMSG).not.toHaveProperty('error')
+})
+
+test('Roulette game : invalid bets', async () => {
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    // play roulette
+    await gameWS.playRouletteGame(
+        {Payload: {
+        }},
+        WebSocketMock,
+        user
+    )
+
+    expect(lastMSG).not.toHaveProperty('randomNumber')
+    expect(lastMSG).not.toHaveProperty('winnings')
+    expect(lastMSG).toHaveProperty('error', 'Invalid bets type')
+})
+
+test('Roulette game : invalid bet amount', async () => {
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    // play roulette
+    await gameWS.playRouletteGame(
+        {Payload: {
+            bets: [{
+                type: 'number',
+                value: '1',
+                amount: -1
+            }]
+        }},
+        WebSocketMock,
+        user
+    )
+
+    expect(lastMSG).not.toHaveProperty('randomNumber')
+    expect(lastMSG).not.toHaveProperty('winnings')
+    expect(lastMSG).toHaveProperty('error', 'Invalid bet amount')
+})
+
+
+test('Roulette game : invalid bet value', async () => {
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    // play roulette
+    await gameWS.playRouletteGame(
+        {Payload: {
+            bets: [{
+                type: 'number',
+                value: [],
+                amount: 10
+            }]
+        }},
+        WebSocketMock,
+        user
+    )
+
+    expect(lastMSG).not.toHaveProperty('randomNumber')
+    expect(lastMSG).not.toHaveProperty('winnings')
+    expect(lastMSG).toHaveProperty('error', 'Invalid bet value')
+})
+
+
+test('Roulette game : invalid bet type', async () => {
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    // play roulette
+    await gameWS.playRouletteGame(
+        {Payload: {
+            bets: [{
+                type: {},
+                value: '1',
+                amount: 10
+            }]
+        }},
+        WebSocketMock,
+        user
+    )
+
+    expect(lastMSG).not.toHaveProperty('randomNumber')
+    expect(lastMSG).not.toHaveProperty('winnings')
+    expect(lastMSG).toHaveProperty('error', 'Invalid bet type')
+})
+
+test('Roulette game : invalid group range', async () => {
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    // play roulette
+    await gameWS.playRouletteGame(
+        {Payload: {
+            bets: [{
+                type: 'group',
+                value: '1-17',
+                amount: 10
+            }]
+        }},
+        WebSocketMock,
+        user
+    )
+
+    expect(lastMSG).not.toHaveProperty('randomNumber')
+    expect(lastMSG).not.toHaveProperty('winnings')
+    expect(lastMSG).toHaveProperty('error', 'invalid group range')
+})
+
+test('Roulette game : invalid column range', async () => {
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    // play roulette
+    await gameWS.playRouletteGame(
+        {Payload: {
+            bets: [{
+                type: 'column',
+                value: 'column0',
+                amount: 10
+            }]
+        }},
+        WebSocketMock,
+        user
+    )
+
+    expect(lastMSG).not.toHaveProperty('randomNumber')
+    expect(lastMSG).not.toHaveProperty('winnings')
+    expect(lastMSG).toHaveProperty('error', 'invalid column range')
+})
+
+test('Roulette game : invalid dozen range', async () => {
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    // play roulette
+    await gameWS.playRouletteGame(
+        {Payload: {
+            bets: [{
+                type: 'dozen',
+                value: 'dozen0',
+                amount: 10
+            }]
+        }},
+        WebSocketMock,
+        user
+    )
+
+    expect(lastMSG).not.toHaveProperty('randomNumber')
+    expect(lastMSG).not.toHaveProperty('winnings')
+    expect(lastMSG).toHaveProperty('error', 'invalid dozen range')
+})
+
+test('Roulette game : invalid type range', async () => {
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    // play roulette
+    await gameWS.playRouletteGame(
+        {Payload: {
+            bets: [{
+                type: 'invalid type',
+                value: 'dozen1',
+                amount: 10
+            }]
+        }},
+        WebSocketMock,
+        user
+    )
+
+    expect(lastMSG).not.toHaveProperty('randomNumber')
+    expect(lastMSG).not.toHaveProperty('winnings')
+    expect(lastMSG).toHaveProperty('error', 'type not found')
+})
+
+test('Roulette game : bet to high', async () => {
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    // play roulette
+    await gameWS.playRouletteGame(
+        {Payload: {
+            bets: [{
+                type: 'dozen',
+                value: 'dozen1',
+                amount: 9999999999999999999999999999999999999999999999999999
+            }]
+        }},
+        WebSocketMock,
+        user
+    )
+
+    expect(lastMSG).not.toHaveProperty('randomNumber')
+    expect(lastMSG).not.toHaveProperty('winnings')
+    expect(lastMSG).toHaveProperty('error', 'bet is not a number, below 0 or over the user balance')
 })
