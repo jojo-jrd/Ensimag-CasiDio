@@ -21,11 +21,6 @@ async function saveUserHistory (user, purProfit, gameID) {
   history.setGame(gameID)
 }
 
-// Question
-function formatStringFromAPI (input) {
-  return input.replaceAll('&quot;', '"').replaceAll('&#039;', "'").replaceAll('&ndash;', '-').replaceAll('&Amp;', '&')
-}
-
 // Mines game
 const gridSize = 5
 const totalCells = gridSize * gridSize
@@ -74,11 +69,10 @@ module.exports = {
         correctAnswer: correctAnswer
       }
 
-      // Format answers
-      answers.map((answer) => formatStringFromAPI(answer))
+
 
       // Send back data
-      ws.send(JSON.stringify({ question: formatStringFromAPI(result.question), difficulty: result.difficulty, category: formatStringFromAPI(result.category), possibleAnswers: answers, state: 'playing' }))
+      ws.send(JSON.stringify({ question: result.question, difficulty: result.difficulty, category: result.category, possibleAnswers: answers, state: 'playing' }))
     } else {
       // Wait for :
       //    - the timeout to proc
