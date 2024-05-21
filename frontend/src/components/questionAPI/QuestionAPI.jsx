@@ -5,18 +5,43 @@ import PropTypes from 'prop-types';
 
 let gameSocket;
 
+const isTest = import.meta.env.VITE_TEST == '1';
+const questionTest = [{
+    state: "playing",
+    question: "Qui est le meilleur de l'équipe ?",
+    difficulty: "facile",
+    category : "Divertissement",
+    possibleAnswers : ["Jordan", "Lukas", "Clement", "Aucun"]
+}, {
+    state : "win"
+}, {
+    error : "Une erreur"
+}, {
+    state : "loose"
+}]
+
 function QuestionAPI({setOpenModal}) {
     const [question, setQuestion] = useState("");
     const [responses, setResponses] = useState([]);
     const [answerSelected, setAnswerSelected] = useState("");
     const [erreurMessage, setErreurMessage] = useState("");
+    const [winMessage, setWinMessage] = useState("");
     const [difficulty, setDifficulty] = useState("");
     const [category, setCategory] = useState("");
     const [gameState, setGameState] = useState("");
     const { token, updateUserConnected } = useContext(AppContext);
 
+    // Used for the test
+    let nbQuestionTest = 0;
+
     const gameSocketHandler = (msg) => {
-        const data = JSON.parse(msg.data);
+        let data;
+        if (isTest) {
+            data = questionTest[nbQuestionTest];
+            nbQuestionTest++;
+        } else {
+           data = JSON.parse(msg.data)
+        }
 
         // Handle errors
         if (data.error) {
@@ -34,14 +59,15 @@ function QuestionAPI({setOpenModal}) {
             return;
         }
 
-        setQuestion('');
-        setDifficulty('');
-        setCategory('');
-        setResponses([])
+        // setQuestion('');
+        // setDifficulty('');
+        // setCategory('');
+        // setResponses([])
         setGameState('end')
         // Handle validation win
         if (data.state === 'win') {
             // Update l'user pour savoir son nouveau solde
+            setWinMessage("Bonne réponse. Vous venez de gagner des Viardots.");
             updateUserConnected();
             return;
         }
@@ -55,6 +81,7 @@ function QuestionAPI({setOpenModal}) {
     const initQuestion = () => {
         gameSocket.send(JSON.stringify({game: 'initQuestion', Payload: {}, userToken: token}));
         setErreurMessage('');
+        setWinMessage('');
         setGameState('playing');
     }
 
@@ -92,6 +119,7 @@ function QuestionAPI({setOpenModal}) {
                 </div>
             </div>
             <span className="text-red-500 text-xs italic"> {erreurMessage}</span>
+            <span className="text-green-500 text-xs italic"> {winMessage}</span>
             </Modal.Body>
             <Modal.Footer>
                 { gameState === 'playing' ? (
