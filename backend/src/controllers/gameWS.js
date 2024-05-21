@@ -411,7 +411,6 @@ module.exports = {
         default:
           ws.send(JSON.stringify({ error: 'type not found' }))
           invalid = true
-          return
       }
     })
 
