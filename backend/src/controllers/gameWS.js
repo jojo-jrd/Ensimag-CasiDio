@@ -69,8 +69,6 @@ module.exports = {
         correctAnswer: correctAnswer
       }
 
-
-
       // Send back data
       ws.send(JSON.stringify({ question: result.question, difficulty: result.difficulty, category: result.category, possibleAnswers: answers, state: 'playing' }))
     } else {
