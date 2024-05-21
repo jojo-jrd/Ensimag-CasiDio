@@ -8,6 +8,7 @@ function RegisterView(){
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const birthDateRef = useRef(null);
+  const addressRef = useRef(null);
   const [erreurMessage, setErreurMessage] = useState("");
   const {changePage} = useContext(AppContext)
 
@@ -23,7 +24,8 @@ function RegisterView(){
         !lastNameRef?.current?.value ||
         !emailRef?.current?.value ||
         !passwordRef?.current?.value ||
-        !birthDateRef?.current?.value) {
+        !birthDateRef?.current?.value ||
+        !addressRef?.current?.value) {
         message += "Vous devez remplir tous les champs."
       }
     setErreurMessage(message)
@@ -37,7 +39,8 @@ function RegisterView(){
                   lastName : lastNameRef.current.value,
                   email : emailRef.current.value,
                   password : passwordRef.current.value,
-                  birthDate : birthDateRef.current.value
+                  birthDate : birthDateRef.current.value,
+                  address : addressRef.current.value
                 })
             }).then(res => res.json()).then(reponse => {
               if (reponse.status) {
@@ -73,6 +76,10 @@ function RegisterView(){
             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" id="birthdate" ref={birthDateRef} type="date" />
           </div>
           <div className="mb-4">
+            <label className="block text-white text-sm font-bold mb-2" htmlFor="address">Adresse</label>
+            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" id="address" ref={addressRef} type="text" />
+          </div>
+          <div className="mb-4">
             <label className="block text-white text-sm font-bold mb-2" htmlFor="email">Email</label>
             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline" id="email" ref={emailRef} type="email" />
           </div>
@@ -82,7 +89,7 @@ function RegisterView(){
           </div>
           <span className="text-red-500 text-xs italic"> {erreurMessage}</span>
           <div className="flex items-center justify-between">
-            <button data-cy="validate-register" className="bg-blue-700 hover:bg-blue-800 rounded-lg text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={verifie}>Se connecter</button>
+            <button data-cy="validate-register" className="bg-blue-700 hover:bg-blue-800 rounded-lg text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={verifie}>S'inscrire</button>
             <p className="inline-block align-baseline font-bold text-sm text-white">Déjà un compte ? <a className="text-blue-700 cursor-pointer" onClick={() => changePage('login')}> Connectez vous !</a></p>
           </div>
         </div>

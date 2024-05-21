@@ -9,6 +9,7 @@ function ProfilView(){
 	const lastNameRef = useRef(null);
 	const emailRef = useRef(null);
 	const birthDateRef = useRef(null);
+	const addressRef = useRef(null);
 	const [erreurMessage, setErreurMessage] = useState("");
 	const [isEdit, setIsEdit] = useState(false);
 	const {changePage, userConnected, token, updateUserConnected} = useContext(AppContext)
@@ -45,7 +46,8 @@ function ProfilView(){
 		if (!firstNameRef?.current?.value  || 
 			!lastNameRef?.current?.value ||
 			!emailRef?.current?.value ||
-			!birthDateRef?.current?.value) {
+			!birthDateRef?.current?.value ||
+			!addressRef?.current?.value) {
 			message += "Vous devez remplir tous les champs."
 		}
 		setErreurMessage(message)
@@ -61,11 +63,12 @@ function ProfilView(){
 					firstName : firstNameRef?.current?.value,
 					lastName : lastNameRef?.current?.value,
 					email : emailRef?.current?.value,
-					birthDate : birthDateRef?.current?.value
+					birthDate : birthDateRef?.current?.value,
+					address : addressRef?.current?.value
 					})
 				}).then(res => res.json()).then(reponse => {
 				if (reponse.status) {
-					toast.success("Modification sauvegardé", {
+					toast.success("Modifications sauvegardées", {
 						position: "top-right",
 						theme: "colored",
 					});
@@ -94,15 +97,9 @@ function ProfilView(){
 							<button className="bg-blue-700 hover:bg-blue-800 rounded-lg text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => setIsEdit(true)}>Modifier</button>
 						}
 					</div>
-					<div className="flex">
-						<span className={(userConnected.balance > 100 ? 'text-lime-500' : 'text-amber-500') +' inline bg-gray-800 shadow-md rounded py-2 px-4 mr-4'}>
-							<p className="inline">{userConnected.balance}</p>
-							<img src={Viardot} alt="Viardot Money" className="w-6 ml-1 inline"/>
-						</span>
-						<button className="rounded-lg text-red-500 bg-transparent hover:text-red-600 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => deleteUser()}>
-							Supprimer le compte
-						</button>
-					</div>
+					<button className="rounded-lg text-red-500 bg-transparent hover:text-red-600 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={() => deleteUser()}>
+						Supprimer le compte
+					</button>
 
 				</div>
 				<div className="flex items-center justify-center w-full mt-4">
@@ -121,6 +118,10 @@ function ProfilView(){
 						<div className="mb-4">
 							<label className="block text-white text-sm font-bold mb-2" htmlFor="birthdate">Date de naissance</label>
 							<input className={'shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ' + (isEdit ? 'text-black' : 'text-gray-400')} id="birthdate" defaultValue={userConnected.birthDate?.slice(0, 10)} disabled={!isEdit} ref={birthDateRef} type="date" />
+						</div>
+						<div className="mb-4">
+							<label className="block text-white text-sm font-bold mb-2" htmlFor="address">Adresse</label>
+							<input className={'shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ' + (isEdit ? 'text-black' : 'text-gray-400')} id="address" defaultValue={userConnected.address} disabled={!isEdit} ref={addressRef} type="text" />
 						</div>
 						<div className="mb-4">
 							<label className="block text-white text-sm font-bold mb-2" htmlFor="email">Email</label>
