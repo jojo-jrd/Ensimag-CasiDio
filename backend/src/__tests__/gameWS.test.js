@@ -717,6 +717,35 @@ test('Roulette game : simple color win', async () => {
     expect(lastMSG).not.toHaveProperty('error')
 })
 
+test('Roulette game : simple parity win', async () => {
+    let win = false
+
+    // Get the third user
+    const user = await userModel.findOne({where: {id: 3}})
+
+    while (!win) {
+        // play roulette
+        await gameWS.playRouletteGame(
+            {Payload: {
+                bets: [{
+                    type: 'parity',
+                    value: 'odd',
+                    amount: 10
+                }]
+            }},
+            WebSocketMock,
+            user
+        )
+
+        if (lastMSG.winnings>0)
+            win = true
+    }
+
+    expect(lastMSG).toHaveProperty('randomNumber')
+    expect(lastMSG).toHaveProperty('winnings')
+    expect(lastMSG).not.toHaveProperty('error')
+})
+
 test('Roulette game : simple group win', async () => {
     let win = false
 
