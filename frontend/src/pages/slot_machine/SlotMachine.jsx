@@ -78,15 +78,15 @@ function SlotMachineView() {
             function afterRolls() {
                 if (data.state === 'win') {
                     $(slotMachineEl.current).addClass('twoOnLine');
-                    setTimeout(() => $(slotMachineEl.current).removeClass('twoOnLine'), 2000);
+                    setTimeout(() => { $(slotMachineEl.current).removeClass('twoOnLine'); setIsClicked(false) }, 2000);
                 } else if (data.state === 'bigWIN') {
                     $(slotMachineEl.current).addClass('threeOnLine');
-                    setTimeout(() => $(slotMachineEl.current).removeClass('threeOnLine'), 2000);
+                    setTimeout(() => { $(slotMachineEl.current).removeClass('threeOnLine'); setIsClicked(false) }, 2000);
+                } else {
+                    setIsClicked(false);
                 }
                 // Update l'user pour savoir son nouveau solde
                 updateUserConnected();
-                
-                setIsClicked(false);
             }
         }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps

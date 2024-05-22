@@ -78,7 +78,12 @@ const RouletteView = () => {
     setSpinning(true);
 
     // Send data to backend
-    gameSocket.send(JSON.stringify({ game: 'playRouletteGame', Payload: { bets }, userToken: token }));
+    try {
+      gameSocket.send(JSON.stringify({ game: 'playRouletteGame', Payload: { bets }, userToken: token }));
+    } catch (error) {
+      setSpinning(false);
+      console.error(error)
+    }
   };
 
   const placeBet = (type, value) => {
