@@ -1,8 +1,21 @@
 import { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../../AppContext';
 import './Roulette.css';
+import Viardot from './../../assets/viardot-coin.png';
 
 let gameSocket;
+
+const ViardotCoin = ({ number, deleteNumber }) => {
+  return <>
+    {number ?
+      <>
+        <img src={Viardot} alt="Coin Viardot" className="w-10 absolute bottom-0 right-0 opacity-70 cursor-pointer" onClick={() => deleteNumber()}/>
+        <p className="absolute bottom-2.5 right-3 cursor-pointer" onClick={() => deleteNumber()}>{number}</p>
+      </>
+      : ''}
+  </>
+
+}
 
 const RouletteView = () => {
   const [spinning, setSpinning] = useState(false);
@@ -20,7 +33,7 @@ const RouletteView = () => {
     // Define web socket handler
     gameSocket.onmessage = (msg) => {
       const data = JSON.parse(msg.data)
-  
+
       // Résultat
       setResult(data.randomNumber); // Set the result after animation ends
       setTimeout(() => {
@@ -63,15 +76,43 @@ const RouletteView = () => {
     setResult(null); // Clear previous result
     setCurrentIndex(0); // Reset currentIndex
     setSpinning(true);
-    
+
     // Send data to backend
     gameSocket.send(JSON.stringify({ game: 'playRouletteGame', Payload: { bets }, userToken: token }));
   };
 
   const placeBet = (type, value) => {
     if (!spinning) {
-      setBets([...bets, { type, value, amount: betAmount }]);
+      let betExists = false;
+
+      const updatedBets = bets.map(bet => {
+        if (bet.type === type && bet.value === value) {
+          betExists = true;
+          return {
+            ...bet,
+            amount: bet.amount + betAmount
+          };
+        }
+        return bet;
+      });
+
+      if (!betExists) {
+        updatedBets.push({ type, value, amount: betAmount });
+      }
+
+      setBets(updatedBets);
       setGlobalBetAmount(globalBetAmount + betAmount);
+    }
+  };
+
+  const removeBet = (type, value) => {
+    if (!spinning) {
+      const betToRemove = bets.find(bet => bet.type === type && bet.value === value);
+      if (betToRemove) {
+        const updatedBets = bets.filter(bet => !(bet.type === type && bet.value === value));
+        setBets(updatedBets);
+        setGlobalBetAmount(globalBetAmount - betToRemove.amount);
+      }
     }
   };
 
@@ -86,9 +127,9 @@ const RouletteView = () => {
     } else if (redNumbers.includes(number)) {
       return 'text-white bg-red-600'; // Red numbers
     } else {
-      return 'text-white bg-black' ; // Black numbers
+      return 'text-white bg-black'; // Black numbers
     }
-};
+  };
 
 
   return (
@@ -141,77 +182,110 @@ const RouletteView = () => {
           </div>
         </div>
       </div>
-      <table className="bg-lime-700 rounded-lg">
-        <tbody>
-          <tr>
-            <td></td>
-            <td className="border-2 border-white" colSpan="4"><button className={`rounded-none  ${getColor(0)}`} onClick={() => placeBet('dozen', 'dozen1')} disabled={spinning}>1-12</button></td>
-            <td className="border-2 border-white" colSpan="4"><button className={`rounded-none  ${getColor(0)}`} onClick={() => placeBet('dozen', 'dozen2')} disabled={spinning}>13-24</button></td>
-            <td className="border-2 border-white" colSpan="4"><button className={`rounded-none  ${getColor(0)}`} onClick={() => placeBet('dozen', 'dozen3')} disabled={spinning}>25-36</button></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td className="border-2 border-white" rowSpan="3"><button className={`"rounded-none ${getColor(0)}`} onClick={() => placeBet('number', '0')} disabled={spinning}>0</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(3)}`} onClick={() => placeBet('number', '3')} disabled={spinning}>3</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(6)}`} onClick={() => placeBet('number', '6')} disabled={spinning}>6</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(9)}`} onClick={() => placeBet('number', '9')} disabled={spinning}>9</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(12)}`} onClick={() => placeBet('number', '12')} disabled={spinning}>12</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(15)}`} onClick={() => placeBet('number', '15')} disabled={spinning}>15</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(18)}`} onClick={() => placeBet('number', '18')} disabled={spinning}>18</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(21)}`} onClick={() => placeBet('number', '21')} disabled={spinning}>21</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(24)}`} onClick={() => placeBet('number', '24')} disabled={spinning}>24</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(27)}`} onClick={() => placeBet('number', '27')} disabled={spinning}>27</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(30)}`} onClick={() => placeBet('number', '30')} disabled={spinning}>30</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(33)}`} onClick={() => placeBet('number', '33')} disabled={spinning}>33</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(36)}`} onClick={() => placeBet('number', '36')} disabled={spinning}>36</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('column', 'column1')} disabled={spinning}>2 to 1</button></td>
-          </tr>
-          <tr>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(2)}`} onClick={() => placeBet('number', '2')} disabled={spinning}>2</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(5)}`} onClick={() => placeBet('number', '5')} disabled={spinning}>5</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(8)}`} onClick={() => placeBet('number', '8')} disabled={spinning}>8</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(11)}`} onClick={() => placeBet('number', '11')} disabled={spinning}>11</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(14)}`} onClick={() => placeBet('number', '14')} disabled={spinning}>14</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(17)}`} onClick={() => placeBet('number', '17')} disabled={spinning}>17</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(20)}`} onClick={() => placeBet('number', '20')} disabled={spinning}>20</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(23)}`} onClick={() => placeBet('number', '23')} disabled={spinning}>23</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(26)}`} onClick={() => placeBet('number', '26')} disabled={spinning}>26</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(29)}`} onClick={() => placeBet('number', '29')} disabled={spinning}>29</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(32)}`} onClick={() => placeBet('number', '32')} disabled={spinning}>32</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(35)}`} onClick={() => placeBet('number', '35')} disabled={spinning}>35</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('column', 'column2')} disabled={spinning}>2 to 1</button></td>
-          </tr>
-          <tr>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(1)}`} onClick={() => placeBet('number', '1')} disabled={spinning}>1</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(4)}`} onClick={() => placeBet('number', '4')} disabled={spinning}>4</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(7)}`} onClick={() => placeBet('number', '7')} disabled={spinning}>7</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(10)}`} onClick={() => placeBet('number', '10')} disabled={spinning}>10</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(13)}`} onClick={() => placeBet('number', '13')} disabled={spinning}>13</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(16)}`} onClick={() => placeBet('number', '16')} disabled={spinning}>16</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(19)}`} onClick={() => placeBet('number', '19')} disabled={spinning}>19</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(22)}`} onClick={() => placeBet('number', '22')} disabled={spinning}>22</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(25)}`} onClick={() => placeBet('number', '25')} disabled={spinning}>25</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(28)}`} onClick={() => placeBet('number', '28')} disabled={spinning}>28</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(31)}`} onClick={() => placeBet('number', '31')} disabled={spinning}>31</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(34)}`} onClick={() => placeBet('number', '34')} disabled={spinning}>34</button></td>
-            <td className="border-2 border-white"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('column', 'column3')} disabled={spinning}>2 to 1</button></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td className="border-2 border-white"  colSpan="6"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('group', '1-18')} disabled={spinning}>1-18</button></td>
-            <td className="border-2 border-white"  colSpan="6"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('group', '19-36')} disabled={spinning}>19-36</button></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td className="border-2 border-white" colSpan="3"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('color', 'red')} disabled={spinning}>🟥</button></td>
-            <td className="border-2 border-white" colSpan="3"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('color', 'black')} disabled={spinning}>⬛</button></td>
-            <td className="border-2 border-white" colSpan="3"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('parity', 'even')} disabled={spinning}>Pair</button></td>
-            <td className="border-2 border-white" colSpan="3"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('parity', 'odd')} disabled={spinning}>Impair</button></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="flex flex-row md:flex-col bg-lime-700 rounded-lg p-4 mt-4">
+        {/* Première rangée */}
+        <div className="flex justify-between flex-col md:flex-row">
+          <button className={`border border-white rounded-none md:w-1/3 flex-grow ${getColor(0)}`}
+            onClick={() => placeBet('dozen', 'dozen1')}
+            disabled={spinning}>1-12</button>
+          <button className={`border border-white rounded-none md:w-1/3 flex-grow ${getColor(0)}`}
+            onClick={() => placeBet('dozen', 'dozen2')}
+            disabled={spinning}>13-24</button>
+          <button className={`border border-white rounded-none md:w-1/3 flex-grow ${getColor(0)}`}
+            onClick={() => placeBet('dozen', 'dozen3')}
+            disabled={spinning}>25-36</button>
+        </div>
+
+        {/* Trois rangées principales */}
+        <div className="flex flex-col md:flex-row">
+          <div className="border border-white flex-shrink-0">
+            <button className={`rounded-none h-full ${getColor(0)}`}
+              onClick={() => placeBet('number', '0')}
+              disabled={spinning}>0</button>
+          </div>
+          <div className="flex flex-row-reverse md:flex-col w-full">
+            {/* Première rangée des nombres */}
+            <div className="flex flex-col md:flex-row">
+              {[3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36].map((num) => (
+                <div key={num} className="border border-white flex-grow">
+                  <button className={`rounded-none w-full ${getColor(num)}`}
+                    onClick={() => placeBet('number', num)}
+                    disabled={spinning}>{num}</button>
+                </div>
+              ))}
+              <div className="border border-white flex-shrink-0">
+                <button className={`rounded-none ${getColor(0)}`}
+                  onClick={() => placeBet('column', 'column1')}
+                  disabled={spinning}>2 to 1</button>
+              </div>
+            </div>
+
+            {/* Deuxième rangée des nombres */}
+            <div className="flex flex-col md:flex-row">
+              {[2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35].map((num) => (
+                <div key={num} className="border border-white flex-grow">
+                  <button className={`rounded-none w-full ${getColor(num)}`}
+                    onClick={() => placeBet('number', num)}
+                    disabled={spinning}>{num}
+                  </button>
+                </div>
+              ))}
+              <div className="border border-white flex-shrink-0">
+                <button className={`rounded-none ${getColor(0)}`}
+                  onClick={() => placeBet('column', 'column2')}
+                  disabled={spinning}>2 to 1</button>
+              </div>
+            </div>
+
+            {/* Troisième rangée des nombres */}
+            <div className="flex flex-col md:flex-row">
+              {[1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34].map((num) => (
+                <div key={num} className="border border-white flex-grow">
+                  <button className={`rounded-none w-full ${getColor(num)}`}
+                    onClick={() => placeBet('number', num)}
+                    disabled={spinning}>{num}</button>
+                </div>
+              ))}
+              <div className="border border-white flex-shrink-0">
+                <button className={`rounded-none ${getColor(0)}`}
+                  onClick={() => placeBet('column', 'column3')}
+                  disabled={spinning}>2 to 1
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quatrième rangée */}
+        <div className="flex flex-col md:flex-row justify-between">
+          <button className={`border border-white md:w-1/2 rounded-none flex-grow ${getColor(0)}`}
+            onClick={() => placeBet('group', '1-18')}
+            disabled={spinning}>1-18</button>
+          <button className={`border border-white md:w-1/2 rounded-none flex-grow ${getColor(0)}`}
+            onClick={() => placeBet('group', '19-36')}
+            disabled={spinning}>19-36</button>
+        </div>
+
+        {/* Cinquième rangée */}
+        <div className="flex flex-col md:flex-row justify-between">
+          {[
+            { type: 'color', value: 'red', label: '🟥' },
+            { type: 'color', value: 'black', label: '⬛' },
+            { type: 'parity', value: 'even', label: 'Pair' },
+            { type: 'parity', value: 'odd', label: 'Impair' }
+          ].map((btn) => {
+            return <div key={btn.value} className={`border border-white md:w-1/4 rounded-none flex-grow relative ${getColor(0)}`}>
+              <button className="bg-transparent w-full h-full"
+                onClick={() => placeBet(btn.type, btn.value)}
+                disabled={spinning}>{btn.label}</button>
+              <ViardotCoin number={bets.filter((b) => b.type == btn.type && b.value == btn.value)?.[0]?.['amount']} deleteNumber={() => removeBet(btn.type, btn.value)} />
+            </div>
+          })
+          }
+        </div>
+      </div>
+
+
     </div>
   );
 };
