@@ -115,7 +115,7 @@ const MineGameView = () => {
   }
 
   return (
-    <div>
+    <div className="flex flex-col justify-center">
       <div className="flex h-full justify-center items-center">
         <div className="border border-solid border-red-700 bg-gray-800 rounded-lg p-8">
           <h1 className="text-white text-center">Mines Game</h1>

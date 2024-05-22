@@ -152,15 +152,15 @@ function AdminUsers() {
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                     <thead className="text-xs text-gray-800 uppercase bg-gray-200">
                         <tr>
-                            <th className="px-6 py-3 cursor-pointer" onClick={() => sortColumn('firstName', 'string')}>
+                            <th className="px-2 sm:px-6 py-3 cursor-pointer" onClick={() => sortColumn('firstName', 'string')}>
                                 Prenom
                                 <DisplaySort column='firstName' currentSort={currentSort}/>
                             </th>
-                            <th className="px-6 py-3 cursor-pointer" onClick={() => sortColumn('lastName', 'string')}>
+                            <th className="px-2 sm:px-6 py-3 cursor-pointer" onClick={() => sortColumn('lastName', 'string')}>
                                 Nom
                                 <DisplaySort column='lastName' currentSort={currentSort}/>
                             </th>
-                            <th className="px-6 py-3 cursor-pointer" onClick={() => sortColumn('email', 'string')}>
+                            <th className="px-6 py-3 cursor-pointer hidden sm:table-cell" onClick={() => sortColumn('email', 'string')}>
                                 Email
                                 <DisplaySort column='email' currentSort={currentSort}/>
                             </th>
@@ -176,21 +176,21 @@ function AdminUsers() {
                                 Date de naissance
                                 <DisplaySort column='birthDate' currentSort={currentSort}/>
                             </th>
-                            <th className="px-6 py-3"></th>
-                            <th className="px-6 py-3"></th>
+                            <th className="px-2 sm:px-6 py-3"></th>
+                            <th className="px-2 sm:px-6 py-3"></th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map(user => {
                             return (
                                 <tr key={user.id} className="odd:bg-white even:bg-gray-50 border-b">
-                                    <td className="px-6 py-3">{user.firstName}</td>
-                                    <td className="px-6 py-3">{user.lastName}</td>
-                                    <td className="px-6 py-3">{user.email}</td>
+                                    <td className="px-2 sm:px-6 py-3">{user.firstName}</td>
+                                    <td className="px-2 sm:px-6 py-3">{user.lastName}</td>
+                                    <td className="px-6 py-3 hidden sm:table-cell">{user.email}</td>
                                     <td className="px-6 py-3 hidden md:table-cell">{user.address}</td>
                                     <td className="px-6 py-3 hidden md:table-cell">{user.isAdmin ? 'Oui' : 'Non'}</td>
                                     <td className="px-6 py-3 hidden md:table-cell">{moment(user.birthDate).format('L')}</td>
-                                    <td className="px-6 py-3 cursor-pointer" >
+                                    <td className="px-2 sm:px-6 py-3 cursor-pointer" >
                                         {userConnected.email != user.email ? <FontAwesomeIcon className="ml-3 text-blue-700" icon={faPenToSquare} onClick={() => updateUser(user)}/> : ''}
                                     </td>
                                     <td className="px-6 py-3 cursor-pointer" >
