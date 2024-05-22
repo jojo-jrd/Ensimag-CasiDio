@@ -198,10 +198,16 @@ const RouletteView = () => {
           </tr>
           <tr>
             <td></td>
-            <td className="border-2 border-white"  colSpan="5"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('group', '1-18')} disabled={spinning}>1-18</button></td>
-            <td className="border-2 border-white" ><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('color', 'red')} disabled={spinning}>🟥</button></td>
-            <td className="border-2 border-white" ><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('color', 'black')} disabled={spinning}>⬛</button></td>
-            <td className="border-2 border-white"  colSpan="5"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('group', '19-36')} disabled={spinning}>19-36</button></td>
+            <td className="border-2 border-white"  colSpan="6"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('group', '1-18')} disabled={spinning}>1-18</button></td>
+            <td className="border-2 border-white"  colSpan="6"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('group', '19-36')} disabled={spinning}>19-36</button></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td className="border-2 border-white" colSpan="3"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('color', 'red')} disabled={spinning}>🟥</button></td>
+            <td className="border-2 border-white" colSpan="3"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('color', 'black')} disabled={spinning}>⬛</button></td>
+            <td className="border-2 border-white" colSpan="3"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('parity', 'even')} disabled={spinning}>Pair</button></td>
+            <td className="border-2 border-white" colSpan="3"><button className={`rounded-none ${getColor(0)}`} onClick={() => placeBet('parity', 'odd')} disabled={spinning}>Impair</button></td>
             <td></td>
           </tr>
         </tbody>
