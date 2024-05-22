@@ -17,9 +17,19 @@ const RouletteView = () => {
     // Define web socket
     gameSocket = new WebSocket(`${import.meta.env.VITE_API_WS}/gameSocket`);
 
-    // Define handler
-    gameSocket.onmessage = (msg) => socketHandler(msg);
-  });
+    // Define web socket handler
+    gameSocket.onmessage = (msg) => {
+      const data = JSON.parse(msg.data)
+  
+      // Résultat
+      setResult(data.randomNumber); // Set the result after animation ends
+      setTimeout(() => {
+        setSpinning(false);
+        setGlobalBetAmount(0);
+        updateUserConnected();
+      }, 600); // Simulating spinning time
+    };
+  }, [updateUserConnected]);
 
   // Handle spinning
   useEffect(() => {
@@ -39,19 +49,6 @@ const RouletteView = () => {
     }
   }, [result, spinning]);
 
-  // Function to handle sockets message
-  const socketHandler = (msg) => {
-    const data = JSON.parse(msg.data)
-
-    // Résultat
-    setResult(data.randomNumber); // Set the result after animation ends
-    setTimeout(() => {
-      setSpinning(false);
-      setGlobalBetAmount(0);
-      updateUserConnected();
-    }, 600); // Simulating spinning time
-  }
-
   // Function to handle changes in the bet amount
   const handleBetAmountChange = (event) => {
     if (event.target.value) {
@@ -66,7 +63,7 @@ const RouletteView = () => {
     setResult(null); // Clear previous result
     setCurrentIndex(0); // Reset currentIndex
     setSpinning(true);
-
+    
     // Send data to backend
     gameSocket.send(JSON.stringify({ game: 'playRouletteGame', Payload: { bets }, userToken: token }));
   };
