@@ -1,7 +1,6 @@
 import { useState, useRef, useContext } from 'react';
 import { AppContext } from '../../AppContext';
 import { toast, ToastContainer } from 'react-toastify';
-import Viardot from './../../assets/viardot-coin.png';
 import swal from 'sweetalert';
 
 function ProfilView(){

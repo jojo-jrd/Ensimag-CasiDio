@@ -89,7 +89,7 @@ function RegisterView(){
           </div>
           <span className="text-red-500 text-xs italic"> {erreurMessage}</span>
           <div className="flex items-center justify-between">
-            <button data-cy="validate-register" className="bg-blue-700 hover:bg-blue-800 rounded-lg text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={verifie}>S'inscrire</button>
+            <button data-cy="validate-register" className="bg-blue-700 hover:bg-blue-800 rounded-lg text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" onClick={verifie}>S&apos;inscrire</button>
             <p className="inline-block align-baseline font-bold text-sm text-white">Déjà un compte ? <a className="text-blue-700 cursor-pointer" onClick={() => changePage('login')}> Connectez vous !</a></p>
           </div>
         </div>

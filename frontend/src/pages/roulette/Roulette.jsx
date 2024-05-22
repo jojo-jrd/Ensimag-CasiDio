@@ -1,21 +1,39 @@
 import { useState, useEffect, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { AppContext } from '../../AppContext';
 import './Roulette.css';
 import Viardot from './../../assets/viardot-coin.png';
 
+// TODO : responsive coin bas button
+// diminution largeur de la grille
+// ajout de l'interface en accord avec le site
+// changer l'ordre des élements sur la page (spin, roulette, grid, mise)
+// mise en page avec des padding a droite à gauche
+// Afficher les gains / pertes
+// Tests cypress
+// Lint
+// (TODO AFTEEEEEEER (j'aurais jamais le time) : animation clean roulette, 1-18 et 19-36 cadrés (pareil douzaines)) 
+// (TODO AFTEEEEEEER (j'aurais jamais le time) : quand on passe la souris sur un chiffre, il devient plus claire. quand on passe la souris sur un groupe (dozen, column, group) les éléments du groupes deviennent plus clairs) 
+
 let gameSocket;
 
 const ViardotCoin = ({ number, deleteNumber }) => {
-  return <>
-    {number ?
-      <>
-        <img src={Viardot} alt="Coin Viardot" className="w-10 absolute bottom-0 right-0 opacity-70 cursor-pointer" onClick={() => deleteNumber()} />
-        <p className="absolute bottom-2.5 right-3 cursor-pointer" onClick={() => deleteNumber()}>{number}</p>
-      </>
-      : ''}
-  </>
-
+  return (
+    <>
+      {number ?
+        <>
+          <img src={Viardot} alt="Coin Viardot" className="w-10 absolute bottom-0 right-0 opacity-70 cursor-pointer" onClick={() => deleteNumber()} />
+          <p className="absolute bottom-2.5 right-3 cursor-pointer" onClick={() => deleteNumber()}>{number}</p>
+        </>
+        : ''}
+    </>
+  );
 }
+
+ViardotCoin.propTypes = {
+  number: PropTypes.number, // number est un nombre
+  deleteNumber: PropTypes.func // deleteNumber est une fonction
+};
 
 const RouletteView = () => {
   const [spinning, setSpinning] = useState(false);
@@ -143,15 +161,6 @@ const RouletteView = () => {
       <button onClick={startSpinning} disabled={spinning} className="spin-button">
         {spinning ? 'Spinning...' : 'Spin the Roulette'}
       </button>
-      <div>
-        <input className="shadow appearance-none border rounded py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-          id="betAmount"
-          type="number"
-          value={betAmount}
-          onChange={handleBetAmountChange}
-          min={1}
-        />
-      </div>
       <div className="roulette">
         <div className="roulette-table">
           <div className="roulette-row">
@@ -165,6 +174,16 @@ const RouletteView = () => {
             ))}
           </div>
         </div>
+      </div>
+
+      <div>
+        <input className="shadow appearance-none border rounded py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+          id="betAmount"
+          type="number"
+          value={betAmount}
+          onChange={handleBetAmountChange}
+          min={1}
+        />
       </div>
       <div className="flex flex-row md:flex-col bg-lime-700 rounded-lg p-4 mt-4">
         {/* Première rangée */}
