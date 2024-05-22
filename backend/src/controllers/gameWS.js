@@ -349,9 +349,18 @@ module.exports = {
           }
           break
         case 'color':
+          const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
           if (
-            (bet.value === 'red' && (randomNumber !== 0 && randomNumber % 2 === 0)) ||
-            (bet.value === 'black' && (randomNumber !== 0 && randomNumber % 2 !== 0))
+            (bet.value === 'red' && (randomNumber !== 0 && redNumbers.includes(randomNumber))) ||
+            (bet.value === 'black' && (randomNumber !== 0 && !redNumbers.includes(randomNumber)))
+          ) {
+            winnings += 2 * bet.amount // Payout for betting on red or black
+          }
+          break
+        case 'parity':
+          if (
+            (bet.value === 'odd' && (randomNumber !== 0 && randomNumber % 2 !== 0)) ||
+            (bet.value === 'even' && (randomNumber !== 0 && randomNumber % 2 === 0))
           ) {
             winnings += 2 * bet.amount // Payout for betting on red or black
           }
@@ -418,6 +427,7 @@ module.exports = {
     // Add winings
     user.balance += winnings
     await user.save()
+    await saveUserHistory(user, winnings - totalBet, 3)
 
     ws.send(JSON.stringify({ randomNumber, winnings }))
   }
