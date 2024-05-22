@@ -9,7 +9,7 @@ const ViardotCoin = ({ number, deleteNumber }) => {
   return <>
     {number ?
       <>
-        <img src={Viardot} alt="Coin Viardot" className="w-10 absolute bottom-0 right-0 opacity-70 cursor-pointer" onClick={() => deleteNumber()}/>
+        <img src={Viardot} alt="Coin Viardot" className="w-10 absolute bottom-0 right-0 opacity-70 cursor-pointer" onClick={() => deleteNumber()} />
         <p className="absolute bottom-2.5 right-3 cursor-pointer" onClick={() => deleteNumber()}>{number}</p>
       </>
       : ''}
@@ -144,34 +144,13 @@ const RouletteView = () => {
         {spinning ? 'Spinning...' : 'Spin the Roulette'}
       </button>
       <div>
-        <input className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+        <input className="shadow appearance-none border rounded py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
           id="betAmount"
           type="number"
           value={betAmount}
           onChange={handleBetAmountChange}
           min={1}
         />
-      </div>
-      <div className="bets-summary">
-        <h2>Bets Summary</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>Value</th>
-              <th>Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bets.map((bet, index) => (
-              <tr key={index}>
-                <td>{bet.type}</td>
-                <td>{bet.value}</td>
-                <td>{bet.amount}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
       <div className="roulette">
         <div className="roulette-table">
@@ -189,73 +168,82 @@ const RouletteView = () => {
       </div>
       <div className="flex flex-row md:flex-col bg-lime-700 rounded-lg p-4 mt-4">
         {/* Première rangée */}
-        <div className="flex justify-between flex-col md:flex-row">
-          <button className={`border border-white rounded-none md:w-1/3 flex-grow ${getColor(0)}`}
-            onClick={() => placeBet('dozen', 'dozen1')}
-            disabled={spinning}>1-12</button>
-          <button className={`border border-white rounded-none md:w-1/3 flex-grow ${getColor(0)}`}
-            onClick={() => placeBet('dozen', 'dozen2')}
-            disabled={spinning}>13-24</button>
-          <button className={`border border-white rounded-none md:w-1/3 flex-grow ${getColor(0)}`}
-            onClick={() => placeBet('dozen', 'dozen3')}
-            disabled={spinning}>25-36</button>
+        <div className="flex flex-col md:flex-row justify-between">
+          {[
+            { type: 'dozen', value: 'dozen1', label: '1-12' },
+            { type: 'dozen', value: 'dozen2', label: '13-24' },
+            { type: 'dozen', value: 'dozen3', label: '25-36' }
+          ].map((btn) => {
+            return <div key={btn.value} className={`border border-white md:w-1/4 rounded-none flex-grow relative ${getColor(0)}`}>
+              <button className="bg-transparent w-full h-full"
+                onClick={() => placeBet(btn.type, btn.value)}
+                disabled={spinning}>{btn.label}</button>
+              <ViardotCoin number={bets.filter((b) => b.type == btn.type && b.value == btn.value)?.[0]?.['amount']} deleteNumber={() => removeBet(btn.type, btn.value)} />
+            </div>
+          })
+          }
         </div>
-
         {/* Trois rangées principales */}
         <div className="flex flex-col md:flex-row">
-          <div className="border border-white flex-shrink-0">
-            <button className={`rounded-none h-full ${getColor(0)}`}
+          <div key={'0'} className={`border border-white rounded-none flex-grow relative ${getColor(0)}`}>
+            <button className="bg-transparent w-full h-full"
               onClick={() => placeBet('number', '0')}
               disabled={spinning}>0</button>
+            <ViardotCoin number={bets.filter((b) => b.type == 'number' && b.value == '0')?.[0]?.['amount']} deleteNumber={() => removeBet('number', '0')} />
           </div>
           <div className="flex flex-row-reverse md:flex-col w-full">
             {/* Première rangée des nombres */}
             <div className="flex flex-col md:flex-row">
               {[3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36].map((num) => (
-                <div key={num} className="border border-white flex-grow">
-                  <button className={`rounded-none w-full ${getColor(num)}`}
-                    onClick={() => placeBet('number', num)}
+                <div key={num} className={`border border-white flex-grow relative ${getColor(num)}`}>
+                  <button className="bg-transparent w-full h-full"
+                    onClick={() => placeBet('number', ''+num)}
                     disabled={spinning}>{num}</button>
+                  <ViardotCoin number={bets.filter((b) => b.type === 'number' && b.value === ''+num)?.[0]?.amount} deleteNumber={() => removeBet('number', ''+num)} />
                 </div>
               ))}
-              <div className="border border-white flex-shrink-0">
-                <button className={`rounded-none ${getColor(0)}`}
+              <div key={'column1'} className={`border border-white rounded-none flex-grow relative ${getColor(0)}`}>
+                <button className="bg-transparent w-full h-full"
                   onClick={() => placeBet('column', 'column1')}
                   disabled={spinning}>2 to 1</button>
+                <ViardotCoin number={bets.filter((b) => b.type == 'column' && b.value == 'column1')?.[0]?.['amount']} deleteNumber={() => removeBet('column', 'column1')} />
               </div>
             </div>
 
             {/* Deuxième rangée des nombres */}
             <div className="flex flex-col md:flex-row">
               {[2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35].map((num) => (
-                <div key={num} className="border border-white flex-grow">
-                  <button className={`rounded-none w-full ${getColor(num)}`}
-                    onClick={() => placeBet('number', num)}
-                    disabled={spinning}>{num}
-                  </button>
+                <div key={num} className={`border border-white flex-grow relative ${getColor(num)}`}>
+                  <button className="bg-transparent w-full h-full"
+                    onClick={() => placeBet('number', ''+num)}
+                    disabled={spinning}>{num}</button>
+                  <ViardotCoin number={bets.filter((b) => b.type === 'number' && b.value === ''+num)?.[0]?.amount} deleteNumber={() => removeBet('number', ''+num)} />
                 </div>
               ))}
-              <div className="border border-white flex-shrink-0">
-                <button className={`rounded-none ${getColor(0)}`}
+
+              <div key={'column2'} className={`border border-white  rounded-none flex-grow relative ${getColor(0)}`}>
+                <button className="bg-transparent w-full h-full"
                   onClick={() => placeBet('column', 'column2')}
                   disabled={spinning}>2 to 1</button>
+                <ViardotCoin number={bets.filter((b) => b.type == 'column' && b.value == 'column2')?.[0]?.['amount']} deleteNumber={() => removeBet('column', 'column2')} />
               </div>
             </div>
 
             {/* Troisième rangée des nombres */}
             <div className="flex flex-col md:flex-row">
               {[1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34].map((num) => (
-                <div key={num} className="border border-white flex-grow">
-                  <button className={`rounded-none w-full ${getColor(num)}`}
-                    onClick={() => placeBet('number', num)}
+                <div key={num} className={`border border-white flex-grow relative ${getColor(num)}`}>
+                  <button className="bg-transparent w-full h-full"
+                    onClick={() => placeBet('number', ''+num)}
                     disabled={spinning}>{num}</button>
+                  <ViardotCoin number={bets.filter((b) => b.type === 'number' && b.value === ''+num)?.[0]?.amount} deleteNumber={() => removeBet('number', ''+num)} />
                 </div>
               ))}
-              <div className="border border-white flex-shrink-0">
-                <button className={`rounded-none ${getColor(0)}`}
+              <div key={'column3'} className={`border border-white  rounded-none flex-grow relative ${getColor(0)}`}>
+                <button className="bg-transparent w-full h-full"
                   onClick={() => placeBet('column', 'column3')}
-                  disabled={spinning}>2 to 1
-                </button>
+                  disabled={spinning}>2 to 1</button>
+                <ViardotCoin number={bets.filter((b) => b.type == 'column' && b.value == 'column3')?.[0]?.['amount']} deleteNumber={() => removeBet('column', 'column3')} />
               </div>
             </div>
           </div>
@@ -263,12 +251,18 @@ const RouletteView = () => {
 
         {/* Quatrième rangée */}
         <div className="flex flex-col md:flex-row justify-between">
-          <button className={`border border-white md:w-1/2 rounded-none flex-grow ${getColor(0)}`}
-            onClick={() => placeBet('group', '1-18')}
-            disabled={spinning}>1-18</button>
-          <button className={`border border-white md:w-1/2 rounded-none flex-grow ${getColor(0)}`}
-            onClick={() => placeBet('group', '19-36')}
-            disabled={spinning}>19-36</button>
+          {[
+            { type: 'group', value: '1-18', label: '1-18' },
+            { type: 'group', value: '19-36', label: '19-36' }
+          ].map((btn) => {
+            return <div key={btn.value} className={`border border-white md:w-1/2 rounded-none flex-grow relative ${getColor(0)}`}>
+              <button className="bg-transparent w-full h-full"
+                onClick={() => placeBet(btn.type, btn.value)}
+                disabled={spinning}>{btn.label}</button>
+              <ViardotCoin number={bets.filter((b) => b.type == btn.type && b.value == btn.value)?.[0]?.['amount']} deleteNumber={() => removeBet(btn.type, btn.value)} />
+            </div>
+          })
+          }
         </div>
 
         {/* Cinquième rangée */}
