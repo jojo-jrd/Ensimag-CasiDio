@@ -11,9 +11,7 @@ import Viardot from './../../assets/viardot-coin.png';
 // mise en page avec des padding a droite à gauche
 // Afficher les gains / pertes
 // Tests cypress
-// Lint
 // (TODO AFTEEEEEEER (j'aurais jamais le time) : animation clean roulette, 1-18 et 19-36 cadrés (pareil douzaines)) 
-// (TODO AFTEEEEEEER (j'aurais jamais le time) : quand on passe la souris sur un chiffre, il devient plus claire. quand on passe la souris sur un groupe (dozen, column, group) les éléments du groupes deviennent plus clairs) 
 
 let gameSocket;
 
@@ -43,6 +41,32 @@ const RouletteView = () => {
   const [globalBetAmount, setGlobalBetAmount] = useState(0);
   const [bets, setBets] = useState([]); // Array to store placed bets
   const { token, updateUserConnected } = useContext(AppContext);
+
+  // Permet la surbrillance des éléments d'une colonne
+  const [isColumn1Hovered, setIsColumn1Hovered] = useState(false);
+  const [isColumn2Hovered, setIsColumn2Hovered] = useState(false);
+  const [isColumn3Hovered, setIsColumn3Hovered] = useState(false);
+
+  // Permet la surbrillance des éléments d'une douzaine
+  const [isDozen1Hovered, setIsDozen1Hovered] = useState(false);
+  const [isDozen2Hovered, setIsDozen2Hovered] = useState(false);
+  const [isDozen3Hovered, setIsDozen3Hovered] = useState(false);
+
+  // Permet la surbrillance des éléments d'un groupe
+  const [isGroup1Hovered, setIsGroup1Hovered] = useState(false);
+  const [isGroup2Hovered, setIsGroup2Hovered] = useState(false);
+
+  // Permet la surbrillance des éléments pairs/impaires
+  // Pairs
+  const [isParity1Hovered, setIsParity1Hovered] = useState(false);
+  //Impairs
+  const [isParity2Hovered, setIsParity2Hovered] = useState(false);
+
+  // Permet la surbrillance des éléments rouges/noirs
+  // Rouge
+  const [isColor1Hovered, setIsColor1Hovered] = useState(false);
+  // Noir
+  const [isColor2Hovered, setIsColor2Hovered] = useState(false);
 
   useEffect(() => {
     // Define web socket
@@ -145,15 +169,51 @@ const RouletteView = () => {
 
   const getColor = (number) => {
     const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+    const blackNumbers = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35];
+
+    const column1 = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36]
+    const column2 = [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35]
+    const column3 = [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34]
+
+    if ((isColumn1Hovered && column1.includes(number))
+      || (isColumn2Hovered && column2.includes(number))
+      || (isColumn3Hovered && column3.includes(number))
+      || (isDozen1Hovered && number >= 1 && number <= 12)
+      || (isDozen2Hovered && number >= 13 && number <= 24)
+      || (isDozen3Hovered && number >= 25 && number <= 36)
+      || (isGroup1Hovered && number >= 1 && number <= 18)
+      || (isGroup2Hovered && number >= 19 && number <= 36)
+      || (isParity1Hovered && number % 2 == 0 && number != 0)
+      || (isParity2Hovered && number % 2 != 0)
+      || (isColor1Hovered && redNumbers.includes(number))
+      || (isColor2Hovered && blackNumbers.includes(number))) {
+      return "text-white " + getHoverColor(number);
+    } else {
+      return getColorForRoulette(number) + ` hover:${getHoverColor(number)}`;
+    }
+  };
+
+  const getHoverColor = (number) => {
+    const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+    if(number === 0){
+      return "bg-lime-600" // Green numbers
+    } else if (redNumbers.includes(number)) {
+      return 'bg-red-500'; // Red numbers
+    } else {
+      return 'bg-gray-800'; // Black numbers
+    }
+  };
+
+  const getColorForRoulette = (number) => {
+    const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
     if (number === 0) {
-      return 'text-white bg-lime-700'; // 0 is green
+      return 'text-white bg-lime-700 '; // 0 is green
     } else if (redNumbers.includes(number)) {
       return 'text-white bg-red-600'; // Red numbers
     } else {
       return 'text-white bg-black'; // Black numbers
     }
   };
-
 
   return (
     <div className="roulette-container">
@@ -167,7 +227,7 @@ const RouletteView = () => {
             {[...Array(5)].map((_, index) => (
               <div
                 key={index}
-                className={`roulette-cell ${index === 2 ? 'selected' : ''} ${getColor((currentIndex + index - 2 + 37) % 37)}`}
+                className={`roulette-cell ${index === 2 ? 'selected' : ''} ${getColorForRoulette((currentIndex + index - 2 + 37) % 37)}`}
               >
                 {(currentIndex + index - 2 + 37) % 37}
               </div>
@@ -189,11 +249,13 @@ const RouletteView = () => {
         {/* Première rangée */}
         <div className="flex flex-col md:flex-row justify-between">
           {[
-            { type: 'dozen', value: 'dozen1', label: '1-12' },
-            { type: 'dozen', value: 'dozen2', label: '13-24' },
-            { type: 'dozen', value: 'dozen3', label: '25-36' }
+            { type: 'dozen', value: 'dozen1', hoveredFunc: setIsDozen1Hovered, label: '1-12' },
+            { type: 'dozen', value: 'dozen2', hoveredFunc: setIsDozen2Hovered, label: '13-24' },
+            { type: 'dozen', value: 'dozen3', hoveredFunc: setIsDozen3Hovered, label: '25-36' }
           ].map((btn) => {
-            return <div key={btn.value} className={`border border-white md:w-1/4 rounded-none flex-grow relative ${getColor(0)}`}>
+            return <div key={btn.value} className={`border border-white md:w-1/4 rounded-none flex-grow relative ${getColor(0)}`}
+              onMouseEnter={() => btn.hoveredFunc(true)}
+              onMouseLeave={() => btn.hoveredFunc(false)}>
               <button className="bg-transparent w-full h-full"
                 onClick={() => placeBet(btn.type, btn.value)}
                 disabled={spinning}>{btn.label}</button>
@@ -216,12 +278,14 @@ const RouletteView = () => {
               {[3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36].map((num) => (
                 <div key={num} className={`border border-white flex-grow relative ${getColor(num)}`}>
                   <button className="bg-transparent w-full h-full"
-                    onClick={() => placeBet('number', ''+num)}
+                    onClick={() => placeBet('number', '' + num)}
                     disabled={spinning}>{num}</button>
-                  <ViardotCoin number={bets.filter((b) => b.type === 'number' && b.value === ''+num)?.[0]?.amount} deleteNumber={() => removeBet('number', ''+num)} />
+                  <ViardotCoin number={bets.filter((b) => b.type === 'number' && b.value === '' + num)?.[0]?.amount} deleteNumber={() => removeBet('number', '' + num)} />
                 </div>
               ))}
-              <div key={'column1'} className={`border border-white rounded-none flex-grow relative ${getColor(0)}`}>
+              <div key={'column1'} className={`border border-white rounded-none flex-grow relative ${getColor(0)}`}
+                onMouseEnter={() => setIsColumn1Hovered(true)}
+                onMouseLeave={() => setIsColumn1Hovered(false)}>
                 <button className="bg-transparent w-full h-full"
                   onClick={() => placeBet('column', 'column1')}
                   disabled={spinning}>2 to 1</button>
@@ -234,13 +298,15 @@ const RouletteView = () => {
               {[2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35].map((num) => (
                 <div key={num} className={`border border-white flex-grow relative ${getColor(num)}`}>
                   <button className="bg-transparent w-full h-full"
-                    onClick={() => placeBet('number', ''+num)}
+                    onClick={() => placeBet('number', '' + num)}
                     disabled={spinning}>{num}</button>
-                  <ViardotCoin number={bets.filter((b) => b.type === 'number' && b.value === ''+num)?.[0]?.amount} deleteNumber={() => removeBet('number', ''+num)} />
+                  <ViardotCoin number={bets.filter((b) => b.type === 'number' && b.value === '' + num)?.[0]?.amount} deleteNumber={() => removeBet('number', '' + num)} />
                 </div>
               ))}
 
-              <div key={'column2'} className={`border border-white  rounded-none flex-grow relative ${getColor(0)}`}>
+              <div key={'column2'} className={`border border-white  rounded-none flex-grow relative ${getColor(0)}`}
+                onMouseEnter={() => setIsColumn2Hovered(true)}
+                onMouseLeave={() => setIsColumn2Hovered(false)}>
                 <button className="bg-transparent w-full h-full"
                   onClick={() => placeBet('column', 'column2')}
                   disabled={spinning}>2 to 1</button>
@@ -253,12 +319,14 @@ const RouletteView = () => {
               {[1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34].map((num) => (
                 <div key={num} className={`border border-white flex-grow relative ${getColor(num)}`}>
                   <button className="bg-transparent w-full h-full"
-                    onClick={() => placeBet('number', ''+num)}
+                    onClick={() => placeBet('number', '' + num)}
                     disabled={spinning}>{num}</button>
-                  <ViardotCoin number={bets.filter((b) => b.type === 'number' && b.value === ''+num)?.[0]?.amount} deleteNumber={() => removeBet('number', ''+num)} />
+                  <ViardotCoin number={bets.filter((b) => b.type === 'number' && b.value === '' + num)?.[0]?.amount} deleteNumber={() => removeBet('number', '' + num)} />
                 </div>
               ))}
-              <div key={'column3'} className={`border border-white  rounded-none flex-grow relative ${getColor(0)}`}>
+              <div key={'column3'} className={`border border-white  rounded-none flex-grow relative ${getColor(0)}`}
+                onMouseEnter={() => setIsColumn3Hovered(true)}
+                onMouseLeave={() => setIsColumn3Hovered(false)}>
                 <button className="bg-transparent w-full h-full"
                   onClick={() => placeBet('column', 'column3')}
                   disabled={spinning}>2 to 1</button>
@@ -271,10 +339,12 @@ const RouletteView = () => {
         {/* Quatrième rangée */}
         <div className="flex flex-col md:flex-row justify-between">
           {[
-            { type: 'group', value: '1-18', label: '1-18' },
-            { type: 'group', value: '19-36', label: '19-36' }
+            { type: 'group', value: '1-18', hoveredFunc: setIsGroup1Hovered, label: '1-18' },
+            { type: 'group', value: '19-36', hoveredFunc: setIsGroup2Hovered, label: '19-36' }
           ].map((btn) => {
-            return <div key={btn.value} className={`border border-white md:w-1/2 rounded-none flex-grow relative ${getColor(0)}`}>
+            return <div key={btn.value} className={`border border-white md:w-1/2 rounded-none flex-grow relative ${getColor(0)}`}
+              onMouseEnter={() => btn.hoveredFunc(true)}
+              onMouseLeave={() => btn.hoveredFunc(false)}>
               <button className="bg-transparent w-full h-full"
                 onClick={() => placeBet(btn.type, btn.value)}
                 disabled={spinning}>{btn.label}</button>
@@ -287,12 +357,14 @@ const RouletteView = () => {
         {/* Cinquième rangée */}
         <div className="flex flex-col md:flex-row justify-between">
           {[
-            { type: 'color', value: 'red', label: '🟥' },
-            { type: 'color', value: 'black', label: '⬛' },
-            { type: 'parity', value: 'even', label: 'Pair' },
-            { type: 'parity', value: 'odd', label: 'Impair' }
+            { type: 'color', value: 'red', hoveredFunc:setIsColor1Hovered, label: '🟥' },
+            { type: 'color', value: 'black', hoveredFunc:setIsColor2Hovered ,label: '⬛' },
+            { type: 'parity', value: 'even', hoveredFunc:setIsParity1Hovered ,label: 'Pair' },
+            { type: 'parity', value: 'odd', hoveredFunc:setIsParity2Hovered , label: 'Impair' }
           ].map((btn) => {
-            return <div key={btn.value} className={`border border-white md:w-1/4 rounded-none flex-grow relative ${getColor(0)}`}>
+            return <div key={btn.value} className={`border border-white md:w-1/4 rounded-none flex-grow relative ${getColor(0)}`}
+              onMouseEnter={() => btn.hoveredFunc(true)}
+              onMouseLeave={() => btn.hoveredFunc(false)}>
               <button className="bg-transparent w-full h-full"
                 onClick={() => placeBet(btn.type, btn.value)}
                 disabled={spinning}>{btn.label}</button>
