@@ -303,6 +303,8 @@ module.exports = {
     ws.send(JSON.stringify({ grid: newGrid, multiplier: multipler, gainAmount: gainAmount, state: state, discoveredCells: discoveredCells }))
   },
   async playRouletteGame (msg, ws, user) {
+    const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]
+
     // Check bets type
     if (!Array.isArray(msg.Payload.bets)) {
       ws.send(JSON.stringify({ error: 'Invalid bets type' }))
@@ -349,7 +351,6 @@ module.exports = {
           }
           break
         case 'color':
-          const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
           if (
             (bet.value === 'red' && (randomNumber !== 0 && redNumbers.includes(randomNumber))) ||
             (bet.value === 'black' && (randomNumber !== 0 && !redNumbers.includes(randomNumber)))
