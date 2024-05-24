@@ -5,6 +5,7 @@ describe('Test E2E', () => {
     })
 
     it('[LOGIN] : Test password weak' , () => {
+        cy.get('span[data-cy="connexion"]').click();
         
 
         // Remplit les inputs
@@ -267,6 +268,20 @@ describe('Test E2E', () => {
         cy.get('div#SlotMachine').should('satisfy', ($el) => {
             return !$el.hasClass('twoOnLine') && !$el.hasClass('threeOnLine');
         });
+    });
+
+    it('[SLOT-MACHINE] : test SlotMachine insufficient balance ', () => {
+        // Clear les inputs
+        cy.get("input#betAmount").clear();
+
+        // Remplit les inputs
+        cy.get("input#betAmount").type('10000000000000000000000000000000000000000');
+
+        // Valide les données
+        cy.get('button.bg-red-700').click();
+
+        // Récupération du message d'erreur
+        cy.get('span.text-red-500').should('have.text', ' bet is not a number, below 0 or over the user balance');
     });
 
     // TODO MINES

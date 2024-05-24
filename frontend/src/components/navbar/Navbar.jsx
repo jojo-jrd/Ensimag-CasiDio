@@ -49,7 +49,7 @@ function NavBar() {
                             </>
                         ) : (
                             <>
-                                <span onClick={() => changePage('login')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Connexion</span>
+                                <span data-cy="connexion" onClick={() => changePage('login')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Connexion</span>
                                 <span onClick={() => changePage('register')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Inscription</span>
                             </>
                         )}
@@ -79,7 +79,7 @@ function NavBar() {
                                     </>
                                 ) : (
                                     <>
-                                        <span onClick={() => changeMobilePage('login')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Connexion</span>
+                                        <span data-cy="connexion" onClick={() => changeMobilePage('login')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Connexion</span>
                                         <span onClick={() => changeMobilePage('register')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Inscription</span>
                                     </>
                                 )}

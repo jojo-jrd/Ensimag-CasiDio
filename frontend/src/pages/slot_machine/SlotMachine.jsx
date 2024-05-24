@@ -52,7 +52,7 @@ function SlotMachineView() {
             let data;
             // Les web socket sont impossible à tester avec cypress
             // On change donc le résultat ici
-            if (isTest) {
+            if (isTest && nbLaunchTest < 3) {
                 data = valueTest[nbLaunchTest];
                 nbLaunchTest++;
             } else {
