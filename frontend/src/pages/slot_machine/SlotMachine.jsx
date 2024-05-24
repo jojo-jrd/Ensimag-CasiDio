@@ -120,7 +120,7 @@ function SlotMachineView() {
         <div className="flex flex-col justify-center">
             <div className="flex h-full justify-center items-center">
                 <div className="max-w-lg w-full">
-                    <div className="border border-solid border-red-700 bg-gray-800 rounded-lg p-8">
+                    <div className="border border-solid border-red-700 bg-gray-800 rounded-lg p-8 my-4">
                         <h1 className="text-white text-4xl font-bold text-center mb-4">Machine à sous</h1>
                     
                         <div className="mb-6">
@@ -129,6 +129,7 @@ function SlotMachineView() {
                                 id="betAmount"
                                 type="number"
                                 value={betAmount}
+                                min={1}
                                 onChange={handleBetAmountChange}/>
                         </div>
                     <div ref={slotMachineEl} id="SlotMachine">
