@@ -117,7 +117,7 @@ const MineGameView = () => {
   return (
     <div className="flex flex-col justify-center">
       <div className="flex h-full justify-center items-center">
-        <div className="border border-solid border-red-700 bg-gray-800 rounded-lg p-8">
+        <div className="border border-solid border-red-700 bg-gray-800 rounded-lg p-8 my-4">
           <h1 className="text-white text-center">Mines Game</h1>
 
           <div className="text-white py-5">
@@ -141,7 +141,6 @@ const MineGameView = () => {
                 value={betAmount}
                 onChange={handleBetAmountChange}
                 min={1}
-                // TODO : Max betamout : solde
                 disabled={discoveredCells > 0} // Disable changing bet amount when game is running
               />
             </div>

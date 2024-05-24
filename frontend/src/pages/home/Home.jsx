@@ -18,7 +18,7 @@ function HomeView(){
 
   return (
     <div>
-      <div className="flex justify-arround flex-col sm:flex-row">
+      <div className="flex justify-arround flex-col md:flex-row mr-1.5">
         { games.map((game) =>  {
             return <Card key={game.id} title={game.name} pageClick={game.page}
             description={game.description} image={game.picturePath}/>
