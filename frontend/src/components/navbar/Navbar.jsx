@@ -37,7 +37,7 @@ function NavBar() {
                                 <FontAwesomeIcon className='text-xl text-lime-500 hover:text-lime-300 hover:cursor-pointer' icon={faCirclePlus} onClick={() => setQuestionsOpen(true)}/>
                             </span>
                         ) : <></>}
-                        <span onClick={() => changePage('home')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Accueil</span>
+                        <span data-cy="accueil" onClick={() => changePage('home')} className="text-gray-300 hover:text-white px-3 py-2 cursor-pointer rounded-md text-sm font-medium">Accueil</span>
                         { userConnected?.email ? (
                             <>
                                 { userConnected?.isAdmin ? (
@@ -67,7 +67,7 @@ function NavBar() {
                         </button>
                         {isOpen && (
                             <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
-                                <span onClick={() => changeMobilePage('home')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Accueil</span>
+                                <span data-cy="accueil" onClick={() => changeMobilePage('home')} className="block px-4 py-2 cursor-pointer text-gray-300 hover:text-white">Accueil</span>
                                 { userConnected?.email ? (
                                     <>
                                         { userConnected?.isAdmin ? (
