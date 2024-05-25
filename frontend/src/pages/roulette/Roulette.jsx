@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { AppContext } from '../../AppContext';
 import Viardot from './../../assets/viardot-coin.png';
@@ -10,6 +10,79 @@ import Viardot from './../../assets/viardot-coin.png';
 
 let gameSocket;
 
+const isTest = import.meta.env.VITE_TEST == '1';
+const valueTest = [
+  {
+    // 0 valide
+    randomNumber: 0,
+    winnings: 36
+  },
+  {
+    // 0 invalide
+    randomNumber: 1,
+    winnings: 0
+  },
+  {
+    // 3 valide
+    randomNumber: 3,
+    winnings: 36
+  }, 
+  {
+    // 3 invalide
+    randomNumber: 10,
+    winnings: 0
+  },
+  {
+    // 1-12 valide
+    randomNumber: 3,
+    winnings: 3
+  },
+  {
+    // 13-24 invalide
+    randomNumber: 3,
+    winnings: 0
+  }, 
+  {
+    // 1-18 valide
+    randomNumber: 3,
+    winnings: 2
+  }, 
+  {
+    // 19-36 invalide
+    randomNumber: 3,
+    winnings: 0
+  }, 
+  {
+    // 2 to 1 - 1
+    randomNumber: 3,
+    winnings: 3
+  }, 
+  {
+    // 2 to 1 - 2
+    randomNumber: 3,
+    winnings: 0
+  },
+  {
+    // Rouge
+    randomNumber: 3,
+    winnings: 2
+  }, 
+  {
+    // Noir
+    randomNumber: 3,
+    winnings: 0
+  }, 
+  {
+    // Impair
+    randomNumber: 3,
+    winnings: 2
+  },
+  {
+    // Pair
+    randomNumber: 3,
+    winnings: 0
+  }
+]
 const ViardotCoin = ({ number, deleteNumber }) => {
   return (
     <>
@@ -66,13 +139,20 @@ const RouletteView = () => {
   // Noir
   const [isColor2Hovered, setIsColor2Hovered] = useState(false);
 
+  const nbLaunchTest = useRef(0);
   useEffect(() => {
     // Define web socket
     gameSocket = new WebSocket(`${import.meta.env.VITE_API_WS}/gameSocket`);
 
     // Define web socket handler
     gameSocket.onmessage = (msg) => {
-      const data = JSON.parse(msg.data);
+      let data;
+      if (isTest && nbLaunchTest.current < valueTest.length) {
+        data = valueTest[nbLaunchTest.current];
+        nbLaunchTest.current++;
+      } else {
+        data = JSON.parse(msg.data);
+      }
 
       if (data.error) {
         setErreurMessage(data.error);
@@ -389,7 +469,7 @@ const RouletteView = () => {
             <span className="text-red-500 text-xs italic"> {erreurMessage}</span>
             <div className="text-white text-center mt-4">
               <h2>Bet Amount sent: {betAmountSent}</h2>
-              <h2>Gain Amount: {gainAmount}</h2>
+              <h2 id="gainAmount">Gain Amount: {gainAmount}</h2>
             </div>
             <button disabled={spinning} onClick={startSpinning} className="bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">
               {spinning ? 'Spinning...' : 'Spin the Roulette'}
