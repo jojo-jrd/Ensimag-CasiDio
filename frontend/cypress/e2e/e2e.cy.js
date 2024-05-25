@@ -4,9 +4,9 @@ describe('Test E2E', () => {
         cy.visit('http://localhost:3001');
     })
 
-    it('[LOGIN] : Test password weak' , () => {
+    it('[LOGIN] : Test password weak', () => {
         cy.get('span[data-cy="connexion"]').click();
-        
+
 
         // Remplit les inputs
         cy.get("input#password").type('test1');
@@ -148,7 +148,7 @@ describe('Test E2E', () => {
 
         // Récupération du message d'erreur
         cy.get('span.text-red-500').should('have.text', ' Weak password!');
-        
+
     });
 
     it('[REGISTER] : Test create user', () => {
@@ -190,9 +190,9 @@ describe('Test E2E', () => {
     it('[QUESTION-API] : test display question', () => {
         // Une erreur arrive de temps en temps avec les web-sockets
         // On n'a pas réussi a résoudre cette erreur donc sur ce test on laisse passer si la web-socket génère une erreur
-        cy.on('uncaught:exception', (err, runnable) => {return false});
+        cy.on('uncaught:exception', (err, runnable) => { return false });
         cy.get('svg.fa-circle-plus').first().click();
-        
+
         // Attente de la récupération des données
         cy.wait(500);
 
@@ -205,7 +205,7 @@ describe('Test E2E', () => {
 
     it('[QUESTION-API] : test win message', () => {
         cy.get('button.bg-blue-700').click();
-        
+
         // Attente de la récupération des données
         cy.wait(500);
 
@@ -214,7 +214,7 @@ describe('Test E2E', () => {
 
     it('[QUESTION-API] : test custom error', () => {
         cy.get('button.bg-blue-700').click();
-        
+
         // Attente de la récupération des données
         cy.wait(500);
 
@@ -223,7 +223,7 @@ describe('Test E2E', () => {
 
     it('[QUESTION-API] : test loose message', () => {
         cy.get('button.bg-blue-700').click();
-        
+
         // Attente de la récupération des données
         cy.wait(500);
 
@@ -285,9 +285,80 @@ describe('Test E2E', () => {
     });
 
     // TODO MINES
+    it('[MINE-GAME] : test MineGame  insufficient balance  ', () => {
+        cy.get('span[data-cy="accueil"]').click();
+        cy.get('div.card-home:nth-child(2) button').click();
 
+        // Clear les inputs
+        cy.get("input#betAmount").clear();
+
+        // Remplit les inputs
+        cy.get("input#betAmount").type('10000000000000000000000000000000000000000');
+
+        // Valide les données
+        cy.get('bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full').click();
+
+        // Récupération du message d'erreur
+        cy.get('span.text-red-500').should('have.text', ' bet is not defined, below 0 or over the user balance');
+    });
 
     // TODO Roulette
+    it('[ROULETTE] : test Roulette win on 0 ', () => {
+        cy.get('span[data-cy="accueil"]').click();
+        cy.get('div.card-home:nth-child(3) button').click();
+
+        // Clear les inputs
+        cy.get("input#betAmount").clear();
+
+        // Remplit les inputs
+        cy.get("input#betAmount").type('1');
+
+        // Click on the good case 
+        cy.contains('button', '0').click();
+
+        // Spin
+        cy.get('bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-fulll').click();
+
+        // Récupération gain
+        cy.get('#gainAmount').should('have.text', 'Gain Amount: 36');
+        cy.get('.flex > div').eq(2).should('have.text', '0');
+    });
+
+    it('[ROULETTE] : test Roulette loose on 0 ', () => {
+        cy.get('span[data-cy="accueil"]').click();
+        cy.get('div.card-home:nth-child(3) button').click();
+
+        // Clear les inputs
+        cy.get("input#betAmount").clear();
+
+        // Remplit les inputs
+        cy.get("input#betAmount").type('1');
+
+        // Click on the good case 
+        cy.contains('button', '0').click();
+
+        // Spin
+        cy.get('bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-fulll').click();
+
+        // Récupération gain
+        cy.get('#gainAmount').should('have.text', 'Gain Amount: 0');
+        cy.get('.flex > div').eq(2).should('not.have.text', '0');
+    });
+
+
+    it('[ROULETTE] : test Roulette  insufficient balance  ', () => {
+        // Clear les inputs
+        cy.get("input#betAmount").clear();
+
+        // Remplit les inputs
+        cy.get("input#betAmount").type('10000000000000000000000000000000000000000');
+
+        // Valide les données
+        cy.get('bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full').click();
+
+        // Récupération du message d'erreur
+        cy.get('span.text-red-500').should('have.text', ' bet is not defined, below 0 or over the user balance');
+    });
 
     it('[ADMIN-USERS] : test adminUsers sort column', () => {
         cy.intercept('http://localhost:3000/api/users').as('users') // route matcher
@@ -304,7 +375,7 @@ describe('Test E2E', () => {
         // Tri en croissant
         cy.get('thead>tr:first-child>th:first-child').click();
         cy.get('tbody>tr:first-child>td:first-child').should('have.text', 'Admin');
-        
+
         // Tri en décroissant
         cy.get('thead>tr:first-child>th:first-child').click();
         cy.get('tbody>tr:first-child>td:first-child').should('have.text', 'Lukas');
@@ -392,7 +463,7 @@ describe('Test E2E', () => {
     it('[DASHBOARD] : chargement dashboard', () => {
         cy.intercept('http://localhost:3000/api/history').as('history') // route matcher
         // On est sur la page home et on va sur la page dahsboard
-        cy.get('span[data-cy="dashboard"]').click({force : true});
+        cy.get('span[data-cy="dashboard"]').click({ force: true });
 
         cy.wait('@history').then((interception) => {
             expect(interception.response.statusCode).to.equal(200);
@@ -483,5 +554,5 @@ describe('Test E2E', () => {
     });
 
 
-    
+
 })
