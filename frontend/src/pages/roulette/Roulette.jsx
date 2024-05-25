@@ -37,6 +37,8 @@ const RouletteView = () => {
   const [bets, setBets] = useState([]); // Array to store placed bets
   const [erreurMessage, setErreurMessage] = useState("");
   const { token, updateUserConnected } = useContext(AppContext);
+  const [gainAmount, setGainAmount] = useState(0); // State for the gain amount
+  const [betAmountSent, setBetAmountSent] = useState(0); // Default bet amount
 
   // Permet la surbrillance des éléments d'une colonne
   const [isColumn1Hovered, setIsColumn1Hovered] = useState(false);
@@ -85,6 +87,7 @@ const RouletteView = () => {
         setSpinning(false);
         setGlobalBetAmount(0);
         updateUserConnected();
+        setGainAmount(data.winnings);
       }, 600); // Simulating spinning time
     };
   }, [updateUserConnected]);
@@ -125,6 +128,7 @@ const RouletteView = () => {
     // Send data to backend
     try {
       gameSocket.send(JSON.stringify({ game: 'playRouletteGame', Payload: { bets }, userToken: token }));
+      setBetAmountSent(globalBetAmount);
     } catch (error) {
       setSpinning(false);
       console.error(error)
@@ -234,7 +238,11 @@ const RouletteView = () => {
                 value={betAmount}
                 min={1}
                 onChange={handleBetAmountChange} />
+              <div className="text-white text-center-left">
+                <h2>Total Bet Amount for this spin: {globalBetAmount}</h2>
+              </div>
             </div>
+
             <div className="roulette">
               <div className="flex justify-center">
                 <div className="flex">
@@ -379,8 +387,12 @@ const RouletteView = () => {
               </div>
             </div>
             <span className="text-red-500 text-xs italic"> {erreurMessage}</span>
+            <div className="text-white text-center mt-4">
+              <h2>Bet Amount sent: {betAmountSent}</h2>
+              <h2>Gain Amount: {gainAmount}</h2>
+            </div>
             <button disabled={spinning} onClick={startSpinning} className="bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">
-            {spinning ? 'Spinning...' : 'Spin the Roulette'}
+              {spinning ? 'Spinning...' : 'Spin the Roulette'}
             </button>
           </div>
         </div>
