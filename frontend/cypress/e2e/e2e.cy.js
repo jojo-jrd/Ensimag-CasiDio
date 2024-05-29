@@ -233,7 +233,7 @@ describe('Test E2E', () => {
 
     it('[SLOT-MACHINE] : test slot-machine win with 3 in row', () => {
 
-        cy.get('div.card-home:first-child button').click();
+        cy.get('div.card-home:nth-child(1) button').first().click();
 
         // On est sur la page slot-machine
 
@@ -287,7 +287,7 @@ describe('Test E2E', () => {
     // TODO MINES
     it('[MINE-GAME] : test MineGame  insufficient balance  ', () => {
         cy.get('span[data-cy="accueil"]').click();
-        cy.get('div.card-home:nth-child(2) button').click();
+        cy.get('div.card-home button').eq(1).click();
 
         // Clear les inputs
         cy.get("input#betAmount").clear();
@@ -296,7 +296,7 @@ describe('Test E2E', () => {
         cy.get("input#betAmount").type('10000000000000000000000000000000000000000');
 
         // Valide les données
-        cy.get('bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full').click();
+        cy.get('.bg-green-700').click();
 
         // Récupération du message d'erreur
         cy.get('span.text-red-500').should('have.text', ' bet is not defined, below 0 or over the user balance');
@@ -305,7 +305,7 @@ describe('Test E2E', () => {
     // TODO Roulette
     it('[ROULETTE] : test Roulette win on 0 ', () => {
         cy.get('span[data-cy="accueil"]').click();
-        cy.get('div.card-home:nth-child(3) button').click();
+        cy.get('div.card-home button').last().click();
 
         // Clear les inputs
         cy.get("input#betAmount").clear();
