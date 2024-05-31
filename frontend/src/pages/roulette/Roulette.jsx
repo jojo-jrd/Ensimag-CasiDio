@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useRef } from 'react';
+import { useState, useEffect, useContext} from 'react';
 import PropTypes from 'prop-types';
 import { AppContext } from '../../AppContext';
 import Viardot from './../../assets/viardot-coin.png';
