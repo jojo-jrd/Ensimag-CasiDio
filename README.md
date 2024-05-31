@@ -79,45 +79,13 @@ package Application {
 
 ### Maquettes
 
-A modifier/compléter... TODO
+![Alt text](./images/Maquette_1.png "Page connexion")
+![Alt text](./images/Maquette_2.png "Page connexion")
+![Alt text](./images/Maquette_3.png "Page connexion")
+![Alt text](./images/Maquette_4.png "Page connexion")
+![Alt text](./images/Maquette_5.png "Page connexion")
+![Alt text](./images/Maquette_6.png "Page connexion")
 
-```plantuml
-@startsalt
-<style>
-header {
-  TextAlignement right
-  BackGroundColor gray
-  FontColor white
-}
-</style>
-header {- Alice@aol.fr | [Se déconnecter] }
-{
-{^Mes groupes
-**Ceux dont je suis membre**
-* Ensimag
-* Grenoble INP
-* <b>Club gaming
-----
-**Ceux que j'administre**
-* Club Gaming
-* Running
-"<i>nom du nouveau groupe" 
- [Créer]
-}|
-{^"Discussion sur le groupe <b>Club Gaming"
-{SI
-  [Salut , ca va? ] | Charlie
-  [Super, et toi?] | Asimov
-  [On se fait un truc] | Asimov
-  [Une idée? ] | Charlie
-  . | [Hello, oui]
-  ----|----
-}
-{+ "Une partie de LOL après?" | [Envoyer ] }
-}
-}
-@endsalt
-```
 
 ### Captures d'écran
 
