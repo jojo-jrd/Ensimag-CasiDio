@@ -286,7 +286,7 @@ const RouletteView = () => {
                 min={1}
                 onChange={handleBetAmountChange} />
               <div className="text-white text-center-left">
-                <h2 data-cy="totalBetAmount">Total Bet Amount for this spin: {globalBetAmount}</h2>
+                <h2 data-cy="totalBetAmount">Mise totale pour le lancer en cours : {globalBetAmount}</h2>
               </div>
             </div>
 
@@ -440,11 +440,11 @@ const RouletteView = () => {
             </div>
             <span className="text-red-500 text-xs italic"> {erreurMessage}</span>
             <div className="text-white text-center mt-4">
-              <h2 data-cy="betAmountSent">Bet Amount sent: {betAmountSent}</h2>
-              <h2 data-cy="gainAmount">Gain Amount: {gainAmount}</h2>
+              <h2 data-cy="betAmountSent">Mise pour le lancer effectué : {betAmountSent}</h2>
+              <h2 data-cy="gainAmount">Gains pour le lancé effectué : {gainAmount}</h2>
             </div>
             <button disabled={spinning} onClick={startSpinning} className="bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">
-              {spinning ? 'Spinning...' : 'Spin the Roulette'}
+              {spinning ? 'La roue tourne...' : 'Tourner la roue'}
             </button>
           </div>
         </div>

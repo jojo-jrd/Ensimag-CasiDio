@@ -369,7 +369,7 @@ describe('Test E2E', () => {
             cy.get("input#betAmount").type('1');
 
             // Verification mise
-            cy.get('h2[data-cy="totalBetAmount"]').should('have.text', 'Total Bet Amount for this spin: 0');
+            cy.get('h2[data-cy="totalBetAmount"]').should('have.text', 'Mise totale pour le lancer en cours : 0');
 
             // Click on the good case 
             if (betCase === "2 to 1 - first") {
@@ -384,18 +384,18 @@ describe('Test E2E', () => {
             cy.wait(1000);
 
             // Verification mise
-            cy.get('h2[data-cy="totalBetAmount"]').should('have.text', `Total Bet Amount for this spin: 1`);
+            cy.get('h2[data-cy="totalBetAmount"]').should('have.text', `Mise totale pour le lancer en cours : 1`);
 
             // Spin
-            cy.contains('button', 'Spin the Roulette').click();
+            cy.contains('button', 'Tourner la roue').click();
             // Attente fin roulette qui tourne
             cy.wait(700);
 
             // Récupération gain
-            cy.get('h2[data-cy="betAmountSent"]').should('have.text', `Bet Amount sent: 1`);
-            cy.get('h2[data-cy="gainAmount"]').should('have.text', `Gain Amount: ${winnings}`);
+            cy.get('h2[data-cy="betAmountSent"]').should('have.text', `Mise pour le lancer effectué : 1`);
+            cy.get('h2[data-cy="gainAmount"]').should('have.text', `Gains pour le lancé effectué : ${winnings}`);
             // Verif mise remise à 0
-            cy.get('h2[data-cy="totalBetAmount"]').should('have.text', 'Total Bet Amount for this spin: 0');
+            cy.get('h2[data-cy="totalBetAmount"]').should('have.text', 'Mise totale pour le lancer en cours : 0');
             // Verif bon chiffre sur la roulette
             cy.get('div[data-cy="resultRoulette"]').should('have.text', `${randomNumber}`);
         });
@@ -413,7 +413,7 @@ describe('Test E2E', () => {
         cy.contains('button', '0').click();
 
         // Demande de spin
-        cy.contains('button', 'Spin the Roulette').click();
+        cy.contains('button', 'Tourner la roue').click();
 
         // Récupération du message d'erreur
         cy.get('span.text-red-500').should('have.text', ' bet is not a number, below 0 or over the user balance');
