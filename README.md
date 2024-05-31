@@ -79,12 +79,12 @@ package Application {
 
 ### Maquettes
 
-![Alt text](./images/Maquette_1.png "Page connexion")
-![Alt text](./images/Maquette_2.png "Page connexion")
-![Alt text](./images/Maquette_3.png "Page connexion")
-![Alt text](./images/Maquette_4.png "Page connexion")
-![Alt text](./images/Maquette_5.png "Page connexion")
-![Alt text](./images/Maquette_6.png "Page connexion")
+![Alt text](./images/Maquette_1.jpg "Page connexion")
+![Alt text](./images/Maquette_2.jpg "Page connexion")
+![Alt text](./images/Maquette_3.jpg "Page connexion")
+![Alt text](./images/Maquette_4.jpg "Page connexion")
+![Alt text](./images/Maquette_5.jpg "Page connexion")
+![Alt text](./images/Maquette_6.jpg "Page connexion")
 
 
 ### Captures d'écran
