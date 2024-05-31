@@ -448,7 +448,7 @@ const RouletteView = () => {
             </button>
           </div>
           <div className="text-white text-center-left text-xs mt-2">
-              <h2>Veuillez cliquer sur une case du tableau pour miser la somme voulue. Si vous voulez enlever une mise, il suffit simplement de cliquer sur le petit jeton Viardot en bas à droite d'une case où vous avez misé. </h2>
+              <h2>Veuillez cliquer sur une case du tableau pour miser la somme voulue. Si vous voulez enlever une mise, il suffit simplement de cliquer sur le petit jeton Viardot en bas à droite d&apos;une case où vous avez misé. </h2>
           </div>
         </div>
       </div>
