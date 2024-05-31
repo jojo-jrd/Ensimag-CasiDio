@@ -3,10 +3,6 @@ import PropTypes from 'prop-types';
 import { AppContext } from '../../AppContext';
 import Viardot from './../../assets/viardot-coin.png';
 
-// TODO
-// Afficher les gains / pertes
-// Tests cypress
-// (TODO AFTEEEEEEER (j'aurais jamais le time) : animation clean roulette, 1-18 et 19-36 cadrés (pareil douzaines)) 
 
 let gameSocket;
 

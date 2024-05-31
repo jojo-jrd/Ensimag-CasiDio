@@ -284,7 +284,6 @@ describe('Test E2E', () => {
         cy.get('span.text-red-500').should('have.text', ' bet is not a number, below 0 or over the user balance');
     });
 
-    // TODO MINES
     it('[MINE-GAME] : test MineGame  insufficient balance  ', () => {
         cy.get('span[data-cy="accueil"]').click();
         cy.get('div.card-home button').eq(1).click();
