@@ -23,16 +23,6 @@ const valueTest = [
     winnings: 0
   },
   {
-    // 3 valide
-    randomNumber: 3,
-    winnings: 36
-  }, 
-  {
-    // 3 invalide
-    randomNumber: 10,
-    winnings: 0
-  },
-  {
     // 1-12 valide
     randomNumber: 3,
     winnings: 3
@@ -41,22 +31,12 @@ const valueTest = [
     // 13-24 invalide
     randomNumber: 3,
     winnings: 0
-  }, 
-  {
-    // 1-18 valide
-    randomNumber: 3,
-    winnings: 2
-  }, 
-  {
-    // 19-36 invalide
-    randomNumber: 3,
-    winnings: 0
-  }, 
+  },
   {
     // 2 to 1 - 1
     randomNumber: 3,
     winnings: 3
-  }, 
+  },
   {
     // 2 to 1 - 2
     randomNumber: 3,
@@ -66,23 +46,14 @@ const valueTest = [
     // Rouge
     randomNumber: 3,
     winnings: 2
-  }, 
+  },
   {
     // Noir
     randomNumber: 3,
     winnings: 0
-  }, 
-  {
-    // Impair
-    randomNumber: 3,
-    winnings: 2
-  },
-  {
-    // Pair
-    randomNumber: 3,
-    winnings: 0
   }
-]
+];
+
 const ViardotCoin = ({ number, deleteNumber }) => {
   return (
     <>
@@ -100,6 +71,8 @@ ViardotCoin.propTypes = {
   number: PropTypes.number, // number est un nombre
   deleteNumber: PropTypes.func // deleteNumber est une fonction
 };
+
+let nbLaunchTest = 0;
 
 const RouletteView = () => {
   const [spinning, setSpinning] = useState(false);
@@ -139,7 +112,6 @@ const RouletteView = () => {
   // Noir
   const [isColor2Hovered, setIsColor2Hovered] = useState(false);
 
-  const nbLaunchTest = useRef(0);
   useEffect(() => {
     // Define web socket
     gameSocket = new WebSocket(`${import.meta.env.VITE_API_WS}/gameSocket`);
@@ -147,9 +119,9 @@ const RouletteView = () => {
     // Define web socket handler
     gameSocket.onmessage = (msg) => {
       let data;
-      if (isTest && nbLaunchTest.current < valueTest.length) {
-        data = valueTest[nbLaunchTest.current];
-        nbLaunchTest.current++;
+      if (isTest && nbLaunchTest < valueTest.length) {
+        data = valueTest[nbLaunchTest];
+        nbLaunchTest++;
       } else {
         data = JSON.parse(msg.data);
       }
@@ -201,14 +173,13 @@ const RouletteView = () => {
   };
 
   const startSpinning = () => {
-    setResult(null); // Clear previous result
-    setCurrentIndex(0); // Reset currentIndex
-    setSpinning(true);
-
     // Send data to backend
     try {
       gameSocket.send(JSON.stringify({ game: 'playRouletteGame', Payload: { bets }, userToken: token }));
       setBetAmountSent(globalBetAmount);
+      setResult(null); // Clear previous result
+      setCurrentIndex(0); // Reset currentIndex
+      setSpinning(true);
     } catch (error) {
       setSpinning(false);
       console.error(error)
@@ -319,7 +290,7 @@ const RouletteView = () => {
                 min={1}
                 onChange={handleBetAmountChange} />
               <div className="text-white text-center-left">
-                <h2>Total Bet Amount for this spin: {globalBetAmount}</h2>
+                <h2 data-cy="totalBetAmount">Total Bet Amount for this spin: {globalBetAmount}</h2>
               </div>
             </div>
 
@@ -328,6 +299,7 @@ const RouletteView = () => {
                 <div className="flex">
                   {[...Array(5)].map((_, index) => (
                     <div
+                      data-cy={`${index === 2 ? "resultRoulette" : ""}`}
                       key={index}
                       className={`flex justify-center items-center border border-white ${index === 2 ? 'h-20 w-20' : 'h-12 w-12'} ${getColorForRoulette((currentIndex + index - 2 + 37) % 37)}`}
                     >
@@ -378,7 +350,9 @@ const RouletteView = () => {
                     <div key={'column1'} className={`border border-white rounded-none flex-grow relative ${getColor(0)}`}
                       onMouseEnter={() => setIsColumn1Hovered(true)}
                       onMouseLeave={() => setIsColumn1Hovered(false)}>
-                      <button className="bg-transparent w-full h-full"
+                      <button
+                        data-cy="first-2to1"
+                        className="bg-transparent w-full h-full"
                         onClick={() => placeBet('column', 'column1')}
                         disabled={spinning}>2 to 1</button>
                       <ViardotCoin number={bets.filter((b) => b.type == 'column' && b.value == 'column1')?.[0]?.['amount']} deleteNumber={() => removeBet('column', 'column1')} />
@@ -399,7 +373,9 @@ const RouletteView = () => {
                     <div key={'column2'} className={`border border-white  rounded-none flex-grow relative ${getColor(0)}`}
                       onMouseEnter={() => setIsColumn2Hovered(true)}
                       onMouseLeave={() => setIsColumn2Hovered(false)}>
-                      <button className="bg-transparent w-full h-full"
+                      <button
+                        data-cy="second-2to1"
+                        className="bg-transparent w-full h-full"
                         onClick={() => placeBet('column', 'column2')}
                         disabled={spinning}>2 to 1</button>
                       <ViardotCoin number={bets.filter((b) => b.type == 'column' && b.value == 'column2')?.[0]?.['amount']} deleteNumber={() => removeBet('column', 'column2')} />
@@ -468,8 +444,8 @@ const RouletteView = () => {
             </div>
             <span className="text-red-500 text-xs italic"> {erreurMessage}</span>
             <div className="text-white text-center mt-4">
-              <h2>Bet Amount sent: {betAmountSent}</h2>
-              <h2 id="gainAmount">Gain Amount: {gainAmount}</h2>
+              <h2 data-cy="betAmountSent">Bet Amount sent: {betAmountSent}</h2>
+              <h2 data-cy="gainAmount">Gain Amount: {gainAmount}</h2>
             </div>
             <button disabled={spinning} onClick={startSpinning} className="bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">
               {spinning ? 'Spinning...' : 'Spin the Roulette'}

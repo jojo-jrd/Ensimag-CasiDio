@@ -302,50 +302,107 @@ describe('Test E2E', () => {
         cy.get('span.text-red-500').should('have.text', ' bet is not defined, below 0 or over the user balance');
     });
 
-    // TODO Roulette
-    it('[ROULETTE] : test Roulette win on 0 ', () => {
-        cy.get('span[data-cy="accueil"]').click();
-        cy.get('div.card-home button').last().click();
 
-        // Clear les inputs
-        cy.get("input#betAmount").clear();
+    let valueTest = [
+        {
+            // 0 valide
+            betCase: "0",
+            randomNumber: 0,
+            winnings: 36
+        },
+        {
+            // 0 invalide
+            betCase: "0",
+            randomNumber: 1,
+            winnings: 0
+        },
+        {
+            // 1-12 valide
+            betCase: "1-12",
+            randomNumber: 3,
+            winnings: 3
+        },
+        {
+            // 13-24 invalide
+            betCase: "13-24",
+            randomNumber: 3,
+            winnings: 0
+        },
+        {
+            // 2 to 1 - 1
+            betCase: "2 to 1 - first",
+            randomNumber: 3,
+            winnings: 3
+        },
+        {
+            // 2 to 1 - 2
+            betCase: "2 to 1 - second",
+            randomNumber: 3,
+            winnings: 0
+        },
+        {
+            // Rouge
+            betCase: "🟥",
+            randomNumber: 3,
+            winnings: 2
+        },
+        {
+            // Noir
+            betCase: "⬛",
+            randomNumber: 3,
+            winnings: 0
+        }
+    ];
 
-        // Remplit les inputs
-        cy.get("input#betAmount").type('1');
+    for (let i = 0; i < valueTest.length; i++) {
+        const { betCase, randomNumber, winnings } = valueTest[i];
+        const winOrLoose = winnings > 0 ? "win" : "lose";
+        const testName = `[ROULETTE] : test Roulette with ${winOrLoose} when bet on ${betCase} with ${randomNumber} result and the winnings are ${winnings} viardots`;
 
-        // Click on the good case 
-        cy.contains('button', '0').click();
+        it(testName, () => {
+            cy.get('span[data-cy="accueil"]').click();
+            cy.get('div.card-home button').last().click();
 
-        // Spin
-        cy.get('bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-fulll').click();
+            // Clear les inputs
+            cy.get("input#betAmount").clear();
 
-        // Récupération gain
-        cy.get('#gainAmount').should('have.text', 'Gain Amount: 36');
-        cy.get('.flex > div').eq(2).should('have.text', '0');
-    });
+            // Remplit les inputs
+            cy.get("input#betAmount").type('1');
 
-    it('[ROULETTE] : test Roulette loose on 0 ', () => {
-        cy.get('span[data-cy="accueil"]').click();
-        cy.get('div.card-home:nth-child(3) button').click();
+            // Verification mise
+            cy.get('h2[data-cy="totalBetAmount"]').should('have.text', 'Total Bet Amount for this spin: 0');
 
-        // Clear les inputs
-        cy.get("input#betAmount").clear();
+            // Click on the good case 
+            if (betCase === "2 to 1 - first") {
+                // Find the first button containing "2 to 1"
+                cy.get('button[data-cy="first-2to1"]').click();
+            } else if (betCase === "2 to 1 - second") {
+                // Find the second button containing "2 to 1"
+                cy.get('button[data-cy="second-2to1"]').click();
+            } else {
+                cy.contains('button', betCase).click();
+            }
+            cy.wait(1000);
 
-        // Remplit les inputs
-        cy.get("input#betAmount").type('1');
+            // Verification mise
+            cy.get('h2[data-cy="totalBetAmount"]').should('have.text', `Total Bet Amount for this spin: 1`);
 
-        // Click on the good case 
-        cy.contains('button', '0').click();
+            // Spin
+            cy.contains('button', 'Spin the Roulette').click();
+            // Attente fin roulette qui tourne
+            cy.wait(700);
 
-        // Spin
-        cy.get('bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-fulll').click();
+            // Récupération gain
+            cy.get('h2[data-cy="betAmountSent"]').should('have.text', `Bet Amount sent: 1`);
+            cy.get('h2[data-cy="gainAmount"]').should('have.text', `Gain Amount: ${winnings}`);
+            // Verif mise remise à 0
+            cy.get('h2[data-cy="totalBetAmount"]').should('have.text', 'Total Bet Amount for this spin: 0');
+            // Verif bon chiffre sur la roulette
+            cy.get('div[data-cy="resultRoulette"]').should('have.text', `${randomNumber}`);
+        });
+    }
 
-        // Récupération gain
-        cy.get('#gainAmount').should('have.text', 'Gain Amount: 0');
-        cy.get('.flex > div').eq(2).should('not.have.text', '0');
-    });
-
-
+    
     it('[ROULETTE] : test Roulette  insufficient balance  ', () => {
         // Clear les inputs
         cy.get("input#betAmount").clear();
@@ -353,11 +410,14 @@ describe('Test E2E', () => {
         // Remplit les inputs
         cy.get("input#betAmount").type('10000000000000000000000000000000000000000');
 
-        // Valide les données
-        cy.get('bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full').click();
+        // Met la mise sur une case
+        cy.contains('button', '0').click();
+
+        // Demande de spin
+        cy.contains('button', 'Spin the Roulette').click();
 
         // Récupération du message d'erreur
-        cy.get('span.text-red-500').should('have.text', ' bet is not defined, below 0 or over the user balance');
+        cy.get('span.text-red-500').should('have.text', ' bet is not a number, below 0 or over the user balance');
     });
 
     it('[ADMIN-USERS] : test adminUsers sort column', () => {
