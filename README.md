@@ -156,6 +156,7 @@ header {- Alice@aol.fr | [Se déconnecter] }
 #### GAME : Machine à sous
 
 ![Alt text](./images/Casidio_machine_a_sous.png "Page Machine à sous game")
+Images des icones de Vecteezy.com
 
 #### GAME : Mines
 
