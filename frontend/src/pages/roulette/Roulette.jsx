@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext} from 'react';
+import { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { AppContext } from '../../AppContext';
 import Viardot from './../../assets/viardot-coin.png';
@@ -446,6 +446,9 @@ const RouletteView = () => {
             <button disabled={spinning} onClick={startSpinning} className="bg-green-700 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 w-full">
               {spinning ? 'La roue tourne...' : 'Tourner la roue'}
             </button>
+          </div>
+          <div className="text-white text-center-left text-xs mt-2">
+              <h2>Veuillez cliquer sur une case du tableau pour miser la somme voulue. Si vous voulez enlever une mise, il suffit simplement de cliquer sur le petit jeton Viardot en bas à droite d'une case où vous avez misé. </h2>
           </div>
         </div>
       </div>
