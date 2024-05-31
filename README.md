@@ -153,8 +153,17 @@ header {- Alice@aol.fr | [Se déconnecter] }
 
 ![Alt text](./images/update-user.png "Page modification utilisateur")
 
-A compléter
-TODO
+#### GAME : Machine à sous
+
+![Alt text](./images/Casidio_machine_a_sous.png "Page Machine à sous game")
+
+#### GAME : Mines
+
+![Alt text](./images/Casidio_mine_game.png "Page Mines game")
+
+#### GAME : Roulette
+
+![Alt text](./images/Casidio_roulette.png "Page Roulette game")
 
 ### API mise en place
 
