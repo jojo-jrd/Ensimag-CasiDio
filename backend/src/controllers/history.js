@@ -27,10 +27,10 @@ module.exports = {
     const currentDate = new Date()
 
     const first = currentDate.getDate() - currentDate.getDay()
-    const last = first + 6
 
     const firstDay = new Date(currentDate.setDate(first))
-    const lastDay = new Date(currentDate.setDate(last))
+    const lastDay = new Date(firstDay)
+    lastDay.setDate(lastDay.getDate() + 6)
 
     // perform the request
     const evolutionSoldeWeek = await historyModel.findAll({
@@ -78,10 +78,10 @@ module.exports = {
     const currentDate = new Date()
 
     const first = currentDate.getDate() - currentDate.getDay()
-    const last = first + 6
 
     const firstDay = new Date(currentDate.setDate(first))
-    const lastDay = new Date(currentDate.setDate(last))
+    const lastDay = new Date(firstDay)
+    lastDay.setDate(lastDay.getDate() + 6)
 
     // perform the request
     const evolutionSoldeWeek = await historyModel.findAll({

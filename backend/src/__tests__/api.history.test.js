@@ -108,6 +108,7 @@ test('History get : simple valid ', async () => {
   expect(response.statusCode).toBe(200)
 
   // check data
+  const currentDate = new Date(Date.now())
   expect(response.body.data).toStrictEqual({
     "evolutionSolde": [
       {
@@ -127,7 +128,7 @@ test('History get : simple valid ', async () => {
         "total_amount": 200
       },
       {
-        "date": "05-2024",
+        "date": `${(currentDate.getMonth() + 1) < 10 ? '0' : ''}${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`,
         "total_amount": -100
       }
     ],
