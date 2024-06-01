@@ -134,6 +134,10 @@ Images des icones de Vecteezy.com
 
 ![Alt text](./images/Casidio_roulette.png "Page Roulette game")
 
+### Démonstration vidéo
+
+![Démonstration de la plateforme](./video/Casidio_demo.mp4)
+
 ### API mise en place
 
 **User :**
