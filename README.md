@@ -6,9 +6,9 @@ author:
 - NOGUEIRA Clement
 --- 
 
-**Lien du site :** [CasiDio](https://casidio.osc-fr1.scalingo.io/frontend/)
+**Lien du site :** [CasiDio (Plus ébergé)](https://casidio.osc-fr1.scalingo.io/frontend/)
 
-**Lien de la doc technique :** [Swagger CasiDio](https://casidio.osc-fr1.scalingo.io/doc/)
+**Lien de la doc technique :** [Swagger CasiDio (Plus ébergé)](https://casidio.osc-fr1.scalingo.io/doc/)
 
 **Identifiants de connexion :**
 
@@ -19,120 +19,85 @@ author:
   * Identifiant : a@a.com
   * Mot de passe : Ab*123-!
 
+## Présentation
+
+### Projet
+
+L'objectif de ce projet était la réalisation d'une application Web responsive en React sur le domaine que l'on souhaitait en groupe 2 ou 3. Le site devait intégrer une api externe public. Nous avons utilisé celle de [Open Trivia](https://opentdb.com/). L'idée du projet était donc un casino en ligne implémentant 3 jeux :
+- Une machine à sous
+- Un jeu de mine
+- Une roulette
+
+En plus de ces jeux, nous avons implémenté une gestion de droits et d'utilisateurs directement dans l'application.
+
+### Résultats
+
+Voici les diférents badges que nous avons généré sur GitLab grace à l'intégration continue :
+
+![Bagdes gitlab](./images/result_badges.png "Badges GitLab")
+
 ## Cahier des charges
 
 ### Cas d'usage
 
-```plantuml
-@startuml
-
-:Utilisateurs connectés: as User
-:Utilisateurs non connectées: as UserNotConnected
-:Administarateurs: as Admin
-
-package Application {
-  
-  "Connexion" as (Login)
-  "Gestion compte" as (AccountManagement)
-  "Gestion utilisateurs" as (AccountAdminManagement)
-  "Gestion crédits" as (CreditManagement)
-  "Création compte" as (CreateAccount)
-  "Connexion" as (Login)
-  "Modifier des comptes" as (UpdateAccountAdmin)
-  "Jouer jeux" as (PlayGames)
-  "Afficher tableau de bord" as (DashBoard)
-  "Afficher tableau de bord admin" as (DashBoardAdmin)
-  
-  User <|-- Admin
-  UserNotConnected --> (Login)
-  UserNotConnected --> (CreateAccount)
-  User -> (AccountManagement)
-  User -> (CreditManagement)
-  User --> (PlayGames)
-  User --> (DashBoard)
-  Admin --> (DashBoardAdmin)
-  Admin --> (AccountAdminManagement)
-  
-  (CreateAccount) <-- (Login) #line.dashed : <<i>>
-  
-  (Login) <-- (DashBoard) #line.dashed : <<i>>
-  (Login) <-- (PlayGames) #line.dashed : <<i>>
-  (Login) <-- (DashBoardAdmin) #line.dashed : <<i>>
-  
-  (Login) <-- (AccountManagement) #line.dashed : <<i>>
-  (AccountManagement) <-- (Modification compte) #line.dashed : <<e>>
-  (AccountManagement) <-- (Supprimer compte) #line.dashed : <<e>>
-  
-  (Login) <-- (CreditManagement) #line.dashed : <<i>>
-  (CreditManagement) <-- (Ajouter crédits) #line.dashed : <<e>>
-  (CreditManagement) <-- (Retirer crédits) #line.dashed : <<e>>
-  
-  (Login) <--  (AccountAdminManagement) #line.dashed : <<i>>
-  (AccountAdminManagement) <-- (Créer des comptes) #line.dashed : <<e>>
-  (AccountAdminManagement) <-- (UpdateAccountAdmin) #line.dashed : <<e>>
-  (AccountAdminManagement) <-- (Supprimer des comptes) #line.dashed : <<e>>
-
-}
-
-@enduml
-```
+![PlantUML model](https://www.plantuml.com/plantuml/png/dPHVQXin4CRVTOeXVMaUt0COO-Aw42XDAIq-W2ADaqbtfKL_8ANjWNAENAnQhOZYsMen0J_D_EQRRsRalV91kX3xJgmFWJhoCc1q7fGr1bLuVl9ha1uE7XqZZ3MLmefzjM4_XL6BzKxtP6XiCfLbB0U56AJwAUyGTiFGaPA1ak9l0P1-5rdYCKKkneBtN-mTcSinSOq-WyhsGy0fkrFAHXDkf4boFPfmGiPNha_uRADHfDppawPG2lOEDN7zVK8ayv9H6R1qk5mSvSPgEX8wqEYBHkbt67GIgJPBmMSR4_s0yN72ldNorxNiqUVixdWaTP-086yxb379mgrrUc8_IN__qKgd5rcGOpDMyM90GBumRFwiLkM8CBivh5RREcKZpRPKT5E6tv9bwo5OCgcUxAE6sUZPDeld64kstuW0xXysQHzbP7ZNaS4FEccZXZLiDhJTbgf2Z7HjtgXWU1tj39oDThwf-V9RbNEqI4oFMht-O_n719T5ViHXSDIZMrRW0x3tiUX_HfODFDWOqBty_nkTsmBVCP1h2hIjjrvSOu8sNnQHsfzyMTf6beNcdw8t2fMRdcLA_1LNQ7Jikty0) 
 
 ### Maquettes
 
-![Alt text](./images/Maquette_1.jpg "Page connexion")
-![Alt text](./images/Maquette_2.jpg "Page connexion")
-![Alt text](./images/Maquette_3.jpg "Page connexion")
-![Alt text](./images/Maquette_4.jpg "Page connexion")
-![Alt text](./images/Maquette_5.jpg "Page connexion")
-![Alt text](./images/Maquette_6.jpg "Page connexion")
+![Maquette](./images/Maquette_1.jpg "Maquette")
+![Maquette](./images/Maquette_2.jpg "Maquette")
+![Maquette](./images/Maquette_3.jpg "Maquette")
+![Maquette](./images/Maquette_4.jpg "Maquette")
+![Maquette](./images/Maquette_5.jpg "Maquette")
+![Maquette](./images/Maquette_6.jpg "Maquette")
 
 
 ### Captures d'écran
 
 #### Connexion
 
-![Alt text](./images/login.png "Page connexion")
+![Page connexion](./images/login.png "Page connexion")
 
 #### Inscription
 
-![Alt text](./images/register.png "Page inscription")
+![Page inscriptiont](./images/register.png "Page inscription")
 
 #### Accueil
 
-![Alt text](./images/home.png "Page accueil")
+![Page accueil](./images/home.png "Page accueil")
 
 #### Profil
 
-![Alt text](./images/profil.png "Page profil")
+![Page profil](./images/profil.png "Page profil")
 
 #### Tableau de bord
 
-![Alt text](./images/dashboard.png "Page tableau de bord")
+![Page tableau de bord](./images/dashboard.png "Page tableau de bord")
 
 #### Question API
 
-![Alt text](./images/questionAPI.png "Page questionAPI")
+![Page questionAPI](./images/questionAPI.png "Page questionAPI")
 
 #### ADMIN : Gestion utilisateur
 
-![Alt text](./images/manage-user.png "Page gestion utilisateur")
+![Page gestion utilisateur](./images/manage-user.png "Page gestion utilisateur")
 
 #### ADMIN : Modification utilisateur
 
-![Alt text](./images/update-user.png "Page modification utilisateur")
+![Page modification utilisateur](./images/update-user.png "Page modification utilisateur")
 
 #### GAME : Machine à sous
 
-![Alt text](./images/Casidio_machine_a_sous.png "Page Machine à sous game")
+![Page Machine à sous game](./images/Casidio_machine_a_sous.png "Page Machine à sous game")
 Images des icones de Vecteezy.com
 
 #### GAME : Mines
 
-![Alt text](./images/Casidio_mine_game.png "Page Mines game")
+![Page Mines game](./images/Casidio_mine_game.png "Page Mines game")
 
 #### GAME : Roulette
 
-![Alt text](./images/Casidio_roulette.png "Page Roulette game")
+![Page Roulette game](./images/Casidio_roulette.png "Page Roulette game")
 
 ### Démonstration vidéo
 
@@ -197,36 +162,8 @@ frontend/
 
 #### Schéma de la base de donnée
 
-```plantuml
-class User{
-  -id: Number
-  -firstName: String
-  -lastName: String
-  -email: String
-  -password: String
-  -address: String
-  -birthDate: Date
-  -balance: Float
-  -isAdmin: Boolean
-}
 
-class Games{
-  -id: Number
-  -name: String
-  -page: String
-  -description: String
-}
-
-class History{
- -id: Number;
- -profit: Float
- -gameDate: Date
-}
-
-
-History --> "1..1" User
-History --> "1..1" Games
-```
+![PlantUML model](https://www.plantuml.com/plantuml/png/RP31QiCm38RlVWhJUmgzPZ2wCRQTUXbx03LMCu5i1qbXZB9tdsDAS5akXly3Vtpeg0PYSsGtCAZwJqMvEkyx2hq_pV6CigmBYTe98lR-muJIk426_mmZ4BTWAjRlBA5b48AWQelE9FRr0bPaoriHCAIXW5VEOBL9dqAarFldd1aXkLztotuh6RhHdGg_hndlTa0TX2QZd5QyIjz9BSlFrRNMXx8coHUoDQmR8MBJNWJkzjTttQFV7VRxmwwUTelNTdV45ER8Vm00)
 
 #### Architecture de votre code
 
